@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GroceryCrud\PermissionController;
 use App\Http\Controllers\GroceryCrud\SuperAdminController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -25,6 +26,8 @@ Route::get('/logout', function () {
 })->middleware('auth');
 
 Route::prefix('admin')->middleware('auth')->group(function () {
+  Route::get('/permissions', [PermissionController::class, 'permissions'])->name('permissions');
+  Route::post('/permissions', [PermissionController::class, 'permissions']);
     Route::get('/users', [SuperAdminController::class, 'users'])->name('users');
     Route::post('/users', [SuperAdminController::class, 'users']);
     Route::get('/roles', [SuperAdminController::class, 'roles'])->name('roles');

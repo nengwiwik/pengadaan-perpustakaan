@@ -40,6 +40,12 @@
       <span>Roles</span></a>
   </li>
 
+  <li class="nav-item">
+    <a class="nav-link" href="{{ route('permissions') }}">
+      <i class="fas fa-fw fa-user-shield"></i>
+      <span>Permissions</span></a>
+  </li>
+
   @endrole
 
   @role('Penerbit')
