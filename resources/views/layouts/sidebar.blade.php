@@ -41,6 +41,12 @@
   </li>
 
   <li class="nav-item">
+    <a class="nav-link" href="{{ route('permissions') }}">
+      <i class="fas fa-fw fa-user-shield"></i>
+      <span>Permissions</span></a>
+  </li>
+
+  <li class="nav-item">
     <a class="nav-link" href="{{ route('campuses') }}">
       <i class="fas fa-fw fa-building"></i>
       <span>Campus</span></a>
