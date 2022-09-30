@@ -46,6 +46,25 @@
       <span>Permissions</span></a>
   </li>
 
+  <li class="nav-item">
+    <a class="nav-link" href="{{ route('campuses') }}">
+      <i class="fas fa-fw fa-building"></i>
+      <span>Campus</span></a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link" href="{{ route('majors') }}">
+      <i class="fas fa-fw fa-graduation-cap"></i>
+      <span>Majors</span></a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link" href="{{ route('publisher') }}">
+      <i class="fas fa-fw fa-book"></i>
+      <span>Publisher</span></a>
+  </li>
+
+
   @endrole
 
   @role('Penerbit')

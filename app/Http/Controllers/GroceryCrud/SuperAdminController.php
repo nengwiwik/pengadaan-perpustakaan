@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\GroceryCrud;
 
 use App\Http\Controllers\Controller;
+use App\Models\Campus;
+use App\Models\Major;
+use App\Models\Publisher;
 use Illuminate\Http\Request;
 
 class SuperAdminController extends GroceryCrudController
@@ -16,7 +19,7 @@ class SuperAdminController extends GroceryCrudController
     $crud->setTable('users');
     $crud->setSubject('User', 'Users');
 
-    $crud->fields(['name', 'email', 'password']);
+    $crud->fields(['name', 'email','password', 'publisher_id', 'campus_id', 'major_id']);
     $crud->requiredFields(['name', 'email']);
     $crud->columns(['name', 'email', 'password', 'updated_at']);
 
@@ -26,6 +29,18 @@ class SuperAdminController extends GroceryCrudController
       $s->data['updated_at'] = now();
       return $s;
     });
+
+    $crud->setRelation('publisher_id', 'publishers', 'name');
+    $crud->setRelation('campus_id', 'campuses', 'name');
+    $crud->setRelation('major_id', 'majors', 'name');
+
+    $crud->displayAs([
+      'publisher_id' => 'Publisher',
+      'campus_id'  => 'Campus',
+      'major_id' => 'Major'
+    ]);
+
+
 
     $crud->callbackBeforeUpdate(function ($s) {
       $s->data['updated_at'] = now();
@@ -76,4 +91,107 @@ class SuperAdminController extends GroceryCrudController
 
     return $this->_showOutput($output, $title);
   }
-}
+
+  public function campuses()
+  {
+    $this->authorize('manage users');
+    $title = "Campuses";
+    $crud = $this->_getGroceryCrudEnterprise();
+
+    $crud->setTable('campuses');
+    $crud->setSubject('Campus', 'Campuses');
+    $crud->where("campuses.deleted_at is null");
+
+    $crud->fields(['name', 'address', 'email', 'phone']);
+    $crud->columns(['name', 'address', 'email', 'phone']);
+    $crud->requiredFields(['name', 'address', 'email', 'phone']);
+
+    $crud->callbackBeforeInsert(function ($s) {
+      $s->data['created_at'] = now();
+      $s->data['updated_at'] = now();
+      return $s;
+    });
+    $crud->callbackBeforeUpdate(function ($s) {
+      $s->data['updated_at'] = now();
+      return $s;
+    });
+    $crud->callbackDelete(function ($s) {
+      $data = Campus::find($s->primaryKeyValue);
+      $data->delete();
+      return $s;
+    });
+
+    $output = $crud->render();
+
+    return $this->_showOutput($output, $title);
+  }
+
+  public function majors()
+  {
+    $this->authorize('manage users');
+    $title = "Majors";
+    $crud = $this->_getGroceryCrudEnterprise();
+
+    $crud->setTable('majors');
+    $crud->setSubject('Majors', 'Majors');
+    $crud->where("majors.deleted_at is null");
+
+    $crud->fields(['code', 'name']);
+    $crud->columns(['code', 'name']);
+    $crud->requiredFields(['code', 'name']);
+
+    $crud->callbackBeforeInsert(function ($s) {
+      $s->data['created_at'] = now();
+      $s->data['updated_at'] = now();
+      return $s;
+    });
+    $crud->callbackBeforeUpdate(function ($s) {
+      $s->data['updated_at'] = now();
+      return $s;
+    });
+    $crud->callbackDelete(function ($s) {
+      $data = Major::find($s->primaryKeyValue);
+      $data->delete();
+      return $s;
+    });
+
+    $output = $crud->render();
+
+    return $this->_showOutput($output, $title);
+  }
+
+  public function publisher()
+  {
+    $this->authorize('manage users');
+    $title = "Publisher";
+    $crud = $this->_getGroceryCrudEnterprise();
+
+    $crud->setTable('publishers');
+    $crud->setSubject('Publisher', 'Publisher');
+    $crud->where("publishers.deleted_at is null");
+
+    $crud->fields(['code', 'name', 'address', 'email', 'phone']);
+    $crud->columns(['code','name', 'address', 'email', 'phone']);
+    $crud->requiredFields(['code','name', 'address', 'email', 'phone']);
+
+    $crud->callbackBeforeInsert(function ($s) {
+      $s->data['created_at'] = now();
+      $s->data['updated_at'] = now();
+      return $s;
+    });
+    $crud->callbackBeforeUpdate(function ($s) {
+      $s->data['updated_at'] = now();
+      return $s;
+    });
+    $crud->callbackDelete(function ($s) {
+      $data = Publisher::find($s->primaryKeyValue);
+      $data->delete();
+      return $s;
+    });
+
+    $output = $crud->render();
+
+    return $this->_showOutput($output, $title);
+  }
+  }
+
