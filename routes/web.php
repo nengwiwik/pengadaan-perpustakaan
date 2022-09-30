@@ -27,8 +27,18 @@ Route::get('/logout', function () {
 Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/users', [SuperAdminController::class, 'users'])->name('users');
     Route::post('/users', [SuperAdminController::class, 'users']);
-    Route::get('/roles', [SuperAdminController::class, 'roles'])->name('roles');
-    Route::post('/roles', [SuperAdminController::class, 'roles']);
+
+  Route::get('/roles', [SuperAdminController::class, 'roles'])->name('roles');
+  Route::post('/roles', [SuperAdminController::class, 'roles']);
+
+  Route::get('/campuses', [SuperAdminController::class, 'campuses'])->name('campuses');
+  Route::post('/campuses', [SuperAdminController::class, 'campuses']);
+
+  Route::get('/majors', [SuperAdminController::class, 'majors'])->name('majors');
+  Route::post('/majors', [SuperAdminController::class, 'majors']);
+
+  Route::get('/publisher', [SuperAdminController::class, 'publisher'])->name('publisher');
+  Route::post('/publisher', [SuperAdminController::class, 'publisher']);
 });
 
 Auth::routes();
