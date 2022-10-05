@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Campus;
 use App\Models\Major;
 use App\Models\Publisher;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class SuperAdminController extends GroceryCrudController
@@ -39,9 +40,39 @@ class SuperAdminController extends GroceryCrudController
       'campus_id'  => 'Campus',
       'major_id' => 'Major'
     ]);
-
-
-
+    $crud->callbackBeforeInsert(function ($s) {
+      $s->data['created_at'] = now();
+      $s->data['updated_at'] = now();
+      return $s;
+    });
+    $crud->callbackAfterInsert(function ($s) {
+      $user = User::find($s->insertId);
+      if (!is_null($user->publisher_id) and is_null($user->campus_id) and is_null($user->major_id)) {
+        $user->assignRole('Penerbit');
+        $user->removeRole('Admin Prodi');
+      } elseif (is_null($user->publisher_id) and !is_null($user->campus_id) and !is_null($user->major_id)) {
+        $user->assignRole('Admin Prodi');
+        $user->removeRole('Penerbit');
+      } else {
+        $user->removeRole('Admin Prodi');
+        $user->removeRole('Penerbit');
+      }
+      return $s;
+    });
+    $crud->callbackAfterUpdate(function ($s) {
+      $user = User::find($s->primaryKeyValue);
+      if (!is_null($user->publisher_id) and is_null($user->campus_id) and is_null($user->major_id)) {
+        $user->assignRole('Penerbit');
+        $user->removeRole('Admin Prodi');
+      } elseif (is_null($user->publisher_id) and !is_null($user->campus_id) and !is_null($user->major_id)) {
+        $user->assignRole('Admin Prodi');
+        $user->removeRole('Penerbit');
+      } else {
+        $user->removeRole('Admin Prodi');
+        $user->removeRole('Penerbit');
+      }
+      return $s;
+    });
     $crud->callbackBeforeUpdate(function ($s) {
       $s->data['updated_at'] = now();
       if ($s->data['password'] != '') {
