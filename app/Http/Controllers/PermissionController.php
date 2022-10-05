@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\GroceryCrud;
+namespace App\Http\Controllers;
 
 class PermissionController extends GroceryCrudController
 {

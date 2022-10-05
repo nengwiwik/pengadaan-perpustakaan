@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\GroceryCrud\PermissionController;
-use App\Http\Controllers\GroceryCrud\SuperAdminController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\SuperAdminController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
