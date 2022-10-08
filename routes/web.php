@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\GroceryCrud\PermissionController;
-use App\Http\Controllers\GroceryCrud\SuperAdminController;
+use App\Http\Controllers\PenerbitController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\SuperAdminController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -42,6 +43,13 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
   Route::get('/publisher', [SuperAdminController::class, 'publisher'])->name('publisher');
   Route::post('/publisher', [SuperAdminController::class, 'publisher']);
+});
+
+Route::prefix('penerbit')->middleware(['role:Penerbit'])->group(function () {
+  Route::get('/invoices', [PenerbitController::class, 'invoices'])->name('penerbit.invoices');
+  Route::post('/invoices', [PenerbitController::class, 'invoices']);
+  Route::get('/invoices/{invoice}/books', [PenerbitController::class, 'books'])->name('penerbit.invoices.books');
+  Route::post('/invoices/{invoice}/books', [PenerbitController::class, 'books']);
 });
 
 Auth::routes();

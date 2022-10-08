@@ -20,8 +20,12 @@ return new class extends Migration
             $table->string('code')->nullable();
             $table->foreignIdFor(Publisher::class)->nullable()->constrained();
             $table->foreignIdFor(Campus::class)->nullable()->constrained();
+            $table->text('publisher_note')->nullable();
+            $table->text('campus_note')->nullable();
             $table->date('invoice_date')->nullable();
-            $table->string('status')->nullable();
+            $table->date('verified_date')->nullable();
+            $table->date('paid_date')->nullable();
+            $table->date('cancelled_date')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

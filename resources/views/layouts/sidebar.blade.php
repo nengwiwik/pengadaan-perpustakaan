@@ -76,6 +76,12 @@
     Penerbit
   </div>
 
+  <li class="nav-item">
+    <a class="nav-link" href="{{ route('penerbit.invoices') }}">
+      <i class="fas fa-fw fa-book"></i>
+      <span>New Invoices</span></a>
+  </li>
+
   @endrole
 
   @role('Admin Prodi')
