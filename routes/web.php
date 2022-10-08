@@ -48,6 +48,8 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 Route::prefix('penerbit')->middleware(['role:Penerbit'])->group(function () {
   Route::get('/invoices', [PenerbitController::class, 'invoices'])->name('penerbit.invoices');
   Route::post('/invoices', [PenerbitController::class, 'invoices']);
+  Route::get('/invoices/{invoice}/books', [PenerbitController::class, 'books'])->name('penerbit.invoices.books');
+  Route::post('/invoices/{invoice}/books', [PenerbitController::class, 'books']);
 });
 
 Auth::routes();

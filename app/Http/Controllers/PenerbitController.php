@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Book;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,6 +34,9 @@ class PenerbitController extends GroceryCrudController
     $crud->displayAs([
       'campus_id' => 'Campus',
     ]);
+    $crud->setActionButton('Books', 'fa fa-book', function ($row) {
+      return route('penerbit.invoices.books', $row->id);
+    });
     $crud->callbackBeforeInsert(function ($s) {
       $s->data['code'] = "INV-" . date('ymdHis') . "-" . str_pad(Auth::user()->publisher_id, 3, '0', STR_PAD_LEFT);
       $s->data['publisher_id'] = Auth::user()->publisher_id;
@@ -60,5 +64,64 @@ class PenerbitController extends GroceryCrudController
     $output = $crud->render();
 
     return $this->_showOutput($output, $title);
+  }
+
+  public function books(Invoice $invoice)
+  {
+    // otorisasi
+    if ($invoice->publisher_id != Auth::user()->publisher_id) {
+      return abort(403);
+    }
+
+    $title = "Books | Invoice " . $invoice->code;
+    $table = 'books';
+    $singular = 'Book';
+    $plural = 'Books';
+    $crud = $this->_getGroceryCrudEnterprise();
+
+    $crud->setTable($table);
+    $crud->setSubject($singular, $plural);
+    $crud->where([
+      $table . '.invoice_id = ?' => $invoice->getKey(),
+      $table . '.deleted_at is null',
+    ]);
+
+    $crud->setRead();
+    $crud->columns(['major_id', 'title', 'isbn', 'author_name', 'published_year', 'price', 'suplemen']);
+    $crud->fields(['major_id', 'title', 'isbn', 'author_name', 'published_year', 'price', 'suplemen']);
+    $crud->requiredFields(['major_id', 'title', 'isbn', 'author_name', 'published_year', 'price', 'suplemen']);
+    $crud->setRelation('major_id', 'majors', 'name');
+    $crud->fieldType('price', 'numeric');
+    $crud->displayAs([
+      'major_id' => 'Major',
+      'isbn' => 'ISBN',
+      'suplemen' => 'Suplement',
+    ]);
+    $crud->callbackBeforeInsert(function ($s) use ($invoice) {
+      $s->data['invoice_id'] = $invoice->getKey();
+      $s->data['created_at'] = now();
+      $s->data['updated_at'] = now();
+      return $s;
+    });
+    $crud->callbackDelete(function ($s) {
+      $data = Book::find($s->primaryKeyValue);
+
+      if (!$data) {
+        $errorMessage = new \GroceryCrud\Core\Error\ErrorMessage();
+        return $errorMessage->setMessage('Data not found');
+      }
+
+      $data->save();
+      $data->delete();
+      return $s;
+    });
+    $crud->callbackBeforeUpdate(function ($s) {
+      $s->data['updated_at'] = now();
+      return $s;
+    });
+
+    $output = $crud->render();
+
+    return $this->_showOutput($output, $title, 'penerbit.invoice.buku');
   }
 }

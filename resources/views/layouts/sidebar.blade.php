@@ -79,7 +79,7 @@
   <li class="nav-item">
     <a class="nav-link" href="{{ route('penerbit.invoices') }}">
       <i class="fas fa-fw fa-book"></i>
-      <span>Invoices</span></a>
+      <span>New Invoices</span></a>
   </li>
 
   @endrole
