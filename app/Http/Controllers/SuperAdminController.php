@@ -11,18 +11,22 @@ use Illuminate\Http\Request;
 
 class SuperAdminController extends GroceryCrudController
 {
-  public function users()
+  public function prodi_users()
   {
     $this->authorize('manage users');
-    $title = "Users";
+    $title = "Admin Prodi";
     $crud = $this->_getGroceryCrudEnterprise();
 
     $crud->setTable('users');
-    $crud->setSubject('User', 'Users');
+    $crud->setSubject('Admin', 'Administrators');
 
-    $crud->fields(['name', 'email','password', 'publisher_id', 'campus_id', 'major_id']);
-    $crud->requiredFields(['name', 'email']);
-    $crud->columns(['name', 'email', 'password', 'updated_at']);
+    $crud->fields(['name', 'email', 'password', 'campus_id', 'major_id']);
+    $crud->requiredFields(['name', 'email', 'password', 'campus_id', 'major_id']);
+    $crud->columns(['name', 'email', 'campus_id', 'major_id', 'updated_at']);
+
+    $crud->where([
+      "campus_id is not null",
+    ]);
 
     $crud->callbackBeforeInsert(function ($s) {
       $s->data['password'] = bcrypt($s->data['password']);
@@ -31,12 +35,10 @@ class SuperAdminController extends GroceryCrudController
       return $s;
     });
 
-    $crud->setRelation('publisher_id', 'publishers', 'name');
     $crud->setRelation('campus_id', 'campuses', 'name');
     $crud->setRelation('major_id', 'majors', 'name');
 
     $crud->displayAs([
-      'publisher_id' => 'Publisher',
       'campus_id'  => 'Campus',
       'major_id' => 'Major'
     ]);
@@ -77,7 +79,7 @@ class SuperAdminController extends GroceryCrudController
       $s->data['updated_at'] = now();
       if ($s->data['password'] != '') {
         $s->data['password'] = bcrypt($s->data['password']);
-      }else{
+      } else {
         unset($s->data['password']);
       }
       return $s;
@@ -90,7 +92,89 @@ class SuperAdminController extends GroceryCrudController
 
     $output = $crud->render();
 
-    return $this->_showOutput($output, $title);
+    return $this->_showOutput($output, $title, 'grocery', 'user');
+  }
+
+  public function publisher_users()
+  {
+    $this->authorize('manage users');
+    $title = "Admin Publisher";
+    $crud = $this->_getGroceryCrudEnterprise();
+
+    $crud->setTable('users');
+    $crud->setSubject('Admin', 'Administrators');
+
+    $crud->fields(['name', 'email', 'password', 'publisher_id']);
+    $crud->requiredFields(['name', 'email', 'password', 'publisher_id']);
+    $crud->columns(['name', 'email', 'publisher_id', 'updated_at']);
+
+    $crud->where([
+      "publisher_id is not null",
+    ]);
+
+    $crud->callbackBeforeInsert(function ($s) {
+      $s->data['password'] = bcrypt($s->data['password']);
+      $s->data['created_at'] = now();
+      $s->data['updated_at'] = now();
+      return $s;
+    });
+
+    $crud->setRelation('publisher_id', 'publishers', 'name');
+
+    $crud->displayAs([
+      'publisher_id'  => 'Publisher Name',
+    ]);
+    $crud->callbackBeforeInsert(function ($s) {
+      $s->data['created_at'] = now();
+      $s->data['updated_at'] = now();
+      return $s;
+    });
+    $crud->callbackAfterInsert(function ($s) {
+      $user = User::find($s->insertId);
+      if (!is_null($user->publisher_id) and is_null($user->campus_id) and is_null($user->major_id)) {
+        $user->assignRole('Penerbit');
+        $user->removeRole('Admin Prodi');
+      } elseif (is_null($user->publisher_id) and !is_null($user->campus_id) and !is_null($user->major_id)) {
+        $user->assignRole('Admin Prodi');
+        $user->removeRole('Penerbit');
+      } else {
+        $user->removeRole('Admin Prodi');
+        $user->removeRole('Penerbit');
+      }
+      return $s;
+    });
+    $crud->callbackAfterUpdate(function ($s) {
+      $user = User::find($s->primaryKeyValue);
+      if (!is_null($user->publisher_id) and is_null($user->campus_id) and is_null($user->major_id)) {
+        $user->assignRole('Penerbit');
+        $user->removeRole('Admin Prodi');
+      } elseif (is_null($user->publisher_id) and !is_null($user->campus_id) and !is_null($user->major_id)) {
+        $user->assignRole('Admin Prodi');
+        $user->removeRole('Penerbit');
+      } else {
+        $user->removeRole('Admin Prodi');
+        $user->removeRole('Penerbit');
+      }
+      return $s;
+    });
+    $crud->callbackBeforeUpdate(function ($s) {
+      $s->data['updated_at'] = now();
+      if ($s->data['password'] != '') {
+        $s->data['password'] = bcrypt($s->data['password']);
+      } else {
+        unset($s->data['password']);
+      }
+      return $s;
+    });
+
+    $crud->callbackEditForm(function ($data) {
+      $data['password'] = '';
+      return $data;
+    });
+
+    $output = $crud->render();
+
+    return $this->_showOutput($output, $title, 'grocery', 'user');
   }
 
   public function roles()

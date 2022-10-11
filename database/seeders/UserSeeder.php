@@ -35,6 +35,7 @@ class UserSeeder extends Seeder
         'name' => 'Penerbit Erlangga',
         'email_verified_at' => now(),
         'password' => bcrypt('password'),
+        'publisher_id' => 1,
       ]
     );;
     $penerbit->assignRole('Penerbit');
@@ -47,6 +48,8 @@ class UserSeeder extends Seeder
         'name' => 'Prodi TI',
         'email_verified_at' => now(),
         'password' => bcrypt('password'),
+        'campus_id' => 1,
+        'major_id' => 7,
       ]
     );;
     $prodi->assignRole('Admin Prodi');

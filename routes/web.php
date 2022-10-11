@@ -18,19 +18,23 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+  return view('welcome');
 })->middleware('auth');
 
 Route::get('/logout', function () {
-    Auth::logout();
-    return to_route('login');
+  Auth::logout();
+  return to_route('login');
 })->middleware('auth');
 
 Route::prefix('admin')->middleware('auth')->group(function () {
   Route::get('/permissions', [PermissionController::class, 'permissions'])->name('permissions');
   Route::post('/permissions', [PermissionController::class, 'permissions']);
-    Route::get('/users', [SuperAdminController::class, 'users'])->name('users');
-    Route::post('/users', [SuperAdminController::class, 'users']);
+
+  Route::get('/users/prodi', [SuperAdminController::class, 'prodi_users'])->name('prodi_users');
+  Route::post('/users/prodi', [SuperAdminController::class, 'prodi_users']);
+
+  Route::get('/users/publisher', [SuperAdminController::class, 'publisher_users'])->name('publisher_users');
+  Route::post('/users/publisher', [SuperAdminController::class, 'publisher_users']);
 
   Route::get('/roles', [SuperAdminController::class, 'roles'])->name('roles');
   Route::post('/roles', [SuperAdminController::class, 'roles']);
