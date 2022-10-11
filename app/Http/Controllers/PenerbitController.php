@@ -44,6 +44,10 @@ class PenerbitController extends GroceryCrudController
       $s->data['updated_at'] = now();
       return $s;
     });
+    $crud->callbackAfterInsert(function ($s) {
+      $redirectResponse = new \GroceryCrud\Core\Redirect\RedirectResponse();
+      return $redirectResponse->setUrl(route('penerbit.invoices.books', $s->insertId));
+    });
     $crud->callbackDelete(function ($s) {
       $data = Invoice::find($s->primaryKeyValue);
 
