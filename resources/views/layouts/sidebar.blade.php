@@ -93,6 +93,18 @@
       <span>New Invoices</span></a>
   </li>
 
+  <li class="nav-item">
+    <a class="nav-link" href="{{ route('penerbit.invoices.ongoing') }}">
+      <i class="fas fa-fw fa-book"></i>
+      <span>On-Going Invoices</span></a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link" href="{{ route('penerbit.invoices.verified') }}">
+      <i class="fas fa-fw fa-book"></i>
+      <span>Verified Invoices</span></a>
+  </li>
+
   @endrole
 
   @role('Admin Prodi')

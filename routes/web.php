@@ -54,8 +54,21 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 Route::prefix('penerbit')->middleware(['role:Penerbit'])->group(function () {
   Route::get('/invoices', [PenerbitController::class, 'invoices'])->name('penerbit.invoices');
   Route::post('/invoices', [PenerbitController::class, 'invoices']);
+
   Route::get('/invoices/{invoice}/books', [PenerbitController::class, 'books'])->name('penerbit.invoices.books');
   Route::post('/invoices/{invoice}/books', [PenerbitController::class, 'books']);
+
+  Route::get('/ongoing-invoices', [PenerbitController::class, 'ongoing_invoices'])->name('penerbit.invoices.ongoing');
+  Route::post('/ongoing-invoices', [PenerbitController::class, 'ongoing_invoices']);
+
+  Route::get('/ongoing-invoices/{invoice}/books', [PenerbitController::class, 'ongoing_books'])->name('penerbit.invoices.books.ongoing');
+  Route::post('/ongoing-invoices/{invoice}/books', [PenerbitController::class, 'ongoing_books']);
+
+  Route::get('/verified-invoices', [PenerbitController::class, 'verified_invoices'])->name('penerbit.invoices.verified');
+  Route::post('/verified-invoices', [PenerbitController::class, 'verified_invoices']);
+
+  Route::get('/verified-invoices/{invoice}/books', [PenerbitController::class, 'verified_books'])->name('penerbit.invoices.books.verified');
+  Route::post('/verified-invoices/{invoice}/books', [PenerbitController::class, 'verified_books']);
 });
 
 Auth::routes();
