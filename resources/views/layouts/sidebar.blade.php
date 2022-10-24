@@ -31,31 +31,31 @@
   <li class="nav-item {{ $type_menu === 'user' ? 'active' : '' }}">
     <a class="nav-link {{ $type_menu === 'user' ? '' : 'collapsed' }}" href="#" data-toggle="collapse"
       data-target="#collapseUsers" aria-expanded="true" aria-controls="collapseUsers">
-      <i class="fas fa-fw fa-users"></i>
+      <i class="fas fa-fw fa-user-plus"></i>
       <span>Users</span>
     </a>
     <div id="collapseUsers" class="collapse {{ $type_menu === 'user' ? 'show' : '' }}"
       aria-labelledby="headingTwo" data-parent="#accordionSidebar">
       <div class="bg-white py-2 collapse-inner rounded">
         <a class="collapse-item @if (\Request::is('admin/users/prodi')) active @endif"
-          href="{{ route('prodi_users') }}">Admin Prodi</a>
+          href="{{ route('prodi_users') }}">Add Admin Prodi</a>
         <a class="collapse-item @if (\Request::is('admin/users/publisher')) active @endif"
-          href="{{ route('publisher_users') }}">Admin Publisher</a>
+          href="{{ route('publisher_users') }}">Add Admin Publisher</a>
       </div>
     </div>
   </li>
 
-  <li class="nav-item">
+  {{-- <li class="nav-item">
     <a class="nav-link" href="{{ route('roles') }}">
       <i class="fas fa-fw fa-user-plus"></i>
       <span>Roles</span></a>
-  </li>
+  </li> --}}
 
-  <li class="nav-item">
+  {{-- <li class="nav-item">
     <a class="nav-link" href="{{ route('permissions') }}">
       <i class="fas fa-fw fa-user-shield"></i>
       <span>Permissions</span></a>
-  </li>
+  </li> --}}
 
   <li class="nav-item">
     <a class="nav-link" href="{{ route('campuses') }}">
