@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NewInvoice;
 use App\Models\Book;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class PenerbitController extends GroceryCrudController
 {
@@ -63,6 +65,23 @@ class PenerbitController extends GroceryCrudController
     });
     $crud->callbackBeforeUpdate(function ($s) {
       $s->data['updated_at'] = now();
+      return $s;
+    });
+    $crud->callbackAfterUpdate(function ($s) {
+      $invoice = Invoice::find($s->primaryKeyValue);
+
+      if (is_null($invoice->invoice_date) == false) {
+        // ambil jurusan (cukup satu)
+        // ambil nama-nama dosen sesuai jurusan dan kampus
+        $mail = Mail::to('aaezha@gmail.com', 'Aa Ezha');
+        $mail->cc([
+          ['email' => 'cc2@gmail.com', 'name' => 'CC 2'],
+          ['email' => 'cc1@gmail.com', 'name' => 'CC 1'],
+        ]);
+        $mail->bcc('bcc1@gmail.com', 'bcc2@gmail.com');
+        $mail->send(new NewInvoice($invoice));
+      }
+
       return $s;
     });
 
