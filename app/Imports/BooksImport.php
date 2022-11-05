@@ -53,11 +53,6 @@ class BooksImport implements
         }
     }
 
-    public function getInvoice($invoice)
-    {
-        return Invoice::firstWhere('code', $invoice)->value('id');
-    }
-
     public function getMajor($major)
     {
         $data =  Major::firstWhere('name', $major);
