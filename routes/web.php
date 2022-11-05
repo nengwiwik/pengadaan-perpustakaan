@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Penerbit\ImportBukuController;
 use App\Http\Controllers\PenerbitController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\SuperAdminController;
@@ -57,6 +58,8 @@ Route::prefix('penerbit')->middleware(['role:Penerbit'])->group(function () {
 
   Route::get('/invoices/{invoice}/books', [PenerbitController::class, 'books'])->name('penerbit.invoices.books');
   Route::post('/invoices/{invoice}/books', [PenerbitController::class, 'books']);
+
+  Route::post('/invoices/{invoice}/import', ImportBukuController::class)->name('penerbit.invoices.books.import');
 
   Route::get('/ongoing-invoices', [PenerbitController::class, 'ongoing_invoices'])->name('penerbit.invoices.ongoing');
   Route::post('/ongoing-invoices', [PenerbitController::class, 'ongoing_invoices']);
