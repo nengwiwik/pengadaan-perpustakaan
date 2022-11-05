@@ -20,6 +20,10 @@ class BooksImport implements
     ShouldQueue
 // WithValidation
 {
+    public function __construct(public Invoice $invoice)
+    {
+    }
+
     /**
      * @param array $row
      *
@@ -31,22 +35,19 @@ class BooksImport implements
             if ($key == 0) {
                 continue;
             }
-            $invoice = $this->getInvoice($row[0]);
-            $major = $this->getMajor($row[1]);
-            info($invoice);
-            info($major);
+            $major = $this->getMajor($row[0]);
             Book::updateOrCreate(
                 [
-                    'invoice_id' => $invoice,
+                    'invoice_id' => $this->invoice->getKey(),
                     'major_id' => $major,
-                    'isbn' => $row[3],
+                    'isbn' => $row[2],
                 ],
                 [
-                    'title' => $row[2],
-                    'author_name' => $row[4],
-                    'published_year' => $row[5],
-                    'price' => $row[6],
-                    'suplemen' => $row[7],
+                    'title' => $row[1],
+                    'author_name' => $row[3],
+                    'published_year' => $row[4],
+                    'price' => $row[5],
+                    'suplemen' => $row[6],
                 ]
             );
         }
