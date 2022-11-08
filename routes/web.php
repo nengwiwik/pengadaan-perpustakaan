@@ -4,6 +4,7 @@ use App\Http\Controllers\Penerbit\ImportBukuController;
 use App\Http\Controllers\PenerbitController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\SuperAdminController;
+use App\Http\Controllers\ProfilController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -74,8 +75,8 @@ Route::prefix('penerbit')->middleware(['role:Penerbit'])->group(function () {
   Route::post('/verified-invoices/{invoice}/books', [PenerbitController::class, 'verified_books']);
 });
 
-Route::get('/profil',[App\Http\Controllers\ProfilController::class, 'index'])->name('profil.index');
-Route::patch('/profil/{id}', [App\Http\Controllers\ProfilController::class, 'update'])->name('profil.update');
+Route::get('/profil',[ProfilController::class, 'index'])->name('profil.index');
+Route::patch('/profil/{id}', [ProfilController::class, 'update'])->name('profil.update');
 
 Auth::routes();
 

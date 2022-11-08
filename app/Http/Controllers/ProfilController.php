@@ -6,14 +6,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-
-
 class ProfilController extends Controller
 {
-    public function _index()
+    public function index()
     {
         $user = User::findOrFail(Auth::id());
-        return view('profil', compact('user'));
+        return view('profil.index', compact('user'));
     }
 
     public function update(Request $request, $id)
@@ -38,4 +36,5 @@ class ProfilController extends Controller
         $user->save();
         return back()->with('status', 'Profil updated!');
 
+}
 }
