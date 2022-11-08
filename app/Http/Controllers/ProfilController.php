@@ -11,7 +11,7 @@ class ProfilController extends Controller
     public function index()
     {
         $user = User::findOrFail(Auth::id());
-        return view('profil.index', compact('user'));
+        return view('profil', compact('user'));
     }
 
     public function update(Request $request, $id)
