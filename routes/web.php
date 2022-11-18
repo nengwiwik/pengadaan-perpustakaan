@@ -75,8 +75,9 @@ Route::prefix('penerbit')->middleware(['role:Penerbit'])->group(function () {
   Route::post('/verified-invoices/{invoice}/books', [PenerbitController::class, 'verified_books']);
 });
 
-Route::get('/profil',[ProfilController::class, 'index'])->name('profil.index');
-Route::patch('/profil/{id}', [ProfilController::class, 'update'])->name('profil.update');
+Route::get('/profile',[ProfilController::class, 'index'])->name('profil.index');
+Route::patch('/profile', [ProfilController::class, 'update'])->name('profil.update');
+Route::patch('/profile/password', [ProfilController::class, 'password'])->name('profil.update-password');
 
 Auth::routes();
 
