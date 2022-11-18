@@ -14,7 +14,8 @@ class ProfilController extends Controller
     {
         $user = User::findOrFail(Auth::id());
         $type_menu = null;
-        return view('profil', compact('user', 'type_menu'));
+        $title = "Update Profile";
+        return view('profil', compact('user', 'type_menu', 'title'));
     }
 
     public function update(Request $request)
@@ -35,6 +36,11 @@ class ProfilController extends Controller
 
     public function password(Request $request)
     {
+        if (! $request->has('password')) {
+            $type_menu = null;
+            $title = "Change Password";
+            return view('password', compact('type_menu', 'title'));
+        }
         $request->validate([
             'current_password' => 'required',
             'password' => 'required|confirmed|min:8',
