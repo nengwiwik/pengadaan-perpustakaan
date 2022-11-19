@@ -5,8 +5,8 @@ The body of your message.
 
 @component('mail::table')
 | No Invoice | Nama Penerbit      | Tanggal     | Total Buku |
-| :--------- | :----------------- | :---------: | ---------: |
-| 1          | PT. Buku Indonesia | 01 Nov 2022 | 10         |
+| :--------- | :----------------- | :--------- | ---------: |
+| {{ $invoice->code }} | {{ $invoice->publisher->name }} | {{ $invoice->invoice_date->format('d M Y')}} | {{ $invoice->books()->count() }} |
 @endcomponent
 
 @component('mail::button', ['url' => ''])
