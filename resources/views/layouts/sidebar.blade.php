@@ -75,6 +75,12 @@
       <span>Publisher</span></a>
   </li>
 
+  <li class="nav-item">
+    <a class="nav-link" href="{{ route('procurements') }}">
+      <i class="fas fa-fw fa-shopping-cart"></i>
+      <span>Procurements</span></a>
+  </li>
+
 
   @endrole
 

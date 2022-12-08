@@ -72,7 +72,7 @@ class PenerbitController extends GroceryCrudController
       $invoice = Invoice::find($s->primaryKeyValue);
 
       if (is_null($invoice->invoice_date) == false) {
-        PenerbitRepository::sendEmails($invoice);
+        // PenerbitRepository::sendEmails($invoice);
       }
 
       return $s;

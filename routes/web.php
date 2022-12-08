@@ -51,6 +51,12 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
   Route::get('/publisher', [SuperAdminController::class, 'publisher'])->name('publisher');
   Route::post('/publisher', [SuperAdminController::class, 'publisher']);
+
+  Route::get('/procurements', [SuperAdminController::class, 'procurements'])->name('procurements');
+  Route::post('/procurements', [SuperAdminController::class, 'procurements']);
+  Route::get('/procurements/{id}/approve', [SuperAdminController::class, 'procurement_approve'])->name('procurement.approve');
+  Route::get('/procurements/{id}/reject', [SuperAdminController::class, 'procurement_reject'])->name('procurement.reject');
+  Route::get('/procurements/{id}/verify', [SuperAdminController::class, 'procurement_verify'])->name('procurement.verify');
 });
 
 Route::prefix('penerbit')->middleware(['role:Penerbit'])->group(function () {
