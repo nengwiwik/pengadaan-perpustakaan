@@ -29,15 +29,28 @@ class UserSeeder extends Seeder
 
     $penerbit = User::updateOrCreate(
       [
+        'email' => 'publishing@nurfachmi.com'
+      ],
+      [
+        'name' => 'Penerbit Nurfachmi',
+        'email_verified_at' => now(),
+        'password' => bcrypt('password'),
+        'publisher_id' => 1,
+      ]
+    );
+    $penerbit->assignRole('Penerbit');
+
+    $penerbit = User::updateOrCreate(
+      [
         'email' => 'penerbit@gmail.com'
       ],
       [
         'name' => 'Penerbit Erlangga',
         'email_verified_at' => now(),
         'password' => bcrypt('password'),
-        'publisher_id' => 1,
+        'publisher_id' => 2,
       ]
-    );;
+    );
     $penerbit->assignRole('Penerbit');
 
     $prodi = User::updateOrCreate(
@@ -51,7 +64,7 @@ class UserSeeder extends Seeder
         'campus_id' => 1,
         'major_id' => 7,
       ]
-    );;
+    );
     $prodi->assignRole('Admin Prodi');
   }
 }
