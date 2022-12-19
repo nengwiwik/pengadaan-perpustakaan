@@ -17,6 +17,13 @@ class PublisherSeeder extends Seeder
   {
     $data = [
       [
+        'code' => 'NFI',
+        'name' => 'Nurfachmi Publishing',
+        'address' => 'JI Tanjung Duren Barat II No 1 Grogol Jakarta Barat.',
+        'email' => 'publishing@nurfachmi.com',
+        'phone' => '021-21194454',
+      ],
+      [
         'code' => 'ERL',
         'name' => 'Erlangga',
         'address' => 'JI Tanjung Duren Barat II No 1 Grogol Jakarta Barat.',

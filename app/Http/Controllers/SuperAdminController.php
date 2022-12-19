@@ -45,6 +45,7 @@ class SuperAdminController extends GroceryCrudController
             'major_id' => 'Major'
         ]);
         $crud->callbackBeforeInsert(function ($s) {
+            $s->data['password'] = bcrypt($s->data['password']);
             $s->data['created_at'] = now();
             $s->data['updated_at'] = now();
             return $s;
@@ -126,11 +127,6 @@ class SuperAdminController extends GroceryCrudController
         $crud->displayAs([
             'publisher_id'  => 'Publisher Name',
         ]);
-        $crud->callbackBeforeInsert(function ($s) {
-            $s->data['created_at'] = now();
-            $s->data['updated_at'] = now();
-            return $s;
-        });
         $crud->callbackAfterInsert(function ($s) {
             $user = User::find($s->insertId);
             if (!is_null($user->publisher_id) and is_null($user->campus_id) and is_null($user->major_id)) {
