@@ -17,7 +17,7 @@ class UserSeeder extends Seeder
   {
     $admin = User::updateOrCreate(
       [
-        'email' => 'admin@gmail.com'
+        'email' => 'admin@undira.ac.id'
       ],
       [
         'name' => 'Super Admin',
@@ -55,7 +55,7 @@ class UserSeeder extends Seeder
 
     $prodi = User::updateOrCreate(
       [
-        'email' => 'prodi@gmail.com'
+        'email' => 'prodi@undira.ac.id'
       ],
       [
         'name' => 'Prodi TI',
