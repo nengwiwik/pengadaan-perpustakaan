@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\Penerbit\ImportBukuController;
 use App\Http\Controllers\PenerbitController;
 use App\Http\Controllers\PermissionController;
@@ -23,7 +24,7 @@ Route::get('/', function () {
   return view('welcome', [
     'type_menu' => null
   ]);
-})->middleware('auth');
+})->middleware('auth')->name('homepage');
 
 Route::get('/logout', function () {
   Auth::logout();
@@ -88,4 +89,10 @@ Route::patch('/profile/password', [ProfilController::class, 'password'])->name('
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+/**
+ * socialite auth
+ */
+Route::get('/auth/{provider}', [SocialiteController::class, 'redirectToProvider'])->name('socialite.redirect');
+Route::get('/auth/{provider}/callback', [SocialiteController::class, 'handleProvideCallback']);

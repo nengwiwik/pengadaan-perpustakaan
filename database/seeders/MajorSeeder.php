@@ -40,7 +40,7 @@ class MajorSeeder extends Seeder
 
             $prodi = User::updateOrCreate(
                 [
-                    'email' => str($major->name)->slug() . '@gmail.com'
+                    'email' => str($major->name)->slug() . '@undira.ac.id'
                 ],
                 [
                     'name' => "Dosen {$major->name}",
