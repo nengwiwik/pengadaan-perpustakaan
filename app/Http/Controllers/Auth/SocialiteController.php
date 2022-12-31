@@ -44,7 +44,7 @@ class SocialiteController extends Controller
     {
         $email = trim($email); // in case there's any whitespace
 
-        return mb_substr($email, -13) === '@undira.ac.id' or mb_substr($email, -23) === '@mahasiswa.undira.ac.id';
+        return mb_substr($email, -13) === '@undira.ac.id';
     }
 
     public function findOrCreateUser($user)
