@@ -41,6 +41,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
   Route::get('/users/publisher', [SuperAdminController::class, 'publisher_users'])->name('publisher_users');
   Route::post('/users/publisher', [SuperAdminController::class, 'publisher_users']);
 
+  Route::get('/users/inactive', [SuperAdminController::class, 'inactive_users'])->name('inactive_users');
+  Route::post('/users/inactive', [SuperAdminController::class, 'inactive_users']);
+
   Route::get('/roles', [SuperAdminController::class, 'roles'])->name('roles');
   Route::post('/roles', [SuperAdminController::class, 'roles']);
 

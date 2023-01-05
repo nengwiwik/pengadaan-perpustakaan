@@ -41,6 +41,8 @@
           href="{{ route('prodi_users') }}">Add Admin Prodi</a>
         <a class="collapse-item @if (\Request::is('admin/users/publisher')) active @endif"
           href="{{ route('publisher_users') }}">Add Admin Publisher</a>
+        <a class="collapse-item @if (\Request::is('admin/users/inactive')) active @endif"
+          href="{{ route('inactive_users') }}">Inactive Users</a>
       </div>
     </div>
   </li>
