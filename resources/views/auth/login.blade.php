@@ -31,11 +31,11 @@
           <div class="card-body p-0">
             <!-- Nested Row within Card Body -->
             <div class="row">
-              <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
+              {{-- <div class="col-lg-6 d-none d-lg-block bg-login-image"></div> --}}
               <div class="col-lg-6">
                 <div class="p-5">
                   <div class="text-center">
-                    <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
+                    <h1 class="h4 text-gray-900 mb-4">Login Penerbit</h1>
                   </div>
                   <form class="user" method="POST" action="{{ route('login') }}">
                     @csrf
@@ -63,17 +63,26 @@
                       <i class="fas fa-sign-out "></i> Login Penerbit
                     </button>
                   </form>
-                  {{-- <hr> --}}
-                  {{-- <div class="text-center">
-                    <a class="small" href="forgot-password.html">Lupa Password?</a>
+                  <hr>
+                  <div class="text-center">
+                    <a class="small" href="#">Lupa Password?</a>
                   </div>
                   <div class="text-center">
-                    <a class="small" href="{{ route('register') }}">Buat akun!</a>
-                  </div> --}}
-                  <hr>
-                  <a name="login-undira" id="login-undira" class="btn btn-success btn-block"
+                    <a class="small" href="#">Buat akun!</a>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="p-5">
+                  <div class="text-center">
+                    <h1 class="h4 text-gray-900 mb-4">Login UNDIRA</h1>
+                  </div>
+                  <img src="{{ asset('image/logo_baru.png') }}" alt="UNDIRA">
+                  <a name="login-undira" id="login-undira" class="btn btn-success btn-block mt-3"
                     href="{{ route('socialite.redirect', 'google') }}" role="button"
-                    style="font-size: .8rem;border-radius: 10rem;padding: .75rem 1rem;">Login UNDIRA</a>
+                    style="font-size: .8rem;border-radius: 10rem;padding: .75rem 1rem;">
+                    Login email UNDIRA
+                  </a>
                 </div>
               </div>
             </div>
