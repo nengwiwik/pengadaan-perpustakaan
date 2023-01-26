@@ -73,7 +73,7 @@
                   <hr>
                   <a name="login-undira" id="login-undira" class="btn btn-success btn-block"
                     href="{{ route('socialite.redirect', 'google') }}" role="button"
-                    style="font-size: .8rem;border-radius: 10rem;padding: .75rem 1rem;">Login UNDIRA</a>
+                    style="font-size: .8rem;border-radius: 10rem;padding: .75rem 1rem;">Login Menggunakan Email UNDIRA</a>
                 </div>
               </div>
             </div>
