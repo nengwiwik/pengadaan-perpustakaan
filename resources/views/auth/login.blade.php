@@ -80,9 +80,7 @@
                   <img src="{{ asset('image/logo_baru.png') }}" alt="UNDIRA">
                   <a name="login-undira" id="login-undira" class="btn btn-success btn-block mt-3"
                     href="{{ route('socialite.redirect', 'google') }}" role="button"
-                    style="font-size: .8rem;border-radius: 10rem;padding: .75rem 1rem;">
-                    Login email UNDIRA
-                  </a>
+                    style="font-size: .8rem;border-radius: 10rem;padding: .75rem 1rem;">Login Menggunakan Email UNDIRA</a>
                 </div>
               </div>
             </div>
