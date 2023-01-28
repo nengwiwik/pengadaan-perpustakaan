@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Book;
 use App\Models\Campus;
 use App\Models\Invoice;
 use App\Models\Major;
@@ -10,6 +11,7 @@ use App\Models\Publisher;
 use App\Models\User;
 use App\Repositories\PenerbitRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SuperAdminController extends GroceryCrudController
 {
@@ -361,14 +363,20 @@ class SuperAdminController extends GroceryCrudController
         return $this->_showOutput($output, $title);
     }
 
-    public function procurements()
+    public function new_procurements()
     {
-        $title = "Procurements";
+        $title = "New Procurements";
         $crud = $this->_getGroceryCrudEnterprise();
 
         $crud->setTable('invoices');
-        $crud->setSubject('Procurements', 'Procurements');
-        $crud->where("invoices.deleted_at is null");
+        $crud->setSubject('New Procurements', 'New Procurements');
+        $crud->where([
+            "invoices.deleted_at is null",
+            "invoices.approved_at is null",
+            "invoices.verified_date is null",
+            "invoices.cancelled_date is null",
+            "invoices.paid_date is null"
+        ]);
 
         // $crud->fields(['code', 'name', 'address', 'email', 'phone']);
         // $crud->requiredFields(['code', 'name', 'address', 'email', 'phone']);
@@ -390,13 +398,105 @@ class SuperAdminController extends GroceryCrudController
                 return "Rejected";
             }
         });
+        $crud->callbackColumn('code', function ($value, $row) {
+            return "<a href='" . route('procurements.books', $row->id) . "'>" . $value . "</a>";
+        });
         $crud->setActionButton('Mark as Approved', 'fa fa-check', function ($row) {
-            $invoice = Invoice::find($row->id);
             return route('procurement.approve', encrypt($row->id));
         }, false);
         $crud->setActionButton('Mark as Rejected', 'fa fa-times', function ($row) {
             return route('procurement.reject', encrypt($row->id));
         }, false);
+        // $crud->setActionButton('Mark as Verified', 'fa fa-save', function ($row) {
+        //     return route('procurement.verify', encrypt($row->id));
+        // }, false);
+        $crud->displayAs([
+            'created_at' => 'Status',
+            'publisher_id' => 'Publisher',
+            'campus_id' => 'Campus',
+        ]);
+
+        $crud->callbackBeforeInsert(function ($s) {
+            $s->data['created_at'] = now();
+            $s->data['updated_at'] = now();
+            return $s;
+        });
+        $crud->callbackBeforeUpdate(function ($s) {
+            $s->data['updated_at'] = now();
+            return $s;
+        });
+        $crud->callbackDelete(function ($s) {
+            $data = Invoice::find($s->primaryKeyValue);
+            $data->delete();
+            return $s;
+        });
+
+        $output = $crud->render();
+
+        return $this->_showOutput($output, $title, 'grocery', 'procurements');
+    }
+
+    public function books_procurements(Invoice $invoice)
+    {
+        $title = "Books | Invoice " . $invoice->code;
+        $table = 'books';
+        $singular = 'Book';
+        $plural = 'Books';
+        $crud = $this->_getGroceryCrudEnterprise();
+
+        $crud->setTable($table);
+        $crud->setSubject($singular, $plural);
+        $crud->where([
+            $table . '.invoice_id = ?' => $invoice->getKey(),
+            $table . '.deleted_at is null',
+        ]);
+
+        $crud->unsetOperations()->setEdit()->setRead();
+        $crud->columns(['major_id', 'title', 'published_year', 'eksemplar', 'is_chosen', 'isbn', 'author_name', 'price', 'suplemen']);
+        $crud->fields(['title', 'eksemplar', 'is_chosen']);
+        $crud->readFields(['title', 'eksemplar', 'is_chosen', 'major_id', 'published_year', 'isbn', 'author_name', 'price', 'suplemen']);
+        $crud->requiredFields(['title', 'eksemplar', 'is_chosen']);
+        $crud->setRelation('major_id', 'majors', 'name');
+        $crud->fieldType('price', 'numeric');
+        $crud->fieldType('is_chosen', 'checkbox_boolean');
+        $crud->displayAs([
+            'major_id' => 'Major',
+            'isbn' => 'ISBN',
+            'published_year' => 'Year',
+            'author_name' => 'Author',
+            'suplemen' => 'Suplement',
+            'is_chosen' => 'Chosen'
+        ]);
+
+        $output = $crud->render();
+
+        return $this->_showOutput($output, $title, 'superadmin.invoice.buku');
+    }
+
+    public function active_procurements()
+    {
+        $title = "Active Procurements";
+        $crud = $this->_getGroceryCrudEnterprise();
+
+        $crud->setTable('invoices');
+        $crud->setSubject('Active Procurements', 'Active Procurements');
+        $crud->where([
+            "invoices.deleted_at is null",
+            "invoices.approved_at is not null",
+        ]);
+
+        // $crud->fields(['code', 'name', 'address', 'email', 'phone']);
+        // $crud->requiredFields(['code', 'name', 'address', 'email', 'phone']);
+        $crud->columns(['code', 'publisher_id', 'campus_id', 'cancelled_date', 'approved_at']);
+        $crud->fieldTypeColumn('cancelled_date', 'invisible');
+        $crud->fieldTypeColumn('approved_at', 'invisible');
+        $crud->setRelation('publisher_id', 'publishers', 'name');
+        $crud->setRelation('campus_id', 'campuses', 'name');
+        $crud->fields(['campus_note'])->setTexteditor(['campus_note']);
+        $crud->unsetAdd()->unsetDelete()->setRead()->unsetReadFields(['deleted_at', 'updated_at']);
+        $crud->callbackColumn('code', function ($value, $row) {
+            return "<a href='" . route('procurements.books', $row->id) . "'>" . $value . "</a>";
+        });
         $crud->setActionButton('Mark as Verified', 'fa fa-save', function ($row) {
             return route('procurement.verify', encrypt($row->id));
         }, false);
@@ -423,7 +523,7 @@ class SuperAdminController extends GroceryCrudController
 
         $output = $crud->render();
 
-        return $this->_showOutput($output, $title);
+        return $this->_showOutput($output, $title, 'grocery', 'procurements');
     }
 
     public function procurement_approve($id)

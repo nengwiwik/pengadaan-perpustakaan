@@ -56,14 +56,24 @@ Route::prefix('admin')->middleware('auth')->group(function () {
   Route::get('/publisher', [SuperAdminController::class, 'publisher'])->name('publisher');
   Route::post('/publisher', [SuperAdminController::class, 'publisher']);
 
-  Route::get('/procurements', [SuperAdminController::class, 'procurements'])->name('procurements');
-  Route::post('/procurements', [SuperAdminController::class, 'procurements']);
+  Route::get('/procurements/new', [SuperAdminController::class, 'new_procurements'])->name('procurements.new');
+  Route::post('/procurements/new', [SuperAdminController::class, 'new_procurements']);
+
+  Route::get('/procurements/{invoice}/books', [SuperAdminController::class, 'books_procurements'])->name('procurements.books');
+  Route::post('/procurements/{invoice}/books', [SuperAdminController::class, 'books_procurements']);
+
+  Route::get('/procurements/active', [SuperAdminController::class, 'active_procurements'])->name('procurements.active');
+  Route::post('/procurements/active', [SuperAdminController::class, 'active_procurements']);
+
+  Route::get('/procurements/archived', [SuperAdminController::class, 'archived_procurements'])->name('procurements.archived');
+  Route::post('/procurements/archived', [SuperAdminController::class, 'archived_procurements']);
+
   Route::get('/procurements/{id}/approve', [SuperAdminController::class, 'procurement_approve'])->name('procurement.approve');
   Route::get('/procurements/{id}/reject', [SuperAdminController::class, 'procurement_reject'])->name('procurement.reject');
   Route::get('/procurements/{id}/verify', [SuperAdminController::class, 'procurement_verify'])->name('procurement.verify');
 });
 
-Route::prefix('penerbit')->middleware(['role:Penerbit'])->group(function () {
+Route::prefix('penerbit')->middleware(['role:Penerbit', 'auth'])->group(function () {
   Route::get('/invoices', [PenerbitController::class, 'invoices'])->name('penerbit.invoices');
   Route::post('/invoices', [PenerbitController::class, 'invoices']);
 
@@ -85,10 +95,12 @@ Route::prefix('penerbit')->middleware(['role:Penerbit'])->group(function () {
   Route::post('/verified-invoices/{invoice}/books', [PenerbitController::class, 'verified_books']);
 });
 
-Route::get('/profile',[ProfilController::class, 'index'])->name('profil.index');
-Route::patch('/profile', [ProfilController::class, 'update'])->name('profil.update');
-Route::get('/profile/password', [ProfilController::class, 'password'])->name('profil.password');
-Route::patch('/profile/password', [ProfilController::class, 'password'])->name('profil.update-password');
+Route::middleware('auth')->group(function() {
+    Route::get('/profile',[ProfilController::class, 'index'])->name('profil.index');
+    Route::patch('/profile', [ProfilController::class, 'update'])->name('profil.update');
+    Route::get('/profile/password', [ProfilController::class, 'password'])->name('profil.password');
+    Route::patch('/profile/password', [ProfilController::class, 'password'])->name('profil.update-password');
+});
 
 Auth::routes();
 

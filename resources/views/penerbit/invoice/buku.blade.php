@@ -4,7 +4,7 @@
   <h1 class="h3 mb-4 text-gray-800">{{ $title }}</h1>
 
   <div class="mb-3">
-    <a name="" id="" class="btn btn-dark" href="{{ route('penerbit.invoices') }}" role="button"><i
+    <a name="" id="" class="btn btn-dark" href="#back" onclick="history.back()" role="button"><i
         class="fa fa-arrow-circle-left" aria-hidden="true"></i> Back</a>
     <button name="" id="" class="btn btn-primary" href="#" role="button" data-toggle="modal" data-target="#exampleModal"><i
         class="fas fa-file-import"></i> Import Books</button>

@@ -38,9 +38,9 @@
       aria-labelledby="headingTwo" data-parent="#accordionSidebar">
       <div class="bg-white py-2 collapse-inner rounded">
         <a class="collapse-item @if (\Request::is('admin/users/prodi')) active @endif"
-          href="{{ route('prodi_users') }}">Add Admin Prodi</a>
+          href="{{ route('prodi_users') }}">Admin Prodi</a>
         <a class="collapse-item @if (\Request::is('admin/users/publisher')) active @endif"
-          href="{{ route('publisher_users') }}">Add Admin Publisher</a>
+          href="{{ route('publisher_users') }}">Admin Publisher</a>
         <a class="collapse-item @if (\Request::is('admin/users/inactive')) active @endif"
           href="{{ route('inactive_users') }}">Inactive Users</a>
       </div>
@@ -77,10 +77,29 @@
       <span>Publisher</span></a>
   </li>
 
-  <li class="nav-item">
+  {{-- <li class="nav-item">
     <a class="nav-link" href="{{ route('procurements') }}">
       <i class="fas fa-fw fa-shopping-cart"></i>
       <span>Procurements</span></a>
+  </li> --}}
+
+  <li class="nav-item {{ $type_menu === 'procurements' ? 'active' : '' }}">
+    <a class="nav-link {{ $type_menu === 'procurements' ? '' : 'collapsed' }}" href="#" data-toggle="collapse"
+      data-target="#collapseProcurements" aria-expanded="true" aria-controls="collapseProcurements">
+      <i class="fas fa-fw fa-shopping-cart"></i>
+      <span>Procurements</span>
+    </a>
+    <div id="collapseProcurements" class="collapse {{ $type_menu === 'procurements' ? 'show' : '' }}"
+      aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+      <div class="bg-white py-2 collapse-inner rounded">
+        <a class="collapse-item @if (\Request::is('admin/procurements/new')) active @endif"
+          href="{{ route('procurements.new') }}">New Procurements</a>
+        <a class="collapse-item @if (\Request::is('admin/procurements/active')) active @endif"
+          href="{{ route('procurements.active') }}">Active Procurements</a>
+        <a class="collapse-item @if (\Request::is('admin/users/inactive')) active @endif"
+          href="{{ route('inactive_users') }}">Archived Procurements</a>
+      </div>
+    </div>
   </li>
 
 
@@ -123,6 +142,18 @@
   <div class="sidebar-heading">
     Admin Prodi
   </div>
+
+  <li class="nav-item">
+    <a class="nav-link" href="{{ route('penerbit.invoices') }}">
+      <i class="fas fa-fw fa-book"></i>
+      <span>Active Procurements</span></a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link" href="{{ route('penerbit.invoices') }}">
+      <i class="fas fa-fw fa-book"></i>
+      <span>Archived Procurements</span></a>
+  </li>
 
   @endrole
 

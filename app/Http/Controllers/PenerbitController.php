@@ -29,11 +29,11 @@ class PenerbitController extends GroceryCrudController
     ]);
 
     $crud->setRead();
-    $crud->columns(['code', 'campus_id', 'publisher_note', 'campus_note', 'invoice_date']);
+    $crud->columns(['code', 'campus_id', 'publisher_note', 'invoice_date']);
     $crud->addFields(['campus_id', 'publisher_note']);
     $crud->editFields(['campus_id', 'publisher_note', 'invoice_date']);
     $crud->requiredFields(['campus_id']);
-    $crud->setTexteditor(['publisher_note', 'campus_note']);
+    $crud->setTexteditor(['publisher_note']);
     $crud->setRelation('campus_id', 'campuses', 'name');
     $crud->displayAs([
       'campus_id' => 'Campus',
