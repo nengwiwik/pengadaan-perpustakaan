@@ -56,43 +56,47 @@ Route::prefix('admin')->middleware('auth')->group(function () {
   Route::get('/publisher', [SuperAdminController::class, 'publisher'])->name('publisher');
   Route::post('/publisher', [SuperAdminController::class, 'publisher']);
 
-  Route::get('/procurements/new', [SuperAdminController::class, 'new_procurements'])->name('procurements.new');
-  Route::post('/procurements/new', [SuperAdminController::class, 'new_procurements']);
+  Route::get('/pengadaan/baru', [SuperAdminController::class, 'new_procurements'])->name('procurements.new');
+  Route::post('/pengadaan/baru', [SuperAdminController::class, 'new_procurements']);
 
-  Route::get('/procurements/{invoice}/books', [SuperAdminController::class, 'books_procurements'])->name('procurements.books');
-  Route::post('/procurements/{invoice}/books', [SuperAdminController::class, 'books_procurements']);
+  Route::get('/pengadaan/{invoice}/books', [SuperAdminController::class, 'books_procurements'])->name('procurements.books');
+  Route::post('/pengadaan/{invoice}/books', [SuperAdminController::class, 'books_procurements']);
 
-  Route::get('/procurements/active', [SuperAdminController::class, 'active_procurements'])->name('procurements.active');
-  Route::post('/procurements/active', [SuperAdminController::class, 'active_procurements']);
+  Route::get('/pengadaan/aktif', [SuperAdminController::class, 'active_procurements'])->name('procurements.active');
+  Route::post('/pengadaan/aktif', [SuperAdminController::class, 'active_procurements']);
 
-  Route::get('/procurements/archived', [SuperAdminController::class, 'archived_procurements'])->name('procurements.archived');
-  Route::post('/procurements/archived', [SuperAdminController::class, 'archived_procurements']);
+  Route::get('/pengadaan/arsip', [SuperAdminController::class, 'archived_procurements'])->name('procurements.archived');
+  Route::post('/pengadaan/arsip', [SuperAdminController::class, 'archived_procurements']);
 
-  Route::get('/procurements/{id}/approve', [SuperAdminController::class, 'procurement_approve'])->name('procurement.approve');
-  Route::get('/procurements/{id}/reject', [SuperAdminController::class, 'procurement_reject'])->name('procurement.reject');
-  Route::get('/procurements/{id}/verify', [SuperAdminController::class, 'procurement_verify'])->name('procurement.verify');
+  Route::get('/pengadaan/{id}/approve', [SuperAdminController::class, 'procurement_approve'])->name('procurement.approve');
+  Route::get('/pengadaan/{id}/reject', [SuperAdminController::class, 'procurement_reject'])->name('procurement.reject');
+  Route::get('/pengadaan/{id}/verify', [SuperAdminController::class, 'procurement_verify'])->name('procurement.verify');
 });
 
 Route::prefix('penerbit')->middleware(['role:Penerbit', 'auth'])->group(function () {
-  Route::get('/invoices', [PenerbitController::class, 'invoices'])->name('penerbit.invoices');
-  Route::post('/invoices', [PenerbitController::class, 'invoices']);
+  Route::get('/pengadaan', [PenerbitController::class, 'invoices'])->name('penerbit.invoices');
+  Route::post('/pengadaan', [PenerbitController::class, 'invoices']);
 
-  Route::get('/invoices/{invoice}/books', [PenerbitController::class, 'books'])->name('penerbit.invoices.books');
-  Route::post('/invoices/{invoice}/books', [PenerbitController::class, 'books']);
+  Route::get('/pengadaan/{invoice}/books', [PenerbitController::class, 'books'])->name('penerbit.invoices.books');
+  Route::post('/pengadaan/{invoice}/books', [PenerbitController::class, 'books']);
 
-  Route::post('/invoices/{invoice}/import', ImportBukuController::class)->name('penerbit.invoices.books.import');
+  Route::post('/pengadaan/{invoice}/import', ImportBukuController::class)->name('penerbit.invoices.books.import');
 
-  Route::get('/ongoing-invoices', [PenerbitController::class, 'ongoing_invoices'])->name('penerbit.invoices.ongoing');
-  Route::post('/ongoing-invoices', [PenerbitController::class, 'ongoing_invoices']);
+  Route::get('/pengadaan/aktif', [PenerbitController::class, 'ongoing_invoices'])->name('penerbit.invoices.ongoing');
+  Route::post('/pengadaan/aktif', [PenerbitController::class, 'ongoing_invoices']);
 
-  Route::get('/ongoing-invoices/{invoice}/books', [PenerbitController::class, 'ongoing_books'])->name('penerbit.invoices.books.ongoing');
-  Route::post('/ongoing-invoices/{invoice}/books', [PenerbitController::class, 'ongoing_books']);
+  Route::get('/pengadaan/aktif/{invoice}/books', [PenerbitController::class, 'ongoing_books'])->name('penerbit.invoices.books.ongoing');
+  Route::post('/pengadaan/aktif/{invoice}/books', [PenerbitController::class, 'ongoing_books']);
 
-  Route::get('/verified-invoices', [PenerbitController::class, 'verified_invoices'])->name('penerbit.invoices.verified');
-  Route::post('/verified-invoices', [PenerbitController::class, 'verified_invoices']);
+  Route::get('/pengadaan/arsip', [PenerbitController::class, 'verified_invoices'])->name('penerbit.invoices.verified');
+  Route::post('/pengadaan/arsip', [PenerbitController::class, 'verified_invoices']);
 
-  Route::get('/verified-invoices/{invoice}/books', [PenerbitController::class, 'verified_books'])->name('penerbit.invoices.books.verified');
-  Route::post('/verified-invoices/{invoice}/books', [PenerbitController::class, 'verified_books']);
+  Route::get('/pengadaan/arsip/{invoice}/books', [PenerbitController::class, 'verified_books'])->name('penerbit.invoices.books.verified');
+  Route::post('/pengadaan/arsip/{invoice}/books', [PenerbitController::class, 'verified_books']);
+});
+
+Route::prefix('prodi')->middleware(['role:Admin Prodi', 'auth'])->group(function () {
+
 });
 
 Route::middleware('auth')->group(function() {

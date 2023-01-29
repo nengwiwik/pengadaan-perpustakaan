@@ -22,7 +22,7 @@ class SuperAdminController extends GroceryCrudController
         $crud = $this->_getGroceryCrudEnterprise();
 
         $crud->setTable('users');
-        $crud->setSubject('Admin', 'Administrators');
+        $crud->setSubject('Admin', 'Admin Prodi');
 
         $crud->fields(['name', 'email', 'password', 'campus_id', 'major_id']);
         $crud->requiredFields(['name', 'email', 'password', 'campus_id', 'major_id']);
@@ -43,8 +43,10 @@ class SuperAdminController extends GroceryCrudController
         $crud->setRelation('major_id', 'majors', 'name');
 
         $crud->displayAs([
-            'campus_id'  => 'Campus',
-            'major_id' => 'Major'
+            'name' => 'Nama',
+            'campus_id'  => 'Kampus',
+            'major_id' => 'Jurusan',
+            'updated_at' => 'Terakhir diubah',
         ]);
         $crud->callbackBeforeInsert(function ($s) {
             $s->data['password'] = bcrypt($s->data['password']);
@@ -103,11 +105,11 @@ class SuperAdminController extends GroceryCrudController
     public function publisher_users()
     {
         $this->authorize('manage users');
-        $title = "Admin Publishers";
+        $title = "Admin Penerbit";
         $crud = $this->_getGroceryCrudEnterprise();
 
         $crud->setTable('users');
-        $crud->setSubject('Admin', 'Admin Publishers');
+        $crud->setSubject('Admin', 'Admin Penerbit');
 
         $crud->fields(['name', 'email', 'password', 'publisher_id']);
         $crud->requiredFields(['name', 'email', 'password', 'publisher_id']);
@@ -127,7 +129,9 @@ class SuperAdminController extends GroceryCrudController
         $crud->setRelation('publisher_id', 'publishers', 'name');
 
         $crud->displayAs([
-            'publisher_id'  => 'Publisher Name',
+            'name' => 'Nama PIC',
+            'publisher_id'  => 'Nama Penerbit',
+            'updated_at' => 'Terakhir diubah',
         ]);
         $crud->callbackAfterInsert(function ($s) {
             $user = User::find($s->insertId);
@@ -180,11 +184,11 @@ class SuperAdminController extends GroceryCrudController
     public function inactive_users()
     {
         $this->authorize('manage users');
-        $title = "Inactive Users";
+        $title = "Pengguna Belum Aktif";
         $crud = $this->_getGroceryCrudEnterprise();
 
         $crud->setTable('users');
-        $crud->setSubject('User', 'Inactive Users');
+        $crud->setSubject('User', 'Pengguna Belum Aktif');
 
         $crud->unsetAdd();
         $crud->fields(['name', 'campus_id', 'major_id']);
@@ -207,8 +211,10 @@ class SuperAdminController extends GroceryCrudController
         $crud->setRelation('campus_id', 'campuses', 'name');
 
         $crud->displayAs([
-            'major_id'  => 'Major Name',
-            'campus_id'  => 'Campus Name',
+            'name' => 'Nama',
+            'updated_at' => 'Terakhir diubah',
+            'major_id'  => 'Jurusan',
+            'campus_id'  => 'Kampus',
         ]);
         $crud->callbackAfterUpdate(function ($s) {
             $user = User::find($s->primaryKeyValue);
@@ -264,16 +270,22 @@ class SuperAdminController extends GroceryCrudController
     public function campuses()
     {
         $this->authorize('manage users');
-        $title = "Campuses";
+        $title = "Kampus";
         $crud = $this->_getGroceryCrudEnterprise();
 
         $crud->setTable('campuses');
-        $crud->setSubject('Campus', 'Campuses');
+        $crud->setSubject('Kampus', 'Data Kampus');
         $crud->where("campuses.deleted_at is null");
 
         $crud->fields(['name', 'address', 'email', 'phone']);
         $crud->columns(['name', 'address', 'email', 'phone']);
         $crud->requiredFields(['name', 'address', 'email', 'phone']);
+
+        $crud->displayAs([
+            'name' => 'Nama',
+            'address' => 'Alamat',
+            'phone' => 'Telepon',
+        ]);
 
         $crud->callbackBeforeInsert(function ($s) {
             $s->data['created_at'] = now();
@@ -292,22 +304,27 @@ class SuperAdminController extends GroceryCrudController
 
         $output = $crud->render();
 
-        return $this->_showOutput($output, $title);
+        return $this->_showOutput($output, $title, 'grocery', 'kampus');
     }
 
     public function majors()
     {
         $this->authorize('manage users');
-        $title = "Majors";
+        $title = "Jurusan";
         $crud = $this->_getGroceryCrudEnterprise();
 
         $crud->setTable('majors');
-        $crud->setSubject('Majors', 'Majors');
+        $crud->setSubject('Jurusan', 'Data Jurusan');
         $crud->where("majors.deleted_at is null");
 
         $crud->fields(['code', 'name']);
         $crud->columns(['code', 'name']);
         $crud->requiredFields(['code', 'name']);
+
+        $crud->displayAs([
+            'code' => 'Kode',
+            'name' => 'Nama',
+        ]);
 
         $crud->callbackBeforeInsert(function ($s) {
             $s->data['created_at'] = now();
@@ -326,22 +343,30 @@ class SuperAdminController extends GroceryCrudController
 
         $output = $crud->render();
 
-        return $this->_showOutput($output, $title);
+        return $this->_showOutput($output, $title, 'grocery', 'jurusan');
     }
 
     public function publisher()
     {
         $this->authorize('manage users');
-        $title = "Publisher";
+        $title = "Penerbit";
         $crud = $this->_getGroceryCrudEnterprise();
 
         $crud->setTable('publishers');
-        $crud->setSubject('Publisher', 'Publisher');
+        $crud->setSubject('Penerbit', 'Data Penerbit');
         $crud->where("publishers.deleted_at is null");
 
         $crud->fields(['code', 'name', 'address', 'email', 'phone']);
         $crud->columns(['code', 'name', 'address', 'email', 'phone']);
         $crud->requiredFields(['code', 'name', 'address', 'email', 'phone']);
+        $crud->uniqueFields(['code']);
+
+        $crud->displayAs([
+            'code' => 'Kode',
+            'name' => 'Nama',
+            'address' => 'Alamat',
+            'phone' => 'Telepon',
+        ]);
 
         $crud->callbackBeforeInsert(function ($s) {
             $s->data['created_at'] = now();
@@ -360,16 +385,16 @@ class SuperAdminController extends GroceryCrudController
 
         $output = $crud->render();
 
-        return $this->_showOutput($output, $title);
+        return $this->_showOutput($output, $title, 'grocery', 'penerbit');
     }
 
     public function new_procurements()
     {
-        $title = "New Procurements";
+        $title = "Pengadaan Baru";
         $crud = $this->_getGroceryCrudEnterprise();
 
         $crud->setTable('invoices');
-        $crud->setSubject('New Procurements', 'New Procurements');
+        $crud->setSubject('Pengadaan Baru', 'Data Pengadaan Baru');
         $crud->where([
             "invoices.deleted_at is null",
             "invoices.approved_at is null",
@@ -411,9 +436,10 @@ class SuperAdminController extends GroceryCrudController
         //     return route('procurement.verify', encrypt($row->id));
         // }, false);
         $crud->displayAs([
+            'code' => 'Kode',
             'created_at' => 'Status',
-            'publisher_id' => 'Publisher',
-            'campus_id' => 'Campus',
+            'publisher_id' => 'Penerbit',
+            'campus_id' => 'Kampus',
         ]);
 
         $crud->callbackBeforeInsert(function ($s) {
@@ -433,15 +459,15 @@ class SuperAdminController extends GroceryCrudController
 
         $output = $crud->render();
 
-        return $this->_showOutput($output, $title, 'grocery', 'procurements');
+        return $this->_showOutput($output, $title, 'grocery', 'pengadaan');
     }
 
     public function books_procurements(Invoice $invoice)
     {
-        $title = "Books | Invoice " . $invoice->code;
+        $title = "Data Buku | ID Pengadaan " . $invoice->code;
         $table = 'books';
-        $singular = 'Book';
-        $plural = 'Books';
+        $singular = 'Buku';
+        $plural = 'Data Buku';
         $crud = $this->_getGroceryCrudEnterprise();
 
         $crud->setTable($table);
@@ -460,12 +486,12 @@ class SuperAdminController extends GroceryCrudController
         $crud->fieldType('price', 'numeric');
         $crud->fieldType('is_chosen', 'checkbox_boolean');
         $crud->displayAs([
-            'major_id' => 'Major',
+            'major_id' => 'Jurusan',
             'isbn' => 'ISBN',
-            'published_year' => 'Year',
-            'author_name' => 'Author',
-            'suplemen' => 'Suplement',
-            'is_chosen' => 'Chosen'
+            'published_year' => 'Tahun Terbit',
+            'author_name' => 'Nama Penulis',
+            'suplemen' => 'Suplemen',
+            'is_chosen' => 'Pilih Buku',
         ]);
 
         $output = $crud->render();
@@ -475,11 +501,11 @@ class SuperAdminController extends GroceryCrudController
 
     public function active_procurements()
     {
-        $title = "Active Procurements";
+        $title = "Pengadaan Aktif";
         $crud = $this->_getGroceryCrudEnterprise();
 
         $crud->setTable('invoices');
-        $crud->setSubject('Active Procurements', 'Active Procurements');
+        $crud->setSubject('Pengadaan Aktif', 'Pengadaan Aktif');
         $crud->where([
             "invoices.deleted_at is null",
             "invoices.approved_at is not null",
@@ -502,8 +528,8 @@ class SuperAdminController extends GroceryCrudController
         }, false);
         $crud->displayAs([
             'created_at' => 'Status',
-            'publisher_id' => 'Publisher',
-            'campus_id' => 'Campus',
+            'publisher_id' => 'Penerbit',
+            'campus_id' => 'Kampus',
         ]);
 
         $crud->callbackBeforeInsert(function ($s) {
@@ -523,7 +549,7 @@ class SuperAdminController extends GroceryCrudController
 
         $output = $crud->render();
 
-        return $this->_showOutput($output, $title, 'grocery', 'procurements');
+        return $this->_showOutput($output, $title, 'grocery', 'pengadaan');
     }
 
     public function procurement_approve($id)

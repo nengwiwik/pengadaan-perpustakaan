@@ -14,10 +14,10 @@ class PenerbitController extends GroceryCrudController
 {
   public function invoices()
   {
-    $title = "Invoices";
+    $title = "New Procurements";
     $table = 'invoices';
-    $singular = 'Invoice';
-    $plural = 'Invoices';
+    $singular = 'Procurement';
+    $plural = 'Procurements';
     $crud = $this->_getGroceryCrudEnterprise();
 
     $crud->setTable($table);
@@ -37,6 +37,7 @@ class PenerbitController extends GroceryCrudController
     $crud->setRelation('campus_id', 'campuses', 'name');
     $crud->displayAs([
       'campus_id' => 'Campus',
+      'invoice_date' => 'Procurement Date'
     ]);
     $crud->setActionButton('Books', 'fa fa-book', function ($row) {
       return route('penerbit.invoices.books', $row->id);
@@ -144,10 +145,10 @@ class PenerbitController extends GroceryCrudController
 
   public function ongoing_invoices()
   {
-    $title = "On-Going Invoices";
+    $title = "Active Procurements";
     $table = 'invoices';
-    $singular = 'Invoice';
-    $plural = 'Invoices';
+    $singular = 'Procurement';
+    $plural = 'Procurements';
     $crud = $this->_getGroceryCrudEnterprise();
 
     $crud->setTable($table);
@@ -267,10 +268,10 @@ class PenerbitController extends GroceryCrudController
 
   public function verified_invoices()
   {
-    $title = "Verified Invoices";
+    $title = "Archived Procurements";
     $table = 'invoices';
-    $singular = 'Invoice';
-    $plural = 'Invoices';
+    $singular = 'Procurement';
+    $plural = 'Procurements';
     $crud = $this->_getGroceryCrudEnterprise();
 
     $crud->setTable($table);

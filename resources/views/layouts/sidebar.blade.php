@@ -16,7 +16,7 @@
   <li class="nav-item">
     <a class="nav-link" href="/">
       <i class="fas fa-fw fa-tachometer-alt"></i>
-      <span>Dashboard</span></a>
+      <span>Dasbor</span></a>
   </li>
 
   @role('Super Admin')
@@ -32,7 +32,7 @@
     <a class="nav-link {{ $type_menu === 'user' ? '' : 'collapsed' }}" href="#" data-toggle="collapse"
       data-target="#collapseUsers" aria-expanded="true" aria-controls="collapseUsers">
       <i class="fas fa-fw fa-user-plus"></i>
-      <span>Users</span>
+      <span>Data Pengguna</span>
     </a>
     <div id="collapseUsers" class="collapse {{ $type_menu === 'user' ? 'show' : '' }}"
       aria-labelledby="headingTwo" data-parent="#accordionSidebar">
@@ -40,9 +40,9 @@
         <a class="collapse-item @if (\Request::is('admin/users/prodi')) active @endif"
           href="{{ route('prodi_users') }}">Admin Prodi</a>
         <a class="collapse-item @if (\Request::is('admin/users/publisher')) active @endif"
-          href="{{ route('publisher_users') }}">Admin Publisher</a>
+          href="{{ route('publisher_users') }}">Admin Penerbit</a>
         <a class="collapse-item @if (\Request::is('admin/users/inactive')) active @endif"
-          href="{{ route('inactive_users') }}">Inactive Users</a>
+          href="{{ route('inactive_users') }}">Pengguna Belum Aktif</a>
       </div>
     </div>
   </li>
@@ -59,22 +59,22 @@
       <span>Permissions</span></a>
   </li> --}}
 
-  <li class="nav-item">
+  <li class="nav-item {{ $type_menu === 'kampus' ? 'active' : '' }}">
     <a class="nav-link" href="{{ route('campuses') }}">
       <i class="fas fa-fw fa-building"></i>
-      <span>Campus</span></a>
+      <span>Kampus</span></a>
   </li>
 
-  <li class="nav-item">
+  <li class="nav-item {{ $type_menu === 'jurusan' ? 'active' : '' }}">
     <a class="nav-link" href="{{ route('majors') }}">
       <i class="fas fa-fw fa-graduation-cap"></i>
-      <span>Majors</span></a>
+      <span>Jurusan</span></a>
   </li>
 
-  <li class="nav-item">
+  <li class="nav-item {{ $type_menu === 'penerbit' ? 'active' : '' }}">
     <a class="nav-link" href="{{ route('publisher') }}">
       <i class="fas fa-fw fa-book"></i>
-      <span>Publisher</span></a>
+      <span>Penerbit</span></a>
   </li>
 
   {{-- <li class="nav-item">
@@ -83,21 +83,21 @@
       <span>Procurements</span></a>
   </li> --}}
 
-  <li class="nav-item {{ $type_menu === 'procurements' ? 'active' : '' }}">
-    <a class="nav-link {{ $type_menu === 'procurements' ? '' : 'collapsed' }}" href="#" data-toggle="collapse"
+  <li class="nav-item {{ $type_menu === 'pengadaan' ? 'active' : '' }}">
+    <a class="nav-link {{ $type_menu === 'pengadaan' ? '' : 'collapsed' }}" href="#" data-toggle="collapse"
       data-target="#collapseProcurements" aria-expanded="true" aria-controls="collapseProcurements">
       <i class="fas fa-fw fa-shopping-cart"></i>
-      <span>Procurements</span>
+      <span>Pengadaan</span>
     </a>
-    <div id="collapseProcurements" class="collapse {{ $type_menu === 'procurements' ? 'show' : '' }}"
+    <div id="collapseProcurements" class="collapse {{ $type_menu === 'pengadaan' ? 'show' : '' }}"
       aria-labelledby="headingTwo" data-parent="#accordionSidebar">
       <div class="bg-white py-2 collapse-inner rounded">
-        <a class="collapse-item @if (\Request::is('admin/procurements/new')) active @endif"
-          href="{{ route('procurements.new') }}">New Procurements</a>
-        <a class="collapse-item @if (\Request::is('admin/procurements/active')) active @endif"
-          href="{{ route('procurements.active') }}">Active Procurements</a>
-        <a class="collapse-item @if (\Request::is('admin/users/inactive')) active @endif"
-          href="{{ route('inactive_users') }}">Archived Procurements</a>
+        <a class="collapse-item @if (\Request::is('admin/pengadaan/baru')) active @endif"
+          href="{{ route('procurements.new') }}">Pengadaan Baru</a>
+        <a class="collapse-item @if (\Request::is('admin/pengadaan/aktif')) active @endif"
+          href="{{ route('procurements.active') }}">Pengadaan Aktif</a>
+        <a class="collapse-item @if (\Request::is('admin/pengadaan/arsip')) active @endif"
+          href="{{ route('procurements.archived') }}">Arsip Pengadaan</a>
       </div>
     </div>
   </li>
@@ -117,19 +117,19 @@
   <li class="nav-item">
     <a class="nav-link" href="{{ route('penerbit.invoices') }}">
       <i class="fas fa-fw fa-book"></i>
-      <span>New Invoices</span></a>
+      <span>Pengadaan Baru</span></a>
   </li>
 
   <li class="nav-item">
     <a class="nav-link" href="{{ route('penerbit.invoices.ongoing') }}">
       <i class="fas fa-fw fa-book"></i>
-      <span>On-Going Invoices</span></a>
+      <span>Pengadaan Aktif</span></a>
   </li>
 
   <li class="nav-item">
     <a class="nav-link" href="{{ route('penerbit.invoices.verified') }}">
       <i class="fas fa-fw fa-book"></i>
-      <span>Verified Invoices</span></a>
+      <span>Arsip Pengadaan</span></a>
   </li>
 
   @endrole
@@ -146,13 +146,13 @@
   <li class="nav-item">
     <a class="nav-link" href="{{ route('penerbit.invoices') }}">
       <i class="fas fa-fw fa-book"></i>
-      <span>Active Procurements</span></a>
+      <span>Pengadaan Aktif</span></a>
   </li>
 
   <li class="nav-item">
     <a class="nav-link" href="{{ route('penerbit.invoices') }}">
       <i class="fas fa-fw fa-book"></i>
-      <span>Archived Procurements</span></a>
+      <span>Arsip Pengadaan</span></a>
   </li>
 
   @endrole
