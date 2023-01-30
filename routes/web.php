@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\Penerbit\ImportBukuController;
 use App\Http\Controllers\PenerbitController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\ProdiController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\ProfilController;
 use Illuminate\Support\Facades\Auth;
@@ -96,7 +97,14 @@ Route::prefix('penerbit')->middleware(['role:Penerbit', 'auth'])->group(function
 });
 
 Route::prefix('prodi')->middleware(['role:Admin Prodi', 'auth'])->group(function () {
+    Route::get('/pengadaan/aktif', [ProdiController::class, 'active_procurements'])->name('prodi.procurements.active');
+    Route::post('/pengadaan/aktif', [ProdiController::class, 'active_procurements']);
 
+    Route::get('/pengadaan/aktif/{invoice}/books', [ProdiController::class, 'procurement_books'])->name('prodi.procurements.books.active');
+    Route::post('/pengadaan/aktif/{invoice}/books', [ProdiController::class, 'procurement_books']);
+
+    Route::get('/pengadaan/arsip', [ProdiController::class, 'archived_procurements'])->name('prodi.procurements.archived');
+    Route::post('/pengadaan/arsip', [ProdiController::class, 'archived_procurements']);
 });
 
 Route::middleware('auth')->group(function() {

@@ -144,13 +144,13 @@
   </div>
 
   <li class="nav-item">
-    <a class="nav-link" href="{{ route('penerbit.invoices') }}">
+    <a class="nav-link" href="{{ route('prodi.procurements.active') }}">
       <i class="fas fa-fw fa-book"></i>
       <span>Pengadaan Aktif</span></a>
   </li>
 
   <li class="nav-item">
-    <a class="nav-link" href="{{ route('penerbit.invoices') }}">
+    <a class="nav-link" href="{{ route('prodi.procurements.archived') }}">
       <i class="fas fa-fw fa-book"></i>
       <span>Arsip Pengadaan</span></a>
   </li>
