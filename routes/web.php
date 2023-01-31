@@ -97,21 +97,24 @@ Route::prefix('penerbit')->middleware(['role:Penerbit', 'auth'])->group(function
 });
 
 Route::prefix('prodi')->middleware(['role:Admin Prodi', 'auth'])->group(function () {
-    Route::get('/pengadaan/aktif', [ProdiController::class, 'active_procurements'])->name('prodi.procurements.active');
-    Route::post('/pengadaan/aktif', [ProdiController::class, 'active_procurements']);
+  Route::get('/pengadaan/aktif', [ProdiController::class, 'active_procurements'])->name('prodi.procurements.active');
+  Route::post('/pengadaan/aktif', [ProdiController::class, 'active_procurements']);
 
-    Route::get('/pengadaan/aktif/{invoice}/books', [ProdiController::class, 'procurement_books'])->name('prodi.procurements.books.active');
-    Route::post('/pengadaan/aktif/{invoice}/books', [ProdiController::class, 'procurement_books']);
+  Route::get('/pengadaan/aktif/{invoice}/books', [ProdiController::class, 'procurement_books'])->name('prodi.procurements.books.active');
+  Route::post('/pengadaan/aktif/{invoice}/books', [ProdiController::class, 'procurement_books']);
 
-    Route::get('/pengadaan/arsip', [ProdiController::class, 'archived_procurements'])->name('prodi.procurements.archived');
-    Route::post('/pengadaan/arsip', [ProdiController::class, 'archived_procurements']);
+  Route::get('/pengadaan/arsip', [ProdiController::class, 'archived_procurements'])->name('prodi.procurements.archived');
+  Route::post('/pengadaan/arsip', [ProdiController::class, 'archived_procurements']);
+
+  Route::get('/pengadaan/arsip/{invoice}/books', [ProdiController::class, 'archived_procurement_books'])->name('prodi.procurements.books.archived');
+  Route::post('/pengadaan/arsip/{invoice}/books', [ProdiController::class, 'archived_procurement_books']);
 });
 
-Route::middleware('auth')->group(function() {
-    Route::get('/profile',[ProfilController::class, 'index'])->name('profil.index');
-    Route::patch('/profile', [ProfilController::class, 'update'])->name('profil.update');
-    Route::get('/profile/password', [ProfilController::class, 'password'])->name('profil.password');
-    Route::patch('/profile/password', [ProfilController::class, 'password'])->name('profil.update-password');
+Route::middleware('auth')->group(function () {
+  Route::get('/profile', [ProfilController::class, 'index'])->name('profil.index');
+  Route::patch('/profile', [ProfilController::class, 'update'])->name('profil.update');
+  Route::get('/profile/password', [ProfilController::class, 'password'])->name('profil.password');
+  Route::patch('/profile/password', [ProfilController::class, 'password'])->name('profil.update-password');
 });
 
 Auth::routes();

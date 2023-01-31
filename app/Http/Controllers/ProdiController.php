@@ -76,8 +76,9 @@ class ProdiController extends GroceryCrudController
         $crud->requiredFields(['title', 'eksemplar']);
         $crud->setRelation('major_id', 'majors', 'name');
         $crud->fieldType('price', 'numeric');
+        $crud->fieldType('eksemplar', 'numeric');
         $crud->fieldType('is_chosen', 'checkbox_boolean');
-        $crud->setRule('eksemplar', 'min', '1');
+        $crud->setRule('eksemplar', 'min', '0');
         $crud->displayAs([
             'major_id' => 'Jurusan',
             'isbn' => 'ISBN',
@@ -100,6 +101,7 @@ class ProdiController extends GroceryCrudController
             if ($inv->eksemplar > 0) {
                 $inv->is_chosen = 1;
             } else {
+                $inv->eksemplar = null;
                 $inv->is_chosen = 0;
             }
 

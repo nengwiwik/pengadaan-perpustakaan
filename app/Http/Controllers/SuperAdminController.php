@@ -519,7 +519,9 @@ class SuperAdminController extends GroceryCrudController
         $crud->setRelation('publisher_id', 'publishers', 'name');
         $crud->setRelation('campus_id', 'campuses', 'name');
         $crud->fields(['campus_note'])->setTexteditor(['campus_note']);
-        $crud->unsetAdd()->unsetDelete()->setRead()->unsetReadFields(['deleted_at', 'updated_at']);
+        $crud->unsetAdd()->unsetDelete()->setRead();
+        $crud->setTexteditor(['campus_note', 'publisher_note']);
+        $crud->readFields(['code', 'publisher_id', 'campus_id', 'invoice_date', 'approved_at', 'campus_note', 'publisher_note']);
         $crud->callbackColumn('code', function ($value, $row) {
             return "<a href='" . route('procurements.books', $row->id) . "'>" . $value . "</a>";
         });
@@ -567,6 +569,14 @@ class SuperAdminController extends GroceryCrudController
         $data = Invoice::find(decrypt($id));
         $data->approved_at = null;
         $data->cancelled_date = now();
+        $data->save();
+        return redirect()->route('procurements');
+    }
+
+    public function procurement_verify($id)
+    {
+        $data = Invoice::find(decrypt($id));
+        $data->verified_date = now();
         $data->save();
         return redirect()->route('procurements');
     }
