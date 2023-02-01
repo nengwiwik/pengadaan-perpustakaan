@@ -10,11 +10,14 @@ use App\Models\Major;
 use App\Models\Publisher;
 use App\Models\User;
 use App\Repositories\PenerbitRepository;
+use App\Traits\CalculateBooks;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class SuperAdminController extends GroceryCrudController
 {
+    use CalculateBooks;
+
     public function prodi_users()
     {
         $this->authorize('manage users');
@@ -479,9 +482,9 @@ class SuperAdminController extends GroceryCrudController
 
         $crud->unsetOperations()->setEdit()->setRead();
         $crud->columns(['major_id', 'title', 'published_year', 'eksemplar', 'is_chosen', 'isbn', 'author_name', 'price', 'suplemen']);
-        $crud->fields(['title', 'eksemplar', 'is_chosen']);
-        $crud->readFields(['title', 'eksemplar', 'is_chosen', 'major_id', 'published_year', 'isbn', 'author_name', 'price', 'suplemen']);
-        $crud->requiredFields(['title', 'eksemplar', 'is_chosen']);
+        $crud->fields(['title', 'eksemplar']);
+        $crud->readFields(['title', 'eksemplar', 'major_id', 'published_year', 'isbn', 'author_name', 'price', 'suplemen']);
+        $crud->requiredFields(['title', 'eksemplar']);
         $crud->setRelation('major_id', 'majors', 'name');
         $crud->fieldType('price', 'numeric');
         $crud->fieldType('is_chosen', 'checkbox_boolean');
@@ -493,6 +496,27 @@ class SuperAdminController extends GroceryCrudController
             'suplemen' => 'Suplemen',
             'is_chosen' => 'Pilih Buku',
         ]);
+        $crud->callbackBeforeUpdate(function ($s) {
+            $book = Book::find($s->primaryKeyValue);
+            $s->data['title'] = $book->title;
+
+            return $s;
+        });
+        $crud->callbackAfterUpdate(function ($s) {
+            $inv = Book::find($s->primaryKeyValue);
+
+            if ($inv->eksemplar > 0) {
+                $inv->is_chosen = 1;
+                $this->calculatePrice($inv->invoice);
+            } else {
+                $inv->eksemplar = null;
+                $inv->is_chosen = 0;
+            }
+
+            $inv->save();
+
+            return $s;
+        });
 
         $output = $crud->render();
 
@@ -513,17 +537,27 @@ class SuperAdminController extends GroceryCrudController
 
         // $crud->fields(['code', 'name', 'address', 'email', 'phone']);
         // $crud->requiredFields(['code', 'name', 'address', 'email', 'phone']);
-        $crud->columns(['code', 'publisher_id', 'campus_id', 'cancelled_date', 'approved_at']);
-        $crud->fieldTypeColumn('cancelled_date', 'invisible');
-        $crud->fieldTypeColumn('approved_at', 'invisible');
+        $crud->columns(['code', 'publisher_id', 'campus_id', 'total_books', 'total_items', 'total_price']);
         $crud->setRelation('publisher_id', 'publishers', 'name');
         $crud->setRelation('campus_id', 'campuses', 'name');
         $crud->fields(['campus_note'])->setTexteditor(['campus_note']);
         $crud->unsetAdd()->unsetDelete()->setRead();
         $crud->setTexteditor(['campus_note', 'publisher_note']);
-        $crud->readFields(['code', 'publisher_id', 'campus_id', 'invoice_date', 'approved_at', 'campus_note', 'publisher_note']);
+        $crud->readFields(['code', 'publisher_id', 'campus_id', 'invoice_date', 'approved_at', 'campus_note', 'publisher_note', 'total_books', 'total_items', 'total_price']);
         $crud->callbackColumn('code', function ($value, $row) {
             return "<a href='" . route('procurements.books', $row->id) . "'>" . $value . "</a>";
+        });
+        $crud->callbackReadField('total_books', function ($value, $row) {
+            return number_format($value, 0, ',', '.');
+        });
+        $crud->callbackReadField('total_items', function ($value, $row) {
+            return number_format($value, 0, ',', '.');
+        });
+        $crud->callbackReadField('total_price', function ($value, $row) {
+            return "IDR " . number_format($value, 0, ',', '.');
+        });
+        $crud->callbackColumn('total_price', function ($value, $row) {
+            return "IDR " . number_format($value, 0, ',', '.');
         });
         $crud->setActionButton('Mark as Verified', 'fa fa-save', function ($row) {
             return route('procurement.verify', encrypt($row->id));
@@ -532,6 +566,9 @@ class SuperAdminController extends GroceryCrudController
             'created_at' => 'Status',
             'publisher_id' => 'Penerbit',
             'campus_id' => 'Kampus',
+            'total_books' => 'Jumlah Buku',
+            'total_items' => 'Jumlah Barang',
+            'total_price' => 'Total Harga',
         ]);
 
         $crud->callbackBeforeInsert(function ($s) {
