@@ -5,6 +5,7 @@ namespace App\Imports;
 use App\Models\Book;
 use App\Models\Invoice;
 use App\Models\Major;
+use App\Traits\CalculateBooks;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
@@ -20,6 +21,8 @@ class BooksImport implements
     ShouldQueue
 // WithValidation
 {
+    use CalculateBooks;
+
     public function __construct(public Invoice $invoice)
     {
     }
@@ -36,7 +39,7 @@ class BooksImport implements
                 continue;
             }
             $major = $this->getMajor($row[0]);
-            Book::updateOrCreate(
+            $inv = Book::updateOrCreate(
                 [
                     'invoice_id' => $this->invoice->getKey(),
                     'major_id' => $major,
@@ -50,6 +53,7 @@ class BooksImport implements
                     'suplemen' => $row[6],
                 ]
             );
+            $this->calculateBooks($inv->invoice);
         }
     }
 

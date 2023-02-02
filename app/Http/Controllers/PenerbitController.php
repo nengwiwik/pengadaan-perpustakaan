@@ -128,6 +128,12 @@ class PenerbitController extends GroceryCrudController
             $s->data['updated_at'] = now();
             return $s;
         });
+        $crud->callbackAfterInsert(function ($s) {
+            $inv = Book::find($s->insertId);
+            $this->calculateBooks($inv->invoice);
+
+            return $s;
+        });
         $crud->callbackAfterUpdate(function ($s) {
             $inv = Book::find($s->primaryKeyValue);
             $this->calculateBooks($inv->invoice);
