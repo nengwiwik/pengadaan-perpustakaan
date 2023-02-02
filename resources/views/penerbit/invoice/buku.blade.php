@@ -5,14 +5,14 @@
 
   <div class="mb-3">
     <a name="" id="" class="btn btn-dark" href="#back" onclick="history.back()" role="button"><i
-        class="fa fa-arrow-circle-left" aria-hidden="true"></i> Back</a>
+        class="fa fa-arrow-circle-left" aria-hidden="true"></i> Kembali</a>
     <button name="" id="" class="btn btn-primary" href="#" role="button" data-toggle="modal" data-target="#exampleModal"><i
-        class="fas fa-file-import"></i> Import Books</button>
+        class="fas fa-file-import"></i> Impor Buku</button>
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Import Books</h5>
+            <h5 class="modal-title" id="exampleModalLabel">Impor Buku</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -27,11 +27,11 @@
             </form>
 
             <hr>
-            <p>Download template <a href="{{ asset('template/import-books.xlsx') }}" download>here</a></p>
+            <p>Unduh template <a href="{{ asset('template/import-books.xlsx') }}" download>di sini</a></p>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary" form="form-upload">Upload</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+            <button type="submit" class="btn btn-primary" form="form-upload">Unggah</button>
           </div>
         </div>
       </div>
