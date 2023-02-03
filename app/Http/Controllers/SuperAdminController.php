@@ -398,6 +398,7 @@ class SuperAdminController extends GroceryCrudController
         $crud->setTable('invoices');
         $crud->setSubject('Pengadaan Baru', 'Data Pengadaan Baru');
         $crud->where([
+            "invoices.invoice_date is not null",
             "invoices.deleted_at is null",
             "invoices.approved_at is null",
             "invoices.verified_date is null",
@@ -428,10 +429,10 @@ class SuperAdminController extends GroceryCrudController
         $crud->callbackColumn('code', function ($value, $row) {
             return "<a href='" . route('procurements.books', $row->id) . "'>" . $value . "</a>";
         });
-        $crud->setActionButton('Mark as Approved', 'fa fa-check', function ($row) {
+        $crud->setActionButton('Terima Permintaan', 'fa fa-check', function ($row) {
             return route('procurement.approve', encrypt($row->id));
         }, false);
-        $crud->setActionButton('Mark as Rejected', 'fa fa-times', function ($row) {
+        $crud->setActionButton('Tolak Permintaan', 'fa fa-times', function ($row) {
             return route('procurement.reject', encrypt($row->id));
         }, false);
         // $crud->setActionButton('Mark as Verified', 'fa fa-save', function ($row) {
@@ -590,6 +591,74 @@ class SuperAdminController extends GroceryCrudController
         return $this->_showOutput($output, $title, 'grocery', 'pengadaan');
     }
 
+    public function archived_procurements()
+    {
+        $title = "Arsip Pengadaan";
+        $crud = $this->_getGroceryCrudEnterprise();
+
+        $crud->setTable('invoices');
+        $crud->setSubject('Pengadaan', 'Arsip Pengadaan');
+        $crud->where([
+            "invoices.deleted_at is null",
+            "invoices.approved_at is not null",
+        ]);
+
+        // $crud->fields(['code', 'name', 'address', 'email', 'phone']);
+        // $crud->requiredFields(['code', 'name', 'address', 'email', 'phone']);
+        $crud->columns(['code', 'publisher_id', 'campus_id', 'total_books', 'total_items', 'total_price']);
+        $crud->setRelation('publisher_id', 'publishers', 'name');
+        $crud->setRelation('campus_id', 'campuses', 'name');
+        $crud->fields(['campus_note'])->setTexteditor(['campus_note']);
+        $crud->unsetAdd()->unsetDelete()->setRead();
+        $crud->setTexteditor(['campus_note', 'publisher_note']);
+        $crud->readFields(['code', 'publisher_id', 'campus_id', 'invoice_date', 'approved_at', 'campus_note', 'publisher_note', 'total_books', 'total_items', 'total_price']);
+        $crud->callbackColumn('code', function ($value, $row) {
+            return "<a href='" . route('procurements.books', $row->id) . "'>" . $value . "</a>";
+        });
+        $crud->callbackReadField('total_books', function ($value, $row) {
+            return number_format($value, 0, ',', '.');
+        });
+        $crud->callbackReadField('total_items', function ($value, $row) {
+            return number_format($value, 0, ',', '.');
+        });
+        $crud->callbackReadField('total_price', function ($value, $row) {
+            return "IDR " . number_format($value, 0, ',', '.');
+        });
+        $crud->callbackColumn('total_price', function ($value, $row) {
+            return "IDR " . number_format($value, 0, ',', '.');
+        });
+        $crud->setActionButton('Mark as Verified', 'fa fa-save', function ($row) {
+            return route('procurement.verify', encrypt($row->id));
+        }, false);
+        $crud->displayAs([
+            'created_at' => 'Status',
+            'publisher_id' => 'Penerbit',
+            'campus_id' => 'Kampus',
+            'total_books' => 'Jumlah Buku',
+            'total_items' => 'Jumlah Barang',
+            'total_price' => 'Total Harga',
+        ]);
+
+        $crud->callbackBeforeInsert(function ($s) {
+            $s->data['created_at'] = now();
+            $s->data['updated_at'] = now();
+            return $s;
+        });
+        $crud->callbackBeforeUpdate(function ($s) {
+            $s->data['updated_at'] = now();
+            return $s;
+        });
+        $crud->callbackDelete(function ($s) {
+            $data = Invoice::find($s->primaryKeyValue);
+            $data->delete();
+            return $s;
+        });
+
+        $output = $crud->render();
+
+        return $this->_showOutput($output, $title, 'grocery', 'pengadaan');
+    }
+
     public function procurement_approve($id)
     {
         $data = Invoice::find(decrypt($id));
@@ -597,7 +666,7 @@ class SuperAdminController extends GroceryCrudController
         $data->approved_at = now();
         $data->cancelled_date = null;
         $data->save();
-        return redirect()->route('procurements');
+        return redirect()->route('procurements.active');
     }
 
     public function procurement_reject($id)
@@ -606,14 +675,15 @@ class SuperAdminController extends GroceryCrudController
         $data->approved_at = null;
         $data->cancelled_date = now();
         $data->save();
-        return redirect()->route('procurements');
+        return redirect()->route('procurements.archived');
     }
 
     public function procurement_verify($id)
     {
         $data = Invoice::find(decrypt($id));
+        PenerbitRepository::sendVerified($data);
         $data->verified_date = now();
         $data->save();
-        return redirect()->route('procurements');
+        return redirect()->route('procurements.archived');
     }
 }

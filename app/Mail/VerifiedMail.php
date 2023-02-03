@@ -11,7 +11,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class NewInvoice extends Mailable implements ShouldQueue
+class VerifiedMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -33,9 +33,8 @@ class NewInvoice extends Mailable implements ShouldQueue
     public function envelope()
     {
         return new Envelope(
-            from: new Address($this->invoice->publisher->email, $this->invoice->publisher->name),
-            subject: 'New Procurement from ' . $this->invoice->publisher->name,
-            tags: ['Perpustakaan'],
+            from: new Address(env('MAIL_FROM_ADDRESS', 'jangan-dibalas@undira.ac.id'), env('MAIL_FROM_NAME', env('APP_NAME', 'Perpustakaan Universitas Dian Nusantara'))),
+            subject: 'Permintaan Pengadaan Buku Anda Telah Diverifikasi',
         );
     }
 
@@ -47,7 +46,7 @@ class NewInvoice extends Mailable implements ShouldQueue
     public function content()
     {
         return new Content(
-            markdown: 'emails.invoices.new',
+            markdown: 'emails.invoices.verified',
         );
     }
 
@@ -60,17 +59,4 @@ class NewInvoice extends Mailable implements ShouldQueue
     {
         return [];
     }
-
-    /**
-     * Build the message.
-     *
-     * @return $this
-     */
-    // public function build()
-    // {
-    //     return $this->markdown('emails.invoices.new')
-    //         ->from($this->invoice->publisher->email, $this->invoice->publisher->name)
-    //         ->subject('New Procurement from ' . $this->invoice->publisher->name)
-    //         ->tag('Perpustakaan');
-    // }
 }
