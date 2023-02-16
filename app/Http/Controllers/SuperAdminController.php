@@ -201,7 +201,7 @@ class SuperAdminController extends GroceryCrudController
         $crud->where([
             "publisher_id is null",
             "campus_id is null",
-            "email != ?" => env('ADMIN_EMAIL', ["admin@undira.ac.id", "admin@gmail.com"]),
+            "email != ?" => env('ADMIN_EMAIL'),
         ]);
 
         $crud->callbackBeforeInsert(function ($s) {
