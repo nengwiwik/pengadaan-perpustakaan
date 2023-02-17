@@ -16,7 +16,7 @@
   <li class="nav-item">
     <a class="nav-link" href="/">
       <i class="fas fa-fw fa-tachometer-alt"></i>
-      <span>Dasbor</span></a>
+      <span>Dasboard</span></a>
   </li>
 
   @role('Super Admin')
@@ -116,7 +116,7 @@
 
   <li class="nav-item">
     <a class="nav-link" href="{{ route('penerbit.invoices') }}">
-      <i class="fas fa-fw fa-book"></i>
+      <i class="fas fa-fw fa-file"></i>
       <span>Pengadaan Baru</span></a>
   </li>
 
@@ -128,7 +128,7 @@
 
   <li class="nav-item">
     <a class="nav-link" href="{{ route('penerbit.invoices.verified') }}">
-      <i class="fas fa-fw fa-book"></i>
+    <i class="fas fa-fw fa-box"></i>
       <span>Arsip Pengadaan</span></a>
   </li>
 
