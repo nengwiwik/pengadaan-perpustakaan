@@ -27,6 +27,7 @@ class ProdiController extends GroceryCrudController
             $table . '.deleted_at is null',
             $table . '.invoice_date is not null',
             $table . '.verified_date is null',
+            $table . '.cancelled_date is null',
         ]);
         $crud->unsetOperations()->setEdit();
         $crud->setRead();
@@ -88,10 +89,10 @@ class ProdiController extends GroceryCrudController
         ]);
 
         $crud->unsetOperations()->setEdit();
-        $crud->columns(['major_id', 'title', 'published_year', 'eksemplar', 'is_chosen', 'isbn', 'author_name', 'price', 'suplemen']);
-        $crud->fields(['title', 'eksemplar']);
+        $crud->columns(['major_id', 'title', 'published_year', 'eksemplar', 'price', 'is_chosen', 'isbn', 'author_name', 'suplemen']);
+        $crud->fields(['title', 'price', 'eksemplar']);
         $crud->readFields(['title', 'eksemplar', 'is_chosen', 'major_id', 'published_year', 'isbn', 'author_name', 'price', 'suplemen']);
-        $crud->requiredFields(['title', 'eksemplar']);
+        $crud->requiredFields(['eksemplar']);
         $crud->setRelation('major_id', 'majors', 'name');
         $crud->fieldType('price', 'numeric');
         $crud->fieldType('eksemplar', 'numeric');
@@ -109,6 +110,7 @@ class ProdiController extends GroceryCrudController
         $crud->callbackBeforeUpdate(function ($s) {
             $book = Book::find($s->primaryKeyValue);
             $s->data['title'] = $book->title;
+            $s->data['price'] = $book->price;
 
             return $s;
         });
@@ -136,6 +138,58 @@ class ProdiController extends GroceryCrudController
 
     public function archived_procurements()
     {
-        # code...
+        $title = "Arsip Pengadaan";
+        $table = 'invoices';
+        $singular = 'Pengadaan';
+        $plural = 'Data Arsip Pengadaan';
+        $crud = $this->_getGroceryCrudEnterprise();
+
+        $crud->setTable($table);
+        $crud->setSubject($singular, $plural);
+        $crud->where("$table.campus_id = '" . Auth::user()->campus_id . "'
+            and $table.deleted_at is null
+            and ($table.verified_date is not null or $table.cancelled_date is not null)
+        ");
+        $crud->unsetOperations();
+        $crud->setRead();
+        $crud->columns(['code', 'campus_id', 'publisher_note', 'campus_note', 'total_price']);
+        $crud->readFields(['code', 'campus_id', 'publisher_id', 'publisher_note', 'campus_note', 'invoice_date', 'approved_at', 'total_books', 'total_items', 'total_price', 'verified_date', 'cancelled_date']);
+        $crud->unsetSearchColumns(['campus_id']);
+        $crud->setTexteditor(['publisher_note', 'campus_note']);
+        $crud->setRelation('campus_id', 'campuses', 'name');
+        $crud->setRelation('publisher_id', 'publishers', 'name');
+        $crud->displayAs([
+            'code' => 'Kode',
+            'campus_id' => 'Kampus',
+            'publisher_id' => 'Penerbit',
+            'publisher_note' => 'Catatan Penerbit',
+            'campus_note' => 'Catatan Kampus',
+            'invoice_date' => 'Tgl. Pengadaan',
+            'approved_at' => 'Tgl. Disetujui',
+            'total_books' => 'Total Buku',
+            'total_items' => 'Total Barang',
+            'total_price' => 'Total Harga',
+            'verified_date' => 'Tgl. Verifikasi',
+            'cancelled_date' => 'Tgl. Ditolak'
+        ]);
+        $crud->callbackColumn('code', function ($value, $row) {
+            return '<a href="' . route('prodi.procurements.books.active', $row->id) . '">' . $value . '</a>';
+        });
+        $crud->callbackReadField('total_books', function ($value, $row) {
+            return number_format($value, 0, ',', '.');
+        });
+        $crud->callbackReadField('total_items', function ($value, $row) {
+            return number_format($value, 0, ',', '.');
+        });
+        $crud->callbackReadField('total_price', function ($value, $row) {
+            return "IDR " . number_format($value, 0, ',', '.');
+        });
+        $crud->callbackColumn('total_price', function ($value, $row) {
+            return "IDR " . number_format($value, 0, ',', '.');
+        });
+
+        $output = $crud->render();
+
+        return $this->_showOutput($output, $title);
     }
 }
