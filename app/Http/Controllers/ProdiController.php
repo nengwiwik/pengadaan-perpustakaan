@@ -26,6 +26,7 @@ class ProdiController extends GroceryCrudController
             $table . '.campus_id = ?' => Auth::user()->campus_id,
             $table . '.deleted_at is null',
             $table . '.invoice_date is not null',
+            $table . '.approved_at is not null',
             $table . '.verified_date is null',
         ]);
         $crud->unsetOperations()->setEdit();
@@ -33,7 +34,7 @@ class ProdiController extends GroceryCrudController
         $crud->columns(['code', 'campus_id', 'publisher_note', 'campus_note', 'total_price']);
         $crud->addFields(['campus_id', 'publisher_note']);
         $crud->editFields(['campus_note']);
-        $crud->readFields(['code', 'campus_id', 'publisher_note', 'campus_note', 'invoice_date', 'approved_at', 'total_books', 'total_items', 'total_price']);
+        $crud->readFields(['code', 'campus_id', 'publisher_id', 'publisher_note', 'campus_note', 'invoice_date', 'approved_at', 'total_books', 'total_items', 'total_price']);
         $crud->unsetSearchColumns(['campus_id']);
         $crud->requiredFields(['campus_id']);
         $crud->setTexteditor(['publisher_note', 'campus_note']);
@@ -88,8 +89,8 @@ class ProdiController extends GroceryCrudController
         ]);
 
         $crud->unsetOperations()->setEdit();
-        $crud->columns(['major_id', 'title', 'published_year', 'eksemplar', 'is_chosen', 'isbn', 'author_name', 'price', 'suplemen']);
-        $crud->fields(['title', 'eksemplar']);
+        $crud->columns(['major_id', 'title', 'published_year', 'eksemplar', 'price', 'is_chosen', 'isbn', 'author_name', 'suplemen']);
+        $crud->fields(['title', 'eksemplar', 'price']);
         $crud->readFields(['title', 'eksemplar', 'is_chosen', 'major_id', 'published_year', 'isbn', 'author_name', 'price', 'suplemen']);
         $crud->requiredFields(['title', 'eksemplar']);
         $crud->setRelation('major_id', 'majors', 'name');
@@ -109,6 +110,7 @@ class ProdiController extends GroceryCrudController
         $crud->callbackBeforeUpdate(function ($s) {
             $book = Book::find($s->primaryKeyValue);
             $s->data['title'] = $book->title;
+            $s->data['price'] = $book->price;
 
             return $s;
         });

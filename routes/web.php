@@ -66,6 +66,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
   Route::get('/pengadaan/aktif', [SuperAdminController::class, 'active_procurements'])->name('procurements.active');
   Route::post('/pengadaan/aktif', [SuperAdminController::class, 'active_procurements']);
 
+    Route::get('/pengadaan/{invoice}/aktif/books', [SuperAdminController::class, 'active_books_procurements'])->name('procurements.books.active');
+    Route::post('/pengadaan/{invoice}/aktif/books', [SuperAdminController::class, 'active_books_procurements']);
+
   Route::get('/pengadaan/arsip', [SuperAdminController::class, 'archived_procurements'])->name('procurements.archived');
   Route::post('/pengadaan/arsip', [SuperAdminController::class, 'archived_procurements']);
 
