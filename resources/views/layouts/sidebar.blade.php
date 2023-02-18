@@ -16,7 +16,7 @@
   <li class="nav-item">
     <a class="nav-link" href="/">
       <i class="fas fa-fw fa-tachometer-alt"></i>
-      <span>Dasboard</span></a>
+      <span>Dasboard {{ \App\Models\User::find(Auth::id())->getRoleNames()[0] ?? "" }}</span></a>
   </li>
 
   @role('Super Admin')

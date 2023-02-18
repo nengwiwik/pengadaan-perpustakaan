@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Mail\NewInvoice;
+use App\Mail\RejectedInvoice;
 use App\Mail\VerifiedMail;
 use App\Models\Invoice;
 use App\Models\User;
@@ -20,12 +21,18 @@ class PenerbitRepository
         $users = User::select(['name', 'email'])->where('campus_id', $campus_id)->get();
         $mail = Mail::to(config('undira.admin_email'), config('undira.admin_name'));
         $mail->cc($users);
-        $mail->send(new NewInvoice($invoice));
+        $mail->queue(new NewInvoice($invoice));
     }
 
     public static function sendVerified(Invoice $invoice)
     {
         $mail = Mail::to($invoice->publisher->email, $invoice->publisher->name);
-        $mail->send(new VerifiedMail($invoice));
+        $mail->queue(new VerifiedMail($invoice));
+    }
+
+    public static function sendRejected(Invoice $invoice)
+    {
+        $mail = Mail::to($invoice->publisher->email, $invoice->publisher->name);
+        $mail->queue(new RejectedInvoice($invoice));
     }
 }

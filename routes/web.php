@@ -92,8 +92,8 @@ Route::prefix('penerbit')->middleware(['role:Penerbit', 'auth'])->group(function
   Route::get('/pengadaan/arsip', [PenerbitController::class, 'verified_invoices'])->name('penerbit.invoices.verified');
   Route::post('/pengadaan/arsip', [PenerbitController::class, 'verified_invoices']);
 
-  Route::get('/pengadaan/arsip/{invoice}/books', [PenerbitController::class, 'verified_books'])->name('penerbit.invoices.books.verified');
-  Route::post('/pengadaan/arsip/{invoice}/books', [PenerbitController::class, 'verified_books']);
+  Route::get('/pengadaan/arsip/{invoice}/books', [PenerbitController::class, 'ongoing_books'])->name('penerbit.invoices.books.verified');
+  Route::post('/pengadaan/arsip/{invoice}/books', [PenerbitController::class, 'ongoing_books']);
 });
 
 Route::prefix('prodi')->middleware(['role:Admin Prodi', 'auth'])->group(function () {

@@ -729,6 +729,7 @@ class SuperAdminController extends GroceryCrudController
     public function procurement_reject($id)
     {
         $data = Invoice::find(decrypt($id));
+        PenerbitRepository::sendRejected($data);
         $data->approved_at = null;
         $data->cancelled_date = now();
         $data->status = Invoice::STATUS_DITOLAK;
