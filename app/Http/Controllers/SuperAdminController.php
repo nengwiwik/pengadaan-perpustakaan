@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Http\Controllers\Controller;
 use App\Models\Book;
 use App\Models\Campus;
@@ -399,11 +400,7 @@ class SuperAdminController extends GroceryCrudController
         $crud->setSubject('Pengadaan Baru', 'Data Pengadaan Baru');
         $crud->where([
             "invoices.invoice_date is not null",
-            "invoices.deleted_at is null",
-            "invoices.approved_at is null",
-            "invoices.verified_date is null",
-            "invoices.cancelled_date is null",
-            "invoices.paid_date is null"
+            "invoices.status" => Invoice::STATUS_BARU,
         ]);
 
         // $crud->fields(['code', 'name', 'address', 'email', 'phone']);
@@ -419,10 +416,10 @@ class SuperAdminController extends GroceryCrudController
             if (is_null($row->approved_at) && is_null($row->cancelled_date)) {
                 return "Pending";
             }
-            if (! is_null($row->approved_at)) {
+            if (!is_null($row->approved_at)) {
                 return "Approved";
             }
-            if (! is_null($row->cancelled_date)) {
+            if (!is_null($row->cancelled_date)) {
                 return "Rejected";
             }
         });
@@ -532,7 +529,7 @@ class SuperAdminController extends GroceryCrudController
         $crud->setSubject('Pengadaan Aktif', 'Pengadaan Aktif');
         $crud->where([
             "invoices.deleted_at is null",
-            "invoices.approved_at is not null",
+            "invoices.status" => Invoice::STATUS_AKTIF,
         ]);
 
         // $crud->fields(['code', 'name', 'address', 'email', 'phone']);
@@ -659,18 +656,18 @@ class SuperAdminController extends GroceryCrudController
         $crud->setSubject('Pengadaan', 'Arsip Pengadaan');
         $crud->where([
             "invoices.deleted_at is null",
-            "invoices.approved_at is not null",
+            "invoices.status in ('" . Invoice::STATUS_SELESAI . "','" . Invoice::STATUS_DITOLAK . "')",
         ]);
 
         // $crud->fields(['code', 'name', 'address', 'email', 'phone']);
         // $crud->requiredFields(['code', 'name', 'address', 'email', 'phone']);
-        $crud->columns(['code', 'publisher_id', 'campus_id', 'total_books', 'total_items', 'total_price']);
+        $crud->columns(['code', 'status', 'publisher_id', 'campus_id', 'total_books', 'total_items', 'total_price']);
         $crud->setRelation('publisher_id', 'publishers', 'name');
         $crud->setRelation('campus_id', 'campuses', 'name');
         $crud->fields(['campus_note'])->setTexteditor(['campus_note']);
         $crud->unsetAdd()->unsetDelete()->setRead();
         $crud->setTexteditor(['campus_note', 'publisher_note']);
-        $crud->readFields(['code', 'publisher_id', 'campus_id', 'invoice_date', 'approved_at', 'campus_note', 'publisher_note', 'total_books', 'total_items', 'total_price']);
+        $crud->readFields(['code', 'status', 'publisher_id', 'campus_id', 'invoice_date', 'approved_at', 'campus_note', 'publisher_note', 'total_books', 'total_items', 'total_price']);
         $crud->callbackColumn('code', function ($value, $row) {
             return "<a href='" . route('procurements.books', $row->id) . "'>" . $value . "</a>";
         });
@@ -724,6 +721,7 @@ class SuperAdminController extends GroceryCrudController
         PenerbitRepository::sendEmails($data);
         $data->approved_at = now();
         $data->cancelled_date = null;
+        $data->status = Invoice::STATUS_AKTIF;
         $data->save();
         return redirect()->route('procurements.active');
     }
@@ -733,6 +731,7 @@ class SuperAdminController extends GroceryCrudController
         $data = Invoice::find(decrypt($id));
         $data->approved_at = null;
         $data->cancelled_date = now();
+        $data->status = Invoice::STATUS_DITOLAK;
         $data->save();
         return redirect()->route('procurements.archived');
     }
@@ -742,6 +741,7 @@ class SuperAdminController extends GroceryCrudController
         $data = Invoice::find(decrypt($id));
         PenerbitRepository::sendVerified($data);
         $data->verified_date = now();
+        $data->status = Invoice::STATUS_SELESAI;
         $data->save();
         return redirect()->route('procurements.archived');
     }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\SocialiteController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Penerbit\ImportBukuController;
 use App\Http\Controllers\PenerbitController;
 use App\Http\Controllers\PermissionController;
@@ -21,18 +22,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-  return view('welcome', [
-    'type_menu' => null
-  ]);
-})->middleware('auth')->name('homepage');
+Route::get('/', [HomeController::class, 'index'])->middleware('auth')->name('homepage');
 
 Route::get('/logout', function () {
   Auth::logout();
   return to_route('login');
 })->middleware('auth');
 
-Route::prefix('admin')->middleware('auth')->group(function () {
+Route::prefix('admin')->middleware(['auth'])->group(function () {
   Route::get('/permissions', [PermissionController::class, 'permissions'])->name('permissions');
   Route::post('/permissions', [PermissionController::class, 'permissions']);
 

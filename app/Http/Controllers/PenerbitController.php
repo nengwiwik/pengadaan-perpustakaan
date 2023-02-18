@@ -28,7 +28,7 @@ class PenerbitController extends GroceryCrudController
         $crud->where([
             $table . '.publisher_id = ?' => Auth::user()->publisher_id,
             $table . '.deleted_at is null',
-            $table . '.invoice_date is null',
+            $table . '.status' => Invoice::STATUS_PROSES,
         ]);
         $crud->columns(['code', 'campus_id', 'publisher_note', 'invoice_date', 'total_books']);
         $crud->addFields(['campus_id', 'publisher_note']);
@@ -51,6 +51,7 @@ class PenerbitController extends GroceryCrudController
             $s->data['publisher_id'] = Auth::user()->publisher_id;
             $s->data['created_at'] = now();
             $s->data['updated_at'] = now();
+            $s->data['status'] = Invoice::STATUS_PROSES;
             return $s;
         });
         $crud->callbackAfterInsert(function ($s) {
@@ -78,6 +79,8 @@ class PenerbitController extends GroceryCrudController
 
             if (is_null($invoice->invoice_date) == false) {
                 // PenerbitRepository::sendEmails($invoice);
+                $invoice->status = Invoice::STATUS_BARU;
+                $invoice->save();
             }
 
             return $s;
@@ -175,13 +178,12 @@ class PenerbitController extends GroceryCrudController
         $crud->where([
             $table . '.publisher_id = ?' => Auth::user()->publisher_id,
             $table . '.deleted_at is null',
-            $table . '.invoice_date is not null',
-            $table . '.verified_date is null',
+            $table . ".status in ('" . Invoice::STATUS_AKTIF . "','" . Invoice::STATUS_BARU . "')",
         ]);
         $crud->unsetOperations();
         $crud->setRead();
-        $crud->columns(['code', 'campus_id', 'campus_note', 'invoice_date', 'total_price']);
-        $crud->readFields(['code', 'campus_id', 'publisher_note', 'campus_note', 'invoice_date', 'approved_at', 'total_books', 'total_items', 'total_price']);
+        $crud->columns(['code', 'status', 'campus_id', 'campus_note', 'invoice_date', 'total_price']);
+        $crud->readFields(['code', 'status', 'campus_id', 'publisher_note', 'campus_note', 'invoice_date', 'approved_at', 'total_books', 'total_items', 'total_price']);
         $crud->requiredFields(['campus_id']);
         $crud->setTexteditor(['publisher_note', 'campus_note']);
         $crud->setRelation('campus_id', 'campuses', 'name');
@@ -285,10 +287,10 @@ class PenerbitController extends GroceryCrudController
 
     public function verified_invoices()
     {
-        $title = "Archived Procurements";
+        $title = "Arsip Pengadaan";
         $table = 'invoices';
-        $singular = 'Procurement';
-        $plural = 'Procurements';
+        $singular = 'Pengadaan';
+        $plural = 'Data Pengadaan';
         $crud = $this->_getGroceryCrudEnterprise();
 
         $crud->setTable($table);
@@ -296,12 +298,11 @@ class PenerbitController extends GroceryCrudController
         $crud->where([
             $table . '.publisher_id = ?' => Auth::user()->publisher_id,
             $table . '.deleted_at is null',
-            $table . '.invoice_date is not null',
-            $table . '.verified_date is not null',
+            $table . ".status in ('" . Invoice::STATUS_SELESAI . "','" . Invoice::STATUS_DITOLAK . "')",
         ]);
         $crud->unsetOperations();
         $crud->setRead();
-        $crud->columns(['code', 'campus_id', 'publisher_note', 'campus_note', 'invoice_date', 'verified_date']);
+        $crud->columns(['code', 'status', 'campus_id', 'publisher_note', 'campus_note', 'invoice_date', 'verified_date']);
         $crud->addFields(['campus_id', 'publisher_note']);
         $crud->editFields(['campus_id', 'publisher_note', 'invoice_date']);
         $crud->requiredFields(['campus_id']);
