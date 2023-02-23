@@ -26,13 +26,17 @@ class PenerbitRepository
 
     public static function sendVerified(Invoice $invoice)
     {
+        $users = User::select(['name', 'email'])->where('publisher_id', $invoice->publisher_id)->get();
         $mail = Mail::to($invoice->publisher->email, $invoice->publisher->name);
+        $mail->cc($users);
         $mail->queue(new VerifiedMail($invoice));
     }
 
     public static function sendRejected(Invoice $invoice)
     {
+        $users = User::select(['name', 'email'])->where('publisher_id', $invoice->publisher_id)->get();
         $mail = Mail::to($invoice->publisher->email, $invoice->publisher->name);
+        $mail->cc($users);
         $mail->queue(new RejectedInvoice($invoice));
     }
 }
