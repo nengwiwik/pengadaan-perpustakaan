@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Http\Controllers\Controller;
 use App\Models\Book;
 use App\Models\Campus;
@@ -200,7 +201,7 @@ class SuperAdminController extends GroceryCrudController
         $crud->where([
             "publisher_id is null",
             "campus_id is null",
-            "email != ?" => env('ADMIN_EMAIL', ["admin@undira.ac.id", "admin@gmail.com"]),
+            "email != ?" => env('ADMIN_EMAIL'),
         ]);
 
         $crud->callbackBeforeInsert(function ($s) {
@@ -399,11 +400,7 @@ class SuperAdminController extends GroceryCrudController
         $crud->setSubject('Pengadaan Baru', 'Data Pengadaan Baru');
         $crud->where([
             "invoices.invoice_date is not null",
-            "invoices.deleted_at is null",
-            "invoices.approved_at is null",
-            "invoices.verified_date is null",
-            "invoices.cancelled_date is null",
-            "invoices.paid_date is null"
+            "invoices.status" => Invoice::STATUS_BARU,
         ]);
 
         // $crud->fields(['code', 'name', 'address', 'email', 'phone']);
@@ -419,10 +416,10 @@ class SuperAdminController extends GroceryCrudController
             if (is_null($row->approved_at) && is_null($row->cancelled_date)) {
                 return "Pending";
             }
-            if (! is_null($row->approved_at)) {
+            if (!is_null($row->approved_at)) {
                 return "Approved";
             }
-            if (! is_null($row->cancelled_date)) {
+            if (!is_null($row->cancelled_date)) {
                 return "Rejected";
             }
         });
@@ -532,7 +529,7 @@ class SuperAdminController extends GroceryCrudController
         $crud->setSubject('Pengadaan Aktif', 'Pengadaan Aktif');
         $crud->where([
             "invoices.deleted_at is null",
-            "invoices.approved_at is not null",
+            "invoices.status" => Invoice::STATUS_AKTIF,
         ]);
 
         // $crud->fields(['code', 'name', 'address', 'email', 'phone']);
@@ -545,7 +542,7 @@ class SuperAdminController extends GroceryCrudController
         $crud->setTexteditor(['campus_note', 'publisher_note']);
         $crud->readFields(['code', 'publisher_id', 'campus_id', 'invoice_date', 'approved_at', 'campus_note', 'publisher_note', 'total_books', 'total_items', 'total_price']);
         $crud->callbackColumn('code', function ($value, $row) {
-            return "<a href='" . route('procurements.books', $row->id) . "'>" . $value . "</a>";
+            return "<a href='" . route('procurements.books.active', $row->id) . "'>" . $value . "</a>";
         });
         $crud->callbackReadField('total_books', function ($value, $row) {
             return number_format($value, 0, ',', '.');
@@ -591,6 +588,65 @@ class SuperAdminController extends GroceryCrudController
         return $this->_showOutput($output, $title, 'grocery', 'pengadaan');
     }
 
+    public function active_books_procurements(Invoice $invoice)
+    {
+        $title = "Data Buku | ID Pengadaan " . $invoice->code;
+        $table = 'books';
+        $singular = 'Buku';
+        $plural = 'Data Buku';
+        $crud = $this->_getGroceryCrudEnterprise();
+
+        $crud->setTable($table);
+        $crud->setSubject($singular, $plural);
+        $crud->where([
+            $table . '.invoice_id = ?' => $invoice->getKey(),
+            $table . '.deleted_at is null',
+        ]);
+
+        $crud->unsetOperations()->setEdit()->setRead();
+        $crud->columns(['major_id', 'title', 'published_year', 'eksemplar', 'is_chosen', 'isbn', 'author_name', 'price', 'suplemen']);
+        $crud->fields(['title', 'price', 'eksemplar']);
+        $crud->readFields(['title', 'eksemplar', 'major_id', 'published_year', 'isbn', 'author_name', 'price', 'suplemen']);
+        $crud->requiredFields(['title', 'price', 'eksemplar']);
+        $crud->setRelation('major_id', 'majors', 'name');
+        $crud->fieldType('price', 'numeric');
+        $crud->fieldType('is_chosen', 'checkbox_boolean');
+        $crud->displayAs([
+            'major_id' => 'Jurusan',
+            'isbn' => 'ISBN',
+            'published_year' => 'Tahun Terbit',
+            'author_name' => 'Nama Penulis',
+            'suplemen' => 'Suplemen',
+            'is_chosen' => 'Pilih Buku',
+        ]);
+        $crud->callbackBeforeUpdate(function ($s) {
+            $book = Book::find($s->primaryKeyValue);
+            $s->data['title'] = $book->title;
+            $s->data['price'] = $book->price;
+
+            return $s;
+        });
+        $crud->callbackAfterUpdate(function ($s) {
+            $inv = Book::find($s->primaryKeyValue);
+
+            if ($inv->eksemplar > 0) {
+                $inv->is_chosen = 1;
+                $this->calculatePrice($inv->invoice);
+            } else {
+                $inv->eksemplar = null;
+                $inv->is_chosen = 0;
+            }
+
+            $inv->save();
+
+            return $s;
+        });
+
+        $output = $crud->render();
+
+        return $this->_showOutput($output, $title, 'superadmin.invoice.buku');
+    }
+
     public function archived_procurements()
     {
         $title = "Arsip Pengadaan";
@@ -600,18 +656,18 @@ class SuperAdminController extends GroceryCrudController
         $crud->setSubject('Pengadaan', 'Arsip Pengadaan');
         $crud->where([
             "invoices.deleted_at is null",
-            "invoices.approved_at is not null",
+            "invoices.status in ('" . Invoice::STATUS_SELESAI . "','" . Invoice::STATUS_DITOLAK . "')",
         ]);
 
         // $crud->fields(['code', 'name', 'address', 'email', 'phone']);
         // $crud->requiredFields(['code', 'name', 'address', 'email', 'phone']);
-        $crud->columns(['code', 'publisher_id', 'campus_id', 'total_books', 'total_items', 'total_price']);
+        $crud->columns(['code', 'status', 'publisher_id', 'campus_id', 'total_books', 'total_items', 'total_price']);
         $crud->setRelation('publisher_id', 'publishers', 'name');
         $crud->setRelation('campus_id', 'campuses', 'name');
         $crud->fields(['campus_note'])->setTexteditor(['campus_note']);
         $crud->unsetAdd()->unsetDelete()->setRead();
         $crud->setTexteditor(['campus_note', 'publisher_note']);
-        $crud->readFields(['code', 'publisher_id', 'campus_id', 'invoice_date', 'approved_at', 'campus_note', 'publisher_note', 'total_books', 'total_items', 'total_price']);
+        $crud->readFields(['code', 'status', 'publisher_id', 'campus_id', 'invoice_date', 'approved_at', 'campus_note', 'publisher_note', 'total_books', 'total_items', 'total_price']);
         $crud->callbackColumn('code', function ($value, $row) {
             return "<a href='" . route('procurements.books', $row->id) . "'>" . $value . "</a>";
         });
@@ -665,6 +721,7 @@ class SuperAdminController extends GroceryCrudController
         PenerbitRepository::sendEmails($data);
         $data->approved_at = now();
         $data->cancelled_date = null;
+        $data->status = Invoice::STATUS_AKTIF;
         $data->save();
         return redirect()->route('procurements.active');
     }
@@ -672,8 +729,10 @@ class SuperAdminController extends GroceryCrudController
     public function procurement_reject($id)
     {
         $data = Invoice::find(decrypt($id));
+        PenerbitRepository::sendRejected($data);
         $data->approved_at = null;
         $data->cancelled_date = now();
+        $data->status = Invoice::STATUS_DITOLAK;
         $data->save();
         return redirect()->route('procurements.archived');
     }
@@ -683,6 +742,7 @@ class SuperAdminController extends GroceryCrudController
         $data = Invoice::find(decrypt($id));
         PenerbitRepository::sendVerified($data);
         $data->verified_date = now();
+        $data->status = Invoice::STATUS_SELESAI;
         $data->save();
         return redirect()->route('procurements.archived');
     }

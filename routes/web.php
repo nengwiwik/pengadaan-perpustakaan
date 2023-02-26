@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\SocialiteController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Penerbit\ImportBukuController;
 use App\Http\Controllers\PenerbitController;
 use App\Http\Controllers\PermissionController;
@@ -21,18 +22,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-  return view('welcome', [
-    'type_menu' => null
-  ]);
-})->middleware('auth')->name('homepage');
+Route::get('/', [HomeController::class, 'index'])->middleware('auth')->name('homepage');
 
 Route::get('/logout', function () {
   Auth::logout();
   return to_route('login');
 })->middleware('auth');
 
-Route::prefix('admin')->middleware('auth')->group(function () {
+Route::prefix('admin')->middleware(['auth'])->group(function () {
   Route::get('/permissions', [PermissionController::class, 'permissions'])->name('permissions');
   Route::post('/permissions', [PermissionController::class, 'permissions']);
 
@@ -66,6 +63,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
   Route::get('/pengadaan/aktif', [SuperAdminController::class, 'active_procurements'])->name('procurements.active');
   Route::post('/pengadaan/aktif', [SuperAdminController::class, 'active_procurements']);
 
+    Route::get('/pengadaan/{invoice}/aktif/books', [SuperAdminController::class, 'active_books_procurements'])->name('procurements.books.active');
+    Route::post('/pengadaan/{invoice}/aktif/books', [SuperAdminController::class, 'active_books_procurements']);
+
   Route::get('/pengadaan/arsip', [SuperAdminController::class, 'archived_procurements'])->name('procurements.archived');
   Route::post('/pengadaan/arsip', [SuperAdminController::class, 'archived_procurements']);
 
@@ -92,8 +92,8 @@ Route::prefix('penerbit')->middleware(['role:Penerbit', 'auth'])->group(function
   Route::get('/pengadaan/arsip', [PenerbitController::class, 'verified_invoices'])->name('penerbit.invoices.verified');
   Route::post('/pengadaan/arsip', [PenerbitController::class, 'verified_invoices']);
 
-  Route::get('/pengadaan/arsip/{invoice}/books', [PenerbitController::class, 'verified_books'])->name('penerbit.invoices.books.verified');
-  Route::post('/pengadaan/arsip/{invoice}/books', [PenerbitController::class, 'verified_books']);
+  Route::get('/pengadaan/arsip/{invoice}/books', [PenerbitController::class, 'ongoing_books'])->name('penerbit.invoices.books.verified');
+  Route::post('/pengadaan/arsip/{invoice}/books', [PenerbitController::class, 'ongoing_books']);
 });
 
 Route::prefix('prodi')->middleware(['role:Admin Prodi', 'auth'])->group(function () {

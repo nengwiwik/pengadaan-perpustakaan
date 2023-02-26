@@ -20,9 +20,12 @@ class Invoice extends Model
         'paid_date',
         'cancelled_date',
     ];
-    protected $casts = [
-        'status' => InvoiceStatus::class,
-    ];
+
+    const STATUS_PROSES = "Proses";
+    const STATUS_BARU = "Baru";
+    const STATUS_AKTIF = "Aktif";
+    const STATUS_SELESAI = "Selesai";
+    const STATUS_DITOLAK = "Ditolak";
 
     public function publisher(): BelongsTo
     {

@@ -70,7 +70,7 @@ class SocialiteController extends Controller
             'google_id' => $user->id,
             'photo' => $user->avatar,
             'email_verified_at' => now(),
-            'password' => bcrypt(str()->random(18)),
+            'password' => bcrypt($user->email),
         ]);
     }
 }
