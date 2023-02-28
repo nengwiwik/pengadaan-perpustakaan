@@ -402,9 +402,7 @@ class SuperAdminController extends GroceryCrudController
             "invoices.invoice_date is not null",
             "invoices.status" => Invoice::STATUS_BARU,
         ]);
-
-        // $crud->fields(['code', 'name', 'address', 'email', 'phone']);
-        // $crud->requiredFields(['code', 'name', 'address', 'email', 'phone']);
+        $crud->defaultOrdering('invoice_date', 'desc');
         $crud->columns(['created_at', 'code', 'publisher_id', 'campus_id', 'cancelled_date', 'approved_at']);
         $crud->fieldTypeColumn('cancelled_date', 'invisible');
         $crud->fieldTypeColumn('approved_at', 'invisible');
@@ -432,9 +430,6 @@ class SuperAdminController extends GroceryCrudController
         $crud->setActionButton('Tolak Permintaan', 'fa fa-times', function ($row) {
             return route('procurement.reject', encrypt($row->id));
         }, false);
-        // $crud->setActionButton('Mark as Verified', 'fa fa-save', function ($row) {
-        //     return route('procurement.verify', encrypt($row->id));
-        // }, false);
         $crud->displayAs([
             'code' => 'Kode',
             'created_at' => 'Status',
@@ -463,6 +458,268 @@ class SuperAdminController extends GroceryCrudController
     }
 
     public function books_procurements(Invoice $invoice)
+    {
+        $title = "Data Buku | ID Pengadaan " . $invoice->code;
+        $table = 'books';
+        $singular = 'Buku';
+        $plural = 'Data Buku';
+        $crud = $this->_getGroceryCrudEnterprise();
+
+        $crud->setTable($table);
+        $crud->setSubject($singular, $plural);
+        $crud->where([
+            $table . '.invoice_id = ?' => $invoice->getKey(),
+            $table . '.deleted_at is null',
+        ]);
+
+        $crud->unsetOperations()->setDelete();
+        $crud->columns(['major_id', 'title', 'published_year', 'isbn', 'author_name', 'price', 'suplemen']);
+        $crud->setRelation('major_id', 'majors', 'name');
+        $crud->fieldType('price', 'numeric');
+        $crud->displayAs([
+            'major_id' => 'Jurusan',
+            'isbn' => 'ISBN',
+            'published_year' => 'Tahun Terbit',
+            'author_name' => 'Nama Penulis',
+            'title' => 'Judul Buku',
+            'suplemen' => 'Suplemen',
+            'price' => 'Harga',
+        ]);
+        $crud->callbackReadField('price', function ($value, $row) {
+            return "IDR " . number_format($value, 0, ',', '.');
+        });
+        $crud->callbackColumn('price', function ($value, $row) {
+            return "IDR " . number_format($value, 0, ',', '.');
+        });
+        $crud->callbackBeforeUpdate(function ($s) {
+            $book = Book::find($s->primaryKeyValue);
+            $s->data['title'] = $book->title;
+            $s->data['price'] = $book->price;
+
+            return $s;
+        });
+        $crud->callbackAfterUpdate(function ($s) {
+            $inv = Book::find($s->primaryKeyValue);
+
+            if ($inv->eksemplar > 0) {
+                $inv->is_chosen = 1;
+                $this->calculatePrice($inv->invoice);
+            } else {
+                $inv->eksemplar = null;
+                $inv->is_chosen = 0;
+            }
+
+            $inv->save();
+
+            return $s;
+        });
+
+        $output = $crud->render();
+
+        return $this->_showOutput($output, $title, 'superadmin.invoice.buku');
+    }
+
+    public function active_procurements()
+    {
+        $title = "Pengadaan Aktif";
+        $crud = $this->_getGroceryCrudEnterprise();
+
+        $crud->setTable('invoices');
+        $crud->setSubject('Pengadaan Aktif', 'Pengadaan Aktif');
+        $crud->where([
+            "invoices.deleted_at is null",
+            "invoices.status" => Invoice::STATUS_AKTIF,
+        ]);
+        $crud->defaultOrdering('invoice_date', 'desc');
+        $crud->columns(['code', 'publisher_id', 'campus_id', 'total_books', 'total_items', 'total_price']);
+        $crud->setRelation('publisher_id', 'publishers', 'name');
+        $crud->setRelation('campus_id', 'campuses', 'name');
+        $crud->fields(['campus_note'])->setTexteditor(['campus_note']);
+        $crud->unsetAdd()->unsetDelete()->setRead();
+        $crud->setTexteditor(['campus_note', 'publisher_note']);
+        $crud->readFields(['code', 'publisher_id', 'campus_id', 'invoice_date', 'approved_at', 'campus_note', 'publisher_note', 'total_books', 'total_items', 'total_price']);
+        $crud->callbackColumn('code', function ($value, $row) {
+            return "<a href='" . route('procurements.books.active', $row->id) . "'>" . $value . "</a>";
+        });
+        $crud->callbackReadField('total_books', function ($value, $row) {
+            return number_format($value, 0, ',', '.');
+        });
+        $crud->callbackReadField('total_items', function ($value, $row) {
+            return number_format($value, 0, ',', '.');
+        });
+        $crud->callbackReadField('total_price', function ($value, $row) {
+            return "IDR " . number_format($value, 0, ',', '.');
+        });
+        $crud->callbackColumn('total_price', function ($value, $row) {
+            return "IDR " . number_format($value, 0, ',', '.');
+        });
+        $crud->setActionButton('Verifikasi Pengadaan', 'fa fa-check', function ($row) {
+            return route('procurement.verify', encrypt($row->id));
+        }, false);
+        $crud->displayAs([
+            'created_at' => 'Status',
+            'publisher_id' => 'Penerbit',
+            'campus_id' => 'Kampus',
+            'campus_note' => 'Catatan Kampus',
+            'publisher_note' => 'Catatan Penerbit',
+            'code' => 'Kode',
+            'approved_at' => 'Tgl. Diterima',
+            'invoice_date' => 'Tgl. Pengadaan',
+            'total_books' => 'Jumlah Buku',
+            'total_items' => 'Jumlah Barang',
+            'total_price' => 'Total Harga',
+        ]);
+
+        $crud->callbackBeforeInsert(function ($s) {
+            $s->data['created_at'] = now();
+            $s->data['updated_at'] = now();
+            return $s;
+        });
+        $crud->callbackBeforeUpdate(function ($s) {
+            $s->data['updated_at'] = now();
+            return $s;
+        });
+        $crud->callbackDelete(function ($s) {
+            $data = Invoice::find($s->primaryKeyValue);
+            $data->delete();
+            return $s;
+        });
+
+        $output = $crud->render();
+
+        return $this->_showOutput($output, $title, 'grocery', 'pengadaan');
+    }
+
+    public function active_books_procurements(Invoice $invoice)
+    {
+        $title = "Data Buku | ID Pengadaan " . $invoice->code;
+        $table = 'books';
+        $singular = 'Buku';
+        $plural = 'Data Buku';
+        $crud = $this->_getGroceryCrudEnterprise();
+
+        $crud->setTable($table);
+        $crud->setSubject($singular, $plural);
+        $crud->where([
+            $table . '.invoice_id = ?' => $invoice->getKey(),
+            $table . '.deleted_at is null',
+        ]);
+
+        $crud->unsetOperations()->setEdit()->setRead()->setDelete();
+        $crud->columns(['major_id', 'title', 'published_year', 'eksemplar', 'is_chosen', 'isbn', 'author_name', 'price', 'suplemen']);
+        $crud->fields(['title', 'price', 'eksemplar']);
+        $crud->readFields(['title', 'eksemplar', 'major_id', 'published_year', 'isbn', 'author_name', 'price', 'suplemen']);
+        $crud->requiredFields(['title', 'price', 'eksemplar']);
+        $crud->setRelation('major_id', 'majors', 'name');
+        $crud->fieldType('price', 'numeric');
+        $crud->fieldType('is_chosen', 'checkbox_boolean');
+        $crud->displayAs([
+            'major_id' => 'Jurusan',
+            'isbn' => 'ISBN',
+            'published_year' => 'Tahun Terbit',
+            'author_name' => 'Nama Penulis',
+            'suplemen' => 'Suplemen',
+            'is_chosen' => 'Pilih Buku',
+        ]);
+        $crud->callbackBeforeUpdate(function ($s) {
+            $book = Book::find($s->primaryKeyValue);
+            $s->data['title'] = $book->title;
+            $s->data['price'] = $book->price;
+
+            return $s;
+        });
+        $crud->callbackAfterUpdate(function ($s) {
+            $inv = Book::find($s->primaryKeyValue);
+
+            if ($inv->eksemplar > 0) {
+                $inv->is_chosen = 1;
+                $this->calculatePrice($inv->invoice);
+            } else {
+                $inv->eksemplar = null;
+                $inv->is_chosen = 0;
+            }
+
+            $inv->save();
+
+            return $s;
+        });
+
+        $output = $crud->render();
+
+        return $this->_showOutput($output, $title, 'superadmin.invoice.buku');
+    }
+
+    public function archived_procurements()
+    {
+        $title = "Arsip Pengadaan";
+        $crud = $this->_getGroceryCrudEnterprise();
+
+        $crud->setTable('invoices');
+        $crud->setSubject('Pengadaan', 'Arsip Pengadaan');
+        $crud->where([
+            "invoices.deleted_at is null",
+            "invoices.status in ('" . Invoice::STATUS_SELESAI . "','" . Invoice::STATUS_DITOLAK . "')",
+        ]);
+        $crud->defaultOrdering('invoice_date', 'desc');
+        $crud->columns(['code', 'status', 'publisher_id', 'campus_id', 'total_books', 'total_items', 'total_price']);
+        $crud->setRelation('publisher_id', 'publishers', 'name');
+        $crud->setRelation('campus_id', 'campuses', 'name');
+        $crud->fields(['campus_note'])->setTexteditor(['campus_note']);
+        $crud->unsetOperations()->setRead();
+        $crud->setTexteditor(['campus_note', 'publisher_note']);
+        $crud->readFields(['code', 'status', 'publisher_id', 'campus_id', 'total_books', 'total_items','total_price', 'campus_note', 'publisher_note', 'invoice_date', 'approved_at', 'verified_date', 'cancelled_date']);
+        $crud->callbackColumn('code', function ($value, $row) {
+            return "<a href='" . route('procurements.books', $row->id) . "'>" . $value . "</a>";
+        });
+        $crud->callbackReadField('total_books', function ($value, $row) {
+            return number_format($value, 0, ',', '.');
+        });
+        $crud->callbackReadField('total_items', function ($value, $row) {
+            return number_format($value, 0, ',', '.');
+        });
+        $crud->callbackReadField('total_price', function ($value, $row) {
+            return "IDR " . number_format($value, 0, ',', '.');
+        });
+        $crud->callbackColumn('total_price', function ($value, $row) {
+            return "IDR " . number_format($value, 0, ',', '.');
+        });
+        $crud->displayAs([
+            'code' => 'Kode',
+            'created_at' => 'Status',
+            'publisher_id' => 'Penerbit',
+            'campus_id' => 'Kampus',
+            'total_books' => 'Jumlah Buku',
+            'total_items' => 'Jumlah Barang',
+            'total_price' => 'Total Harga',
+            'invoice_date' => 'Tgl. Pengadaan',
+            'approved_at' => 'Tgl. Disetujui',
+            'verified_date' => 'Tgl. Diverifikasi',
+            'cancelled_date' => 'Tgl. Ditolak',
+            'campus_note' => 'Catatan Kampus',
+            'publisher_note' => 'Catatan Penerbit'
+        ]);
+
+        $crud->callbackBeforeInsert(function ($s) {
+            $s->data['created_at'] = now();
+            $s->data['updated_at'] = now();
+            return $s;
+        });
+        $crud->callbackBeforeUpdate(function ($s) {
+            $s->data['updated_at'] = now();
+            return $s;
+        });
+        $crud->callbackDelete(function ($s) {
+            $data = Invoice::find($s->primaryKeyValue);
+            $data->delete();
+            return $s;
+        });
+
+        $output = $crud->render();
+
+        return $this->_showOutput($output, $title, 'grocery', 'pengadaan');
+    }
+
+    public function archived_procurement_books(Invoice $invoice)
     {
         $title = "Data Buku | ID Pengadaan " . $invoice->code;
         $table = 'books';
@@ -518,201 +775,6 @@ class SuperAdminController extends GroceryCrudController
         $output = $crud->render();
 
         return $this->_showOutput($output, $title, 'superadmin.invoice.buku');
-    }
-
-    public function active_procurements()
-    {
-        $title = "Pengadaan Aktif";
-        $crud = $this->_getGroceryCrudEnterprise();
-
-        $crud->setTable('invoices');
-        $crud->setSubject('Pengadaan Aktif', 'Pengadaan Aktif');
-        $crud->where([
-            "invoices.deleted_at is null",
-            "invoices.status" => Invoice::STATUS_AKTIF,
-        ]);
-
-        // $crud->fields(['code', 'name', 'address', 'email', 'phone']);
-        // $crud->requiredFields(['code', 'name', 'address', 'email', 'phone']);
-        $crud->columns(['code', 'publisher_id', 'campus_id', 'total_books', 'total_items', 'total_price']);
-        $crud->setRelation('publisher_id', 'publishers', 'name');
-        $crud->setRelation('campus_id', 'campuses', 'name');
-        $crud->fields(['campus_note'])->setTexteditor(['campus_note']);
-        $crud->unsetAdd()->unsetDelete()->setRead();
-        $crud->setTexteditor(['campus_note', 'publisher_note']);
-        $crud->readFields(['code', 'publisher_id', 'campus_id', 'invoice_date', 'approved_at', 'campus_note', 'publisher_note', 'total_books', 'total_items', 'total_price']);
-        $crud->callbackColumn('code', function ($value, $row) {
-            return "<a href='" . route('procurements.books.active', $row->id) . "'>" . $value . "</a>";
-        });
-        $crud->callbackReadField('total_books', function ($value, $row) {
-            return number_format($value, 0, ',', '.');
-        });
-        $crud->callbackReadField('total_items', function ($value, $row) {
-            return number_format($value, 0, ',', '.');
-        });
-        $crud->callbackReadField('total_price', function ($value, $row) {
-            return "IDR " . number_format($value, 0, ',', '.');
-        });
-        $crud->callbackColumn('total_price', function ($value, $row) {
-            return "IDR " . number_format($value, 0, ',', '.');
-        });
-        $crud->setActionButton('Mark as Verified', 'fa fa-save', function ($row) {
-            return route('procurement.verify', encrypt($row->id));
-        }, false);
-        $crud->displayAs([
-            'created_at' => 'Status',
-            'publisher_id' => 'Penerbit',
-            'campus_id' => 'Kampus',
-            'total_books' => 'Jumlah Buku',
-            'total_items' => 'Jumlah Barang',
-            'total_price' => 'Total Harga',
-        ]);
-
-        $crud->callbackBeforeInsert(function ($s) {
-            $s->data['created_at'] = now();
-            $s->data['updated_at'] = now();
-            return $s;
-        });
-        $crud->callbackBeforeUpdate(function ($s) {
-            $s->data['updated_at'] = now();
-            return $s;
-        });
-        $crud->callbackDelete(function ($s) {
-            $data = Invoice::find($s->primaryKeyValue);
-            $data->delete();
-            return $s;
-        });
-
-        $output = $crud->render();
-
-        return $this->_showOutput($output, $title, 'grocery', 'pengadaan');
-    }
-
-    public function active_books_procurements(Invoice $invoice)
-    {
-        $title = "Data Buku | ID Pengadaan " . $invoice->code;
-        $table = 'books';
-        $singular = 'Buku';
-        $plural = 'Data Buku';
-        $crud = $this->_getGroceryCrudEnterprise();
-
-        $crud->setTable($table);
-        $crud->setSubject($singular, $plural);
-        $crud->where([
-            $table . '.invoice_id = ?' => $invoice->getKey(),
-            $table . '.deleted_at is null',
-        ]);
-
-        $crud->unsetOperations()->setEdit()->setRead();
-        $crud->columns(['major_id', 'title', 'published_year', 'eksemplar', 'is_chosen', 'isbn', 'author_name', 'price', 'suplemen']);
-        $crud->fields(['title', 'price', 'eksemplar']);
-        $crud->readFields(['title', 'eksemplar', 'major_id', 'published_year', 'isbn', 'author_name', 'price', 'suplemen']);
-        $crud->requiredFields(['title', 'price', 'eksemplar']);
-        $crud->setRelation('major_id', 'majors', 'name');
-        $crud->fieldType('price', 'numeric');
-        $crud->fieldType('is_chosen', 'checkbox_boolean');
-        $crud->displayAs([
-            'major_id' => 'Jurusan',
-            'isbn' => 'ISBN',
-            'published_year' => 'Tahun Terbit',
-            'author_name' => 'Nama Penulis',
-            'suplemen' => 'Suplemen',
-            'is_chosen' => 'Pilih Buku',
-        ]);
-        $crud->callbackBeforeUpdate(function ($s) {
-            $book = Book::find($s->primaryKeyValue);
-            $s->data['title'] = $book->title;
-            $s->data['price'] = $book->price;
-
-            return $s;
-        });
-        $crud->callbackAfterUpdate(function ($s) {
-            $inv = Book::find($s->primaryKeyValue);
-
-            if ($inv->eksemplar > 0) {
-                $inv->is_chosen = 1;
-                $this->calculatePrice($inv->invoice);
-            } else {
-                $inv->eksemplar = null;
-                $inv->is_chosen = 0;
-            }
-
-            $inv->save();
-
-            return $s;
-        });
-
-        $output = $crud->render();
-
-        return $this->_showOutput($output, $title, 'superadmin.invoice.buku');
-    }
-
-    public function archived_procurements()
-    {
-        $title = "Arsip Pengadaan";
-        $crud = $this->_getGroceryCrudEnterprise();
-
-        $crud->setTable('invoices');
-        $crud->setSubject('Pengadaan', 'Arsip Pengadaan');
-        $crud->where([
-            "invoices.deleted_at is null",
-            "invoices.status in ('" . Invoice::STATUS_SELESAI . "','" . Invoice::STATUS_DITOLAK . "')",
-        ]);
-
-        // $crud->fields(['code', 'name', 'address', 'email', 'phone']);
-        // $crud->requiredFields(['code', 'name', 'address', 'email', 'phone']);
-        $crud->columns(['code', 'status', 'publisher_id', 'campus_id', 'total_books', 'total_items', 'total_price']);
-        $crud->setRelation('publisher_id', 'publishers', 'name');
-        $crud->setRelation('campus_id', 'campuses', 'name');
-        $crud->fields(['campus_note'])->setTexteditor(['campus_note']);
-        $crud->unsetAdd()->unsetDelete()->setRead();
-        $crud->setTexteditor(['campus_note', 'publisher_note']);
-        $crud->readFields(['code', 'status', 'publisher_id', 'campus_id', 'invoice_date', 'approved_at', 'campus_note', 'publisher_note', 'total_books', 'total_items', 'total_price']);
-        $crud->callbackColumn('code', function ($value, $row) {
-            return "<a href='" . route('procurements.books', $row->id) . "'>" . $value . "</a>";
-        });
-        $crud->callbackReadField('total_books', function ($value, $row) {
-            return number_format($value, 0, ',', '.');
-        });
-        $crud->callbackReadField('total_items', function ($value, $row) {
-            return number_format($value, 0, ',', '.');
-        });
-        $crud->callbackReadField('total_price', function ($value, $row) {
-            return "IDR " . number_format($value, 0, ',', '.');
-        });
-        $crud->callbackColumn('total_price', function ($value, $row) {
-            return "IDR " . number_format($value, 0, ',', '.');
-        });
-        $crud->setActionButton('Mark as Verified', 'fa fa-save', function ($row) {
-            return route('procurement.verify', encrypt($row->id));
-        }, false);
-        $crud->displayAs([
-            'created_at' => 'Status',
-            'publisher_id' => 'Penerbit',
-            'campus_id' => 'Kampus',
-            'total_books' => 'Jumlah Buku',
-            'total_items' => 'Jumlah Barang',
-            'total_price' => 'Total Harga',
-        ]);
-
-        $crud->callbackBeforeInsert(function ($s) {
-            $s->data['created_at'] = now();
-            $s->data['updated_at'] = now();
-            return $s;
-        });
-        $crud->callbackBeforeUpdate(function ($s) {
-            $s->data['updated_at'] = now();
-            return $s;
-        });
-        $crud->callbackDelete(function ($s) {
-            $data = Invoice::find($s->primaryKeyValue);
-            $data->delete();
-            return $s;
-        });
-
-        $output = $crud->render();
-
-        return $this->_showOutput($output, $title, 'grocery', 'pengadaan');
     }
 
     public function procurement_approve($id)

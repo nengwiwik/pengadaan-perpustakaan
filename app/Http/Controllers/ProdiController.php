@@ -8,6 +8,8 @@ use App\Traits\CalculateBooks;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use function PHPSTORM_META\map;
+
 class ProdiController extends GroceryCrudController
 {
     use CalculateBooks;
@@ -29,6 +31,7 @@ class ProdiController extends GroceryCrudController
         ]);
         $crud->unsetOperations()->setEdit();
         $crud->setRead();
+        $crud->defaultOrdering('invoice_date', 'desc');
         $crud->columns(['code', 'status', 'campus_id', 'publisher_note', 'campus_note', 'total_price']);
         $crud->addFields(['campus_id', 'publisher_note']);
         $crud->editFields(['campus_note']);
@@ -151,6 +154,7 @@ class ProdiController extends GroceryCrudController
         ]);
         $crud->unsetOperations();
         $crud->setRead();
+        $crud->defaultOrdering('invoice_date', 'desc');
         $crud->columns(['code', 'status', 'campus_id', 'publisher_note', 'campus_note', 'total_price']);
         $crud->readFields(['code', 'status', 'campus_id', 'publisher_id', 'publisher_note', 'campus_note', 'total_books', 'total_items', 'total_price', 'invoice_date', 'approved_at', 'verified_date', 'cancelled_date']);
         $crud->unsetSearchColumns(['campus_id']);
@@ -222,30 +226,15 @@ class ProdiController extends GroceryCrudController
             'author_name' => 'Nama Penulis',
             'suplemen' => 'Suplemen',
             'is_chosen' => 'Terpilih',
+            'price' => 'Harga',
+            'title' => 'Judul Buku',
         ]);
 
-        $crud->callbackBeforeUpdate(function ($s) {
-            $book = Book::find($s->primaryKeyValue);
-            $s->data['title'] = $book->title;
-            $s->data['price'] = $book->price;
-
-            return $s;
+        $crud->callbackReadField('price', function ($value, $row) {
+            return "IDR " . number_format($value, 0, ',', '.');
         });
-
-        $crud->callbackAfterUpdate(function ($s) {
-            $inv = Book::find($s->primaryKeyValue);
-
-            if ($inv->eksemplar > 0) {
-                $inv->is_chosen = 1;
-                $this->calculatePrice($inv->invoice);
-            } else {
-                $inv->eksemplar = null;
-                $inv->is_chosen = 0;
-            }
-
-            $inv->save();
-
-            return $s;
+        $crud->callbackColumn('price', function ($value, $row) {
+            return "IDR " . number_format($value, 0, ',', '.');
         });
 
         $output = $crud->render();

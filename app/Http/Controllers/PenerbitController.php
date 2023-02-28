@@ -30,6 +30,7 @@ class PenerbitController extends GroceryCrudController
             $table . '.deleted_at is null',
             $table . '.status' => Invoice::STATUS_PROSES,
         ]);
+        $crud->defaultOrdering('invoice_date', 'desc');
         $crud->columns(['code', 'campus_id', 'publisher_note', 'invoice_date', 'total_books']);
         $crud->addFields(['campus_id', 'publisher_note']);
         $crud->editFields(['campus_id', 'publisher_note', 'invoice_date']);
@@ -37,9 +38,9 @@ class PenerbitController extends GroceryCrudController
         $crud->setTexteditor(['publisher_note']);
         $crud->setRelation('campus_id', 'campuses', 'name');
         $crud->displayAs([
+            'code' => 'Kode',
             'campus_id' => 'Kampus',
             'invoice_date' => 'Tgl Pengadaan',
-            'procurement_date' => 'Tgl Pengiriman',
             'publisher_note' => 'Catatan Penerbit',
             'total_books' => 'Jumlah Buku',
         ]);
@@ -124,6 +125,7 @@ class PenerbitController extends GroceryCrudController
             'author_name' => 'Penulis',
             'published_year' => 'Tahun Terbit',
             'price' => 'Harga',
+            'title' => 'Judul Buku',
         ]);
         $crud->callbackBeforeInsert(function ($s) use ($invoice) {
             $s->data['invoice_id'] = $invoice->getKey();
@@ -182,6 +184,7 @@ class PenerbitController extends GroceryCrudController
         ]);
         $crud->unsetOperations();
         $crud->setRead();
+        $crud->defaultOrdering('invoice_date', 'desc');
         $crud->columns(['code', 'status', 'campus_id', 'campus_note', 'invoice_date', 'total_price']);
         $crud->readFields(['code', 'status', 'campus_id', 'publisher_note', 'campus_note', 'total_books', 'total_items', 'total_price', 'invoice_date', 'approved_at']);
         $crud->requiredFields(['campus_id']);
@@ -275,6 +278,7 @@ class PenerbitController extends GroceryCrudController
             'author_name' => 'Penulis',
             'published_year' => 'Tahun Terbit',
             'price' => 'Harga',
+            'title' => 'Judul Buku',
         ]);
         $crud->callbackColumn('price', function ($value, $row) {
             return "IDR " . number_format($value, 0, ',', '.');
@@ -300,6 +304,7 @@ class PenerbitController extends GroceryCrudController
             $table . '.deleted_at is null',
             $table . ".status in ('" . Invoice::STATUS_SELESAI . "','" . Invoice::STATUS_DITOLAK . "')",
         ]);
+        $crud->defaultOrdering('invoice_date', 'desc');
         $crud->unsetOperations();
         $crud->setRead();
         $crud->columns(['code', 'status', 'campus_id', 'campus_note', 'invoice_date', 'total_price']);
