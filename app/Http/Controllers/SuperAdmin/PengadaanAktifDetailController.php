@@ -6,10 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\GroceryCrudController;
 use App\Models\Book;
 use App\Models\Invoice;
+use App\Traits\CalculateBooks;
 use Illuminate\Http\Request;
 
 class PengadaanAktifDetailController extends GroceryCrudController
 {
+    use CalculateBooks;
+
     public function __invoke(Invoice $invoice)
     {
         $title = "Data Buku | ID Pengadaan " . $invoice->code;
@@ -25,7 +28,7 @@ class PengadaanAktifDetailController extends GroceryCrudController
             $table . '.deleted_at is null',
         ]);
 
-        $crud->unsetOperations()->setEdit()->setRead()->setDelete();
+        $crud->unsetOperations()->setEdit()->setRead();
         $crud->columns(['major_id', 'title', 'published_year', 'eksemplar', 'is_chosen', 'isbn', 'author_name', 'price', 'suplemen']);
         $crud->fields(['title', 'price', 'eksemplar']);
         $crud->readFields(['title', 'eksemplar', 'major_id', 'published_year', 'isbn', 'author_name', 'price', 'suplemen']);

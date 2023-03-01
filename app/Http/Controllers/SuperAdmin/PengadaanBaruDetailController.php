@@ -43,28 +43,6 @@ class PengadaanBaruDetailController extends GroceryCrudController
         $crud->callbackColumn('price', function ($value, $row) {
             return "IDR " . number_format($value, 0, ',', '.');
         });
-        $crud->callbackBeforeUpdate(function ($s) {
-            $book = Book::find($s->primaryKeyValue);
-            $s->data['title'] = $book->title;
-            $s->data['price'] = $book->price;
-
-            return $s;
-        });
-        $crud->callbackAfterUpdate(function ($s) {
-            $inv = Book::find($s->primaryKeyValue);
-
-            if ($inv->eksemplar > 0) {
-                $inv->is_chosen = 1;
-                $this->calculatePrice($inv->invoice);
-            } else {
-                $inv->eksemplar = null;
-                $inv->is_chosen = 0;
-            }
-
-            $inv->save();
-
-            return $s;
-        });
 
         $output = $crud->render();
 
