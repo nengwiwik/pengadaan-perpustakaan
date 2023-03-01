@@ -13,7 +13,8 @@ use App\Http\Controllers\Prodi\ArsipPengadaanController as ProdiArsipPengadaanCo
 use App\Http\Controllers\Prodi\ArsipPengadaanDetailController as ProdiArsipPengadaanDetailController;
 use App\Http\Controllers\Prodi\PengadaanAktifController as ProdiPengadaanAktifController;
 use App\Http\Controllers\Prodi\PengadaanAktifDetailController as ProdiPengadaanAktifDetailController;
-use App\Http\Controllers\ProfilController;
+use App\Http\Controllers\Profile\UpdatePasswordController;
+use App\Http\Controllers\Profile\UpdateProfileController;
 use App\Http\Controllers\SuperAdmin\AdminPenerbitController;
 use App\Http\Controllers\SuperAdmin\AdminProdiController;
 use App\Http\Controllers\SuperAdmin\ArsipPengadaanController;
@@ -129,15 +130,13 @@ Route::prefix('prodi')->middleware(['role:Admin Prodi', 'auth'])->group(function
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfilController::class, 'index'])->name('profil.index');
-    Route::patch('/profile', [ProfilController::class, 'update'])->name('profil.update');
-    Route::get('/profile/password', [ProfilController::class, 'password'])->name('profil.password');
-    Route::patch('/profile/password', [ProfilController::class, 'password'])->name('profil.update-password');
+    Route::get('/profile', UpdateProfileController::class)->name('profil.index');
+    Route::patch('/profile', UpdateProfileController::class)->name('profil.update');
+    Route::get('/profile/password', UpdatePasswordController::class)->name('profil.password');
+    Route::patch('/profile/password', UpdatePasswordController::class)->name('profil.update-password');
 });
 
 Auth::routes();
-
-// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 /**
  * socialite auth
