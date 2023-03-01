@@ -9,7 +9,10 @@ use App\Http\Controllers\Penerbit\PengadaanAktifController as PenerbitPengadaanA
 use App\Http\Controllers\Penerbit\PengadaanAktifDetailController as PenerbitPengadaanAktifDetailController;
 use App\Http\Controllers\Penerbit\PengadaanBaruController as PenerbitPengadaanBaruController;
 use App\Http\Controllers\Penerbit\PengadaanBaruDetailController as PenerbitPengadaanBaruDetailController;
-use App\Http\Controllers\ProdiController;
+use App\Http\Controllers\Prodi\ArsipPengadaanController as ProdiArsipPengadaanController;
+use App\Http\Controllers\Prodi\ArsipPengadaanDetailController as ProdiArsipPengadaanDetailController;
+use App\Http\Controllers\Prodi\PengadaanAktifController as ProdiPengadaanAktifController;
+use App\Http\Controllers\Prodi\PengadaanAktifDetailController as ProdiPengadaanAktifDetailController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\SuperAdmin\AdminPenerbitController;
 use App\Http\Controllers\SuperAdmin\AdminProdiController;
@@ -112,17 +115,17 @@ Route::prefix('penerbit')->middleware(['role:Penerbit', 'auth'])->group(function
 });
 
 Route::prefix('prodi')->middleware(['role:Admin Prodi', 'auth'])->group(function () {
-    Route::get('/pengadaan/aktif', [ProdiController::class, 'active_procurements'])->name('prodi.procurements.active');
-    Route::post('/pengadaan/aktif', [ProdiController::class, 'active_procurements']);
+    Route::get('/pengadaan/aktif', ProdiPengadaanAktifController::class)->name('prodi.procurements.active');
+    Route::post('/pengadaan/aktif', ProdiPengadaanAktifController::class);
 
-    Route::get('/pengadaan/aktif/{invoice}/books', [ProdiController::class, 'procurement_books'])->name('prodi.procurements.books.active');
-    Route::post('/pengadaan/aktif/{invoice}/books', [ProdiController::class, 'procurement_books']);
+    Route::get('/pengadaan/{invoice}/aktif', ProdiPengadaanAktifDetailController::class)->name('prodi.procurements.books.active');
+    Route::post('/pengadaan/{invoice}/aktif', ProdiPengadaanAktifDetailController::class);
 
-    Route::get('/pengadaan/arsip', [ProdiController::class, 'archived_procurements'])->name('prodi.procurements.archived');
-    Route::post('/pengadaan/arsip', [ProdiController::class, 'archived_procurements']);
+    Route::get('/pengadaan/arsip', ProdiArsipPengadaanController::class)->name('prodi.procurements.archived');
+    Route::post('/pengadaan/arsip', ProdiArsipPengadaanController::class);
 
-    Route::get('/pengadaan/arsip/{invoice}/books', [ProdiController::class, 'archived_procurement_books'])->name('prodi.procurements.books.archived');
-    Route::post('/pengadaan/arsip/{invoice}/books', [ProdiController::class, 'archived_procurement_books']);
+    Route::get('/pengadaan/{invoice}/arsip', ProdiArsipPengadaanDetailController::class)->name('prodi.procurements.books.archived');
+    Route::post('/pengadaan/{invoice}/arsip', ProdiArsipPengadaanDetailController::class);
 });
 
 Route::middleware('auth')->group(function () {
