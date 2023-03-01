@@ -2,8 +2,13 @@
 
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Penerbit\ArsipPengadaanController as PenerbitArsipPengadaanController;
+use App\Http\Controllers\Penerbit\ArsipPengadaanDetailController as PenerbitArsipPengadaanDetailController;
 use App\Http\Controllers\Penerbit\ImportBukuController;
-use App\Http\Controllers\PenerbitController;
+use App\Http\Controllers\Penerbit\PengadaanAktifController as PenerbitPengadaanAktifController;
+use App\Http\Controllers\Penerbit\PengadaanAktifDetailController as PenerbitPengadaanAktifDetailController;
+use App\Http\Controllers\Penerbit\PengadaanBaruController as PenerbitPengadaanBaruController;
+use App\Http\Controllers\Penerbit\PengadaanBaruDetailController as PenerbitPengadaanBaruDetailController;
 use App\Http\Controllers\ProdiController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\SuperAdmin\AdminPenerbitController;
@@ -12,7 +17,7 @@ use App\Http\Controllers\SuperAdmin\ArsipPengadaanController;
 use App\Http\Controllers\SuperAdmin\ArsipPengadaanDetailController;
 use App\Http\Controllers\SuperAdmin\JurusanController;
 use App\Http\Controllers\SuperAdmin\KampusController;
-use App\Http\Controllers\SuperAdmin\PenerbitController as SuperAdminPenerbitController;
+use App\Http\Controllers\SuperAdmin\PenerbitController;
 use App\Http\Controllers\SuperAdmin\PengadaanAktifController;
 use App\Http\Controllers\SuperAdmin\PengadaanAktifDetailController;
 use App\Http\Controllers\SuperAdmin\PengadaanBaruController;
@@ -58,8 +63,8 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/majors', JurusanController::class)->name('majors');
     Route::post('/majors', JurusanController::class);
 
-    Route::get('/publisher', SuperAdminPenerbitController::class)->name('publisher');
-    Route::post('/publisher', SuperAdminPenerbitController::class);
+    Route::get('/publisher', PenerbitController::class)->name('publisher');
+    Route::post('/publisher', PenerbitController::class);
 
     Route::get('/pengadaan/baru', PengadaanBaruController::class)->name('procurements.new');
     Route::post('/pengadaan/baru', PengadaanBaruController::class);
@@ -85,25 +90,25 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
 });
 
 Route::prefix('penerbit')->middleware(['role:Penerbit', 'auth'])->group(function () {
-    Route::get('/pengadaan', [PenerbitController::class, 'invoices'])->name('penerbit.invoices');
-    Route::post('/pengadaan', [PenerbitController::class, 'invoices']);
+    Route::get('/pengadaan/baru', PenerbitPengadaanBaruController::class)->name('penerbit.invoices');
+    Route::post('/pengadaan/baru', PenerbitPengadaanBaruController::class);
 
-    Route::get('/pengadaan/{invoice}/books', [PenerbitController::class, 'books'])->name('penerbit.invoices.books');
-    Route::post('/pengadaan/{invoice}/books', [PenerbitController::class, 'books']);
+    Route::get('/pengadaan/{invoice}/baru', PenerbitPengadaanBaruDetailController::class)->name('penerbit.invoices.books');
+    Route::post('/pengadaan/{invoice}/baru', PenerbitPengadaanBaruDetailController::class);
 
     Route::post('/pengadaan/{invoice}/import', ImportBukuController::class)->name('penerbit.invoices.books.import');
 
-    Route::get('/pengadaan/aktif', [PenerbitController::class, 'ongoing_invoices'])->name('penerbit.invoices.ongoing');
-    Route::post('/pengadaan/aktif', [PenerbitController::class, 'ongoing_invoices']);
+    Route::get('/pengadaan/aktif', PenerbitPengadaanAktifController::class)->name('penerbit.invoices.ongoing');
+    Route::post('/pengadaan/aktif', PenerbitPengadaanAktifController::class);
 
-    Route::get('/pengadaan/aktif/{invoice}/books', [PenerbitController::class, 'ongoing_books'])->name('penerbit.invoices.books.ongoing');
-    Route::post('/pengadaan/aktif/{invoice}/books', [PenerbitController::class, 'ongoing_books']);
+    Route::get('/pengadaan/{invoice}/aktif', PenerbitPengadaanAktifDetailController::class)->name('penerbit.invoices.books.ongoing');
+    Route::post('/pengadaan/{invoice}/aktif', PenerbitPengadaanAktifDetailController::class);
 
-    Route::get('/pengadaan/arsip', [PenerbitController::class, 'verified_invoices'])->name('penerbit.invoices.verified');
-    Route::post('/pengadaan/arsip', [PenerbitController::class, 'verified_invoices']);
+    Route::get('/pengadaan/arsip', PenerbitArsipPengadaanController::class)->name('penerbit.invoices.verified');
+    Route::post('/pengadaan/arsip', PenerbitArsipPengadaanController::class);
 
-    Route::get('/pengadaan/arsip/{invoice}/books', [PenerbitController::class, 'ongoing_books'])->name('penerbit.invoices.books.verified');
-    Route::post('/pengadaan/arsip/{invoice}/books', [PenerbitController::class, 'ongoing_books']);
+    Route::get('/pengadaan/{invoice}/arsip', PenerbitArsipPengadaanDetailController::class)->name('penerbit.invoices.books.verified');
+    Route::post('/pengadaan/{invoice}/arsip', PenerbitArsipPengadaanDetailController::class);
 });
 
 Route::prefix('prodi')->middleware(['role:Admin Prodi', 'auth'])->group(function () {
