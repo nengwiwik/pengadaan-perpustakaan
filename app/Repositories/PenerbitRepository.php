@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Mail\NewInvoice;
+use App\Mail\NewProcurement;
 use App\Mail\RejectedInvoice;
 use App\Mail\VerifiedMail;
 use App\Models\Invoice;
@@ -38,5 +39,12 @@ class PenerbitRepository
         $mail = Mail::to($invoice->publisher->email, $invoice->publisher->name);
         $mail->cc($users);
         $mail->queue(new RejectedInvoice($invoice));
+    }
+
+    public static function newProcurement(Invoice $invoice)
+    {
+        $users = User::role('Super Admin')->get();
+        $mail = Mail::to($users);
+        $mail->queue(new NewProcurement($invoice));
     }
 }

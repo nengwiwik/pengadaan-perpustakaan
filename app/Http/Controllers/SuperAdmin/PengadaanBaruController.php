@@ -20,14 +20,14 @@ class PengadaanBaruController extends GroceryCrudController
             "invoices.status" => Invoice::STATUS_BARU,
         ]);
         $crud->defaultOrdering('invoice_date', 'desc');
-        $crud->columns(['created_at', 'code', 'publisher_id', 'campus_id', 'cancelled_date', 'approved_at']);
+        $crud->columns(['status', 'code', 'publisher_id', 'campus_id', 'cancelled_date', 'approved_at']);
         $crud->fieldTypeColumn('cancelled_date', 'invisible');
         $crud->fieldTypeColumn('approved_at', 'invisible');
         $crud->setRelation('publisher_id', 'publishers', 'name');
         $crud->setRelation('campus_id', 'campuses', 'name');
         $crud->fields(['campus_note'])->setTexteditor(['campus_note']);
         $crud->unsetAdd()->unsetDelete()->setRead()->unsetReadFields(['deleted_at', 'updated_at']);
-        $crud->callbackColumn('created_at', function ($value, $row) {
+        $crud->callbackColumn('status', function ($value, $row) {
             if (is_null($row->approved_at) && is_null($row->cancelled_date)) {
                 return "Pending";
             }

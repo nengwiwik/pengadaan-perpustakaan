@@ -41,6 +41,11 @@
                     <img src="{{ asset('image/logo_baru.png') }}" alt="UNDIRA">
                     <h1 class="h4 text-gray-900 mb-4">Log in</h1>
                   </div>
+                  @if (session('error'))
+                    <div class="alert alert-danger" role="alert">
+                      {{ session('error') }}
+                    </div>
+                  @endif
                   <form class="user" method="POST" action="{{ route('login') }}">
                     @csrf
                     <div class="form-group">
@@ -71,7 +76,7 @@
                   </div>
                   <div class="text-center">
                     <a class="small" href="{{ route('password.request') }}">
-                        Forgot password?
+                      Forgot password?
                     </a>
                     <br />
                     <a class="small" href="{{ route('register') }}">

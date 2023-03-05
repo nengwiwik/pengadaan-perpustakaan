@@ -57,6 +57,13 @@ class PengadaanAktifController extends GroceryCrudController
         $crud->callbackColumn('total_price', function ($value, $row) {
             return "IDR " . number_format($value, 0, ',', '.');
         });
+        $crud->callbackColumn('status', function ($value, $row) {
+            if ($value == 'Baru') {
+                return "Pending";
+            }
+
+            return str()->title($value);
+        });
         $crud->callbackBeforeInsert(function ($s) {
             $s->data['code'] = "INV-" . date('ymdHis') . "-" . str_pad(Auth::user()->publisher_id, 3, '0', STR_PAD_LEFT);
             $s->data['publisher_id'] = Auth::user()->publisher_id;

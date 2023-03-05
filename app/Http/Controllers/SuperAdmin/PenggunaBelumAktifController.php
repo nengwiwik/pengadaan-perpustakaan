@@ -18,8 +18,8 @@ class PenggunaBelumAktifController extends GroceryCrudController
         $crud->setSubject('User', 'Pengguna Belum Aktif');
 
         $crud->unsetAdd();
-        $crud->fields(['name', 'campus_id', 'major_id']);
-        $crud->requiredFields(['name', 'campus_id', 'major_id']);
+        $crud->fields(['name', 'campus_id', 'major_id', 'publisher_id']);
+        $crud->requiredFields(['name']);
         $crud->columns(['name', 'email', 'updated_at']);
 
         $crud->where([
@@ -36,12 +36,14 @@ class PenggunaBelumAktifController extends GroceryCrudController
 
         $crud->setRelation('major_id', 'majors', 'name');
         $crud->setRelation('campus_id', 'campuses', 'name');
+        $crud->setRelation('publisher_id', 'publishers', 'name');
 
         $crud->displayAs([
             'name' => 'Nama',
             'updated_at' => 'Terakhir diubah',
             'major_id'  => 'Jurusan',
             'campus_id'  => 'Kampus',
+            'publisher_id' => 'Penerbit',
         ]);
         $crud->callbackAfterUpdate(function ($s) {
             $user = User::find($s->primaryKeyValue);
@@ -49,8 +51,8 @@ class PenggunaBelumAktifController extends GroceryCrudController
                 $user->assignRole('Admin Prodi');
                 $user->removeRole('Penerbit');
             } else {
+                $user->assignRole('Penerbit');
                 $user->removeRole('Admin Prodi');
-                $user->removeRole('Penerbit');
             }
             return $s;
         });

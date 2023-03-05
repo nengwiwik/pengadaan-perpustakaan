@@ -9,6 +9,7 @@ use App\Http\Controllers\Penerbit\PengadaanAktifController as PenerbitPengadaanA
 use App\Http\Controllers\Penerbit\PengadaanAktifDetailController as PenerbitPengadaanAktifDetailController;
 use App\Http\Controllers\Penerbit\PengadaanBaruController as PenerbitPengadaanBaruController;
 use App\Http\Controllers\Penerbit\PengadaanBaruDetailController as PenerbitPengadaanBaruDetailController;
+use App\Http\Controllers\Penerbit\SimpanPengadaanController;
 use App\Http\Controllers\Prodi\ArsipPengadaanController as ProdiArsipPengadaanController;
 use App\Http\Controllers\Prodi\ArsipPengadaanDetailController as ProdiArsipPengadaanDetailController;
 use App\Http\Controllers\Prodi\PengadaanAktifController as ProdiPengadaanAktifController;
@@ -30,6 +31,8 @@ use App\Http\Controllers\SuperAdmin\PenggunaBelumAktifController;
 use App\Http\Controllers\SuperAdmin\TerimaPengadaanController;
 use App\Http\Controllers\SuperAdmin\TolakPengadaanController;
 use App\Http\Controllers\SuperAdmin\VerifikasiPengadaanController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -44,14 +47,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [HomeController::class, 'index'])->middleware('auth')->name('homepage');
+Route::get('/', [HomeController::class, 'index'])->middleware('auth', 'verified')->name('homepage');
 
 Route::get('/logout', function () {
     Auth::logout();
     return to_route('login');
 })->middleware('auth');
 
-Route::prefix('admin')->middleware(['auth'])->group(function () {
+Route::prefix('admin')->middleware(['role:Super Admin', 'auth', 'verified'])->group(function () {
     Route::get('/users/prodi', AdminProdiController::class)->name('prodi_users');
     Route::post('/users/prodi', AdminProdiController::class);
 
@@ -93,9 +96,11 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/pengadaan/{id}/verify', VerifikasiPengadaanController::class)->name('procurement.verify');
 });
 
-Route::prefix('penerbit')->middleware(['role:Penerbit', 'auth'])->group(function () {
+Route::prefix('penerbit')->middleware(['role:Penerbit', 'auth', 'verified'])->group(function () {
     Route::get('/pengadaan/baru', PenerbitPengadaanBaruController::class)->name('penerbit.invoices');
     Route::post('/pengadaan/baru', PenerbitPengadaanBaruController::class);
+
+    Route::get('/pengadaan/{invoice:code}/store', SimpanPengadaanController::class)->name('penerbit.invoices.store');
 
     Route::get('/pengadaan/{invoice}/baru', PenerbitPengadaanBaruDetailController::class)->name('penerbit.invoices.books');
     Route::post('/pengadaan/{invoice}/baru', PenerbitPengadaanBaruDetailController::class);
@@ -115,7 +120,7 @@ Route::prefix('penerbit')->middleware(['role:Penerbit', 'auth'])->group(function
     Route::post('/pengadaan/{invoice}/arsip', PenerbitArsipPengadaanDetailController::class);
 });
 
-Route::prefix('prodi')->middleware(['role:Admin Prodi', 'auth'])->group(function () {
+Route::prefix('prodi')->middleware(['role:Admin Prodi', 'auth', 'verified'])->group(function () {
     Route::get('/pengadaan/aktif', ProdiPengadaanAktifController::class)->name('prodi.procurements.active');
     Route::post('/pengadaan/aktif', ProdiPengadaanAktifController::class);
 
@@ -136,6 +141,22 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile/password', UpdatePasswordController::class)->name('profil.update-password');
 });
 
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $request->fulfill();
+
+    return redirect('/');
+})->middleware(['auth', 'signed'])->name('verification.verify');
+
+Route::get('/email/verify', function () {
+    return view('auth.verify');
+})->middleware('auth')->name('verification.notice');
+
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+
+    return back()->with('message', 'Verification link sent!');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.resend');
+
 Auth::routes();
 
 /**
@@ -143,3 +164,7 @@ Auth::routes();
  */
 Route::get('/auth/{provider}', [SocialiteController::class, 'redirectToProvider'])->name('socialite.redirect');
 Route::get('/auth/{provider}/callback', [SocialiteController::class, 'handleProvideCallback']);
+
+Route::fallback(function () {
+    return to_route('homepage')->with('error', 'Kamu tersesat?');
+});

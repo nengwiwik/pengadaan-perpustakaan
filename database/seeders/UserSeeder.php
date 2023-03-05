@@ -17,7 +17,7 @@ class UserSeeder extends Seeder
   {
     $admin = User::updateOrCreate(
       [
-        'email' => 'admin@undira.ac.id'
+        'email' => '41119051@mahasiswa.undira.ac.id'
       ],
       [
         'name' => 'Super Admin',
@@ -29,7 +29,7 @@ class UserSeeder extends Seeder
 
     $penerbit = User::updateOrCreate(
       [
-        'email' => 'publishing@nurfachmi.com'
+        'email' => 'reza@nurfachmi.com'
       ],
       [
         'name' => 'Penerbit Nurfachmi',
@@ -40,31 +40,31 @@ class UserSeeder extends Seeder
     );
     $penerbit->assignRole('Penerbit');
 
-    $penerbit = User::updateOrCreate(
-      [
-        'email' => 'penerbit@gmail.com'
-      ],
-      [
-        'name' => 'Penerbit Erlangga',
-        'email_verified_at' => now(),
-        'password' => bcrypt('password'),
-        'publisher_id' => 2,
-      ]
-    );
-    $penerbit->assignRole('Penerbit');
+    // $penerbit = User::updateOrCreate(
+    //   [
+    //     'email' => 'penerbit@gmail.com'
+    //   ],
+    //   [
+    //     'name' => 'Penerbit Erlangga',
+    //     'email_verified_at' => now(),
+    //     'password' => bcrypt('password'),
+    //     'publisher_id' => 2,
+    //   ]
+    // );
+    // $penerbit->assignRole('Penerbit');
 
-    $prodi = User::updateOrCreate(
-      [
-        'email' => 'prodi@undira.ac.id'
-      ],
-      [
-        'name' => 'Prodi TI',
-        'email_verified_at' => now(),
-        'password' => bcrypt('password'),
-        'campus_id' => 1,
-        'major_id' => 7,
-      ]
-    );
-    $prodi->assignRole('Admin Prodi');
+    // $prodi = User::updateOrCreate(
+    //   [
+    //     'email' => 'prodi@undira.ac.id'
+    //   ],
+    //   [
+    //     'name' => 'Prodi TI',
+    //     'email_verified_at' => now(),
+    //     'password' => bcrypt('password'),
+    //     'campus_id' => 1,
+    //     'major_id' => 7,
+    //   ]
+    // );
+    // $prodi->assignRole('Admin Prodi');
   }
 }

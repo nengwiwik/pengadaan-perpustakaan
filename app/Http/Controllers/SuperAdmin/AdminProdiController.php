@@ -27,6 +27,7 @@ class AdminProdiController extends GroceryCrudController
 
         $crud->callbackBeforeInsert(function ($s) {
             $s->data['password'] = bcrypt($s->data['password']);
+            $s->data['email_verified_at'] = now();
             $s->data['created_at'] = now();
             $s->data['updated_at'] = now();
             return $s;

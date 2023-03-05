@@ -1,4 +1,4 @@
-@component('mail::message')
+<x-mail::message>
 # Introduction
 
 The body of your message.
@@ -9,10 +9,10 @@ The body of your message.
 | {{ $invoice->code }} | {{ $invoice->publisher->name }} | {{ $invoice->invoice_date->format('d M Y')}} | {{ $invoice->total_books }} |
 @endcomponent
 
-@component('mail::button', ['url' => route('homepage')])
-View books
-@endcomponent
+<x-mail::button :url="route('procurements.new')">
+View Books
+</x-mail::button>
 
 Thanks,<br>
 {{ config('app.name') }}
-@endcomponent
+</x-mail::message>

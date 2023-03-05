@@ -29,11 +29,17 @@ class HomeController extends Controller
     {
         $user = User::find(Auth::id());
 
+        if (!$user->hasAnyRole(['Super Admin', 'Penerbit', 'Admin Prodi'])) {
+            Auth::logout();
+            return to_route('login')->with(["error" => "Your account is created succesfully but not activated yet."]);
+        }
+
         // default
         $jumlah_pengadaan_baru = 0;
         $jumlah_pengadaan_aktif = 0;
         $jumlah_arsip_pengadaan = 0;
         $jumlah_penerbit = 0;
+        $jumlah_user_belum_aktif = 0;
 
         $route_pengadaan_baru = "#";
         $route_pengadaan_aktif = "#";
@@ -49,6 +55,7 @@ class HomeController extends Controller
             $jumlah_pengadaan_aktif = Invoice::where('status', Invoice::STATUS_AKTIF)->count();
             $jumlah_arsip_pengadaan = Invoice::whereIn('status', [Invoice::STATUS_SELESAI, Invoice::STATUS_DITOLAK])->count();
             $jumlah_penerbit = Publisher::count();
+            $jumlah_user_belum_aktif = User::doesntHave('roles')->count();
 
             $route_pengadaan_baru = route('procurements.new');
             $route_pengadaan_aktif = route('procurements.active');
@@ -96,6 +103,7 @@ class HomeController extends Controller
             'jumlah_pengadaan_aktif',
             'jumlah_arsip_pengadaan',
             'jumlah_penerbit',
+            'jumlah_user_belum_aktif',
             'route_pengadaan_baru',
             'route_pengadaan_aktif',
             'route_arsip_pengadaan',

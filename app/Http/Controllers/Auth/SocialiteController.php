@@ -4,12 +4,16 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
 
 class SocialiteController extends Controller
 {
+    protected $isPenerbit = false;
+    protected $isDosen = false;
+    protected $isMahasiswa = false;
     public function redirectToProvider($provider)
     {
         return Socialite::driver($provider)->redirect();
@@ -33,22 +37,29 @@ class SocialiteController extends Controller
         // cari atau buat user dan kirim parameter user yang didapat dari socialite dan provider
         $authUser = $this->findOrCreateUser($user);
 
-        // login user
-        auth()->login($authUser, true);
+        if ($authUser) {
+            // setelah login redirect ke dashboard
+            return redirect()->route('homepage')->with('success', 'Login berhasil');
+        }
 
-        // setelah login redirect ke dashboard
-        return redirect()->route('homepage')->with('success', 'Login berhasil');
+        return to_route('login')->withErrors(["email" => "Your account is created succesfully but not activated yet."])->withInput();
     }
 
     public function isUndira($email)
     {
         $email = trim($email); // in case there's any whitespace
 
-        return true
-            || mb_substr($email, -13) === '@undira.ac.id'
+        if (mb_substr($email, -13) === '@undira.ac.id') $this->isDosen = true;
+        if (mb_substr($email, -23) === '@mahasiswa.undira.ac.id') $this->isMahasiswa = true;
+        if (mb_substr($email, -10) === '@gmail.com') $this->isPenerbit = true;
+
+        if (
+            mb_substr($email, -13) === '@undira.ac.id'
             || mb_substr($email, -23) === '@mahasiswa.undira.ac.id'
             || mb_substr($email, -10) === '@gmail.com'
-            || true;
+        ) return true;
+
+        return false;
     }
 
     public function findOrCreateUser($user)
@@ -56,21 +67,29 @@ class SocialiteController extends Controller
         $authUser = User::where('email', $user->email)->first();
 
         if ($authUser) {
-            $authUser->update([
+            if ($authUser->hasAnyRole(['Super Admin', 'Penerbit', 'Admin Prodi'])) {
+                $authUser->update([
+                    'name' => $user->name,
+                    'google_id' => $user->id,
+                    'photo' => $user->avatar,
+                ]);
+
+                // login user
+                auth()->login($authUser, true);
+                return true;
+            }
+        } else {
+            $authUser = User::create([
                 'name' => $user->name,
+                'email' => $user->email,
                 'google_id' => $user->id,
                 'photo' => $user->avatar,
+                'email_verified_at' => now(),
+                'password' => bcrypt($user->email),
             ]);
-            return $authUser;
         }
 
-        return User::create([
-            'name' => $user->name,
-            'email' => $user->email,
-            'google_id' => $user->id,
-            'photo' => $user->avatar,
-            'email_verified_at' => now(),
-            'password' => bcrypt($user->email),
-        ]);
+        event(new Registered($authUser));
+        return false;
     }
 }

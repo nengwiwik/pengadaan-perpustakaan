@@ -26,8 +26,7 @@ class PengadaanBaruController extends GroceryCrudController
         ]);
         $crud->defaultOrdering('invoice_date', 'desc');
         $crud->columns(['code', 'campus_id', 'publisher_note', 'invoice_date', 'total_books']);
-        $crud->addFields(['campus_id', 'publisher_note']);
-        $crud->editFields(['campus_id', 'publisher_note', 'invoice_date']);
+        $crud->fields(['campus_id', 'publisher_note']);
         $crud->requiredFields(['campus_id']);
         $crud->setTexteditor(['publisher_note']);
         $crud->setRelation('campus_id', 'campuses', 'name');
@@ -41,8 +40,12 @@ class PengadaanBaruController extends GroceryCrudController
         $crud->callbackColumn('code', function ($value, $row) {
             return '<a href="' . route('penerbit.invoices.books', $row->id) . '">' . $value . '</a>';
         });
+        $crud->setActionButton('Kirim Pengadaan', 'fa fa-envelope', function ($row) {
+            $inv = Invoice::find($row->id);
+            return route('penerbit.invoices.store', $inv->code);
+        }, false);
         $crud->callbackBeforeInsert(function ($s) {
-            $s->data['code'] = "INV-" . date('ymdHis') . "-" . str_pad(Auth::user()->publisher_id, 3, '0', STR_PAD_LEFT);
+            $s->data['code'] = "BOOK-" . date('ymdHis') . "-" . str_pad(Auth::user()->publisher_id, 3, '0', STR_PAD_LEFT);
             $s->data['publisher_id'] = Auth::user()->publisher_id;
             $s->data['created_at'] = now();
             $s->data['updated_at'] = now();
@@ -67,17 +70,6 @@ class PengadaanBaruController extends GroceryCrudController
         });
         $crud->callbackBeforeUpdate(function ($s) {
             $s->data['updated_at'] = now();
-            return $s;
-        });
-        $crud->callbackAfterUpdate(function ($s) {
-            $invoice = Invoice::find($s->primaryKeyValue);
-
-            if (is_null($invoice->invoice_date) == false) {
-                // PenerbitRepository::sendEmails($invoice);
-                $invoice->status = Invoice::STATUS_BARU;
-                $invoice->save();
-            }
-
             return $s;
         });
 
