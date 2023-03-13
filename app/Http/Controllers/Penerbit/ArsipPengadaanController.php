@@ -27,15 +27,15 @@ class ArsipPengadaanController extends GroceryCrudController
         $crud->defaultOrdering('invoice_date', 'desc');
         $crud->unsetOperations();
         $crud->setRead();
-        $crud->columns(['code', 'status', 'campus_id', 'campus_note', 'invoice_date', 'total_price']);
-        $crud->addFields(['campus_id', 'publisher_note']);
-        $crud->editFields(['campus_id', 'publisher_note', 'invoice_date']);
+        $crud->columns(['code', 'status', 'campus_id', 'invoice_date', 'total_price']);
+        $crud->addFields(['campus_id']);
+        $crud->editFields(['campus_id', 'invoice_date']);
         $crud->requiredFields(['campus_id']);
-        $crud->readFields(['code', 'status', 'campus_id', 'publisher_note', 'campus_note', 'total_books', 'total_items', 'total_price', 'invoice_date', 'approved_at', 'verified_date', 'cancelled_date']);
-        $crud->setTexteditor(['publisher_note', 'campus_note']);
+        $crud->readFields(['code', 'status', 'campus_id', 'total_books', 'total_items', 'total_price', 'invoice_date', 'approved_at', 'verified_date', 'cancelled_date']);
         $crud->setRelation('campus_id', 'campuses', 'name');
         $crud->displayAs([
-            'campus_id' => 'Campus',
+            'campus_id' => 'Kampus',
+            'invoice_date' => 'Tgl. Penawaran',
         ]);
         $crud->callbackColumn('code', function ($value, $row) {
             return '<a href="' . route('penerbit.invoices.books.verified', $row->id) . '">' . $value . '</a>';

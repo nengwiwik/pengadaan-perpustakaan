@@ -13,12 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('books', function (Blueprint $table) {
-            $table->after('major_id', function ($table) {
-                $table->text('summary')->nullable();
-                $table->string("cover")->nullable();
-            });
-        });
+         Schema::table('invoices', function (Blueprint $table) {
+            $table->dropColumn(['publisher_note', 'campus_note']);
+         });
     }
 
     /**
@@ -28,8 +25,11 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('books', function (Blueprint $table) {
-            $table->dropColumn(['summary', 'cover']);
+        Schema::table('invoices', function (Blueprint $table) {
+            $table->after('campus_id', function ($table) {
+                $table->text('publisher_note')->nullable();
+                $table->text('campus_note')->nullable();
+            });
         });
     }
 };

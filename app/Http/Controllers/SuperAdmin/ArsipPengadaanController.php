@@ -23,10 +23,8 @@ class ArsipPengadaanController extends GroceryCrudController
         $crud->columns(['code', 'status', 'publisher_id', 'campus_id', 'total_books', 'total_items', 'total_price']);
         $crud->setRelation('publisher_id', 'publishers', 'name');
         $crud->setRelation('campus_id', 'campuses', 'name');
-        $crud->fields(['campus_note'])->setTexteditor(['campus_note']);
         $crud->unsetOperations()->setRead();
-        $crud->setTexteditor(['campus_note', 'publisher_note']);
-        $crud->readFields(['code', 'status', 'publisher_id', 'campus_id', 'total_books', 'total_items', 'total_price', 'campus_note', 'publisher_note', 'invoice_date', 'approved_at', 'verified_date', 'cancelled_date']);
+        $crud->readFields(['code', 'status', 'publisher_id', 'campus_id', 'total_books', 'total_items', 'total_price', 'invoice_date', 'approved_at', 'verified_date', 'cancelled_date']);
         $crud->callbackColumn('code', function ($value, $row) {
             return "<a href='" . route('procurements.books.arsip', $row->id) . "'>" . $value . "</a>";
         });
@@ -54,8 +52,6 @@ class ArsipPengadaanController extends GroceryCrudController
             'approved_at' => 'Tgl. Disetujui',
             'verified_date' => 'Tgl. Diverifikasi',
             'cancelled_date' => 'Tgl. Ditolak',
-            'campus_note' => 'Catatan Kampus',
-            'publisher_note' => 'Catatan Penerbit'
         ]);
 
         $crud->callbackBeforeInsert(function ($s) {

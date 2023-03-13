@@ -27,18 +27,15 @@ class ArsipPengadaanController extends GroceryCrudController
         $crud->unsetOperations();
         $crud->setRead();
         $crud->defaultOrdering('invoice_date', 'desc');
-        $crud->columns(['code', 'status', 'campus_id', 'publisher_note', 'campus_note', 'total_price']);
-        $crud->readFields(['code', 'status', 'campus_id', 'publisher_id', 'publisher_note', 'campus_note', 'total_books', 'total_items', 'total_price', 'invoice_date', 'approved_at', 'verified_date', 'cancelled_date']);
+        $crud->columns(['code', 'status', 'campus_id', 'total_price']);
+        $crud->readFields(['code', 'status', 'campus_id', 'publisher_id', 'total_books', 'total_items', 'total_price', 'invoice_date', 'approved_at', 'verified_date', 'cancelled_date']);
         $crud->unsetSearchColumns(['campus_id']);
-        $crud->setTexteditor(['publisher_note', 'campus_note']);
         $crud->setRelation('campus_id', 'campuses', 'name');
         $crud->setRelation('publisher_id', 'publishers', 'name');
         $crud->displayAs([
             'code' => 'Kode',
             'campus_id' => 'Kampus',
             'publisher_id' => 'Penerbit',
-            'publisher_note' => 'Catatan Penerbit',
-            'campus_note' => 'Catatan Kampus',
             'invoice_date' => 'Tgl. Pengadaan',
             'approved_at' => 'Tgl. Disetujui',
             'verified_date' => 'Tgl. Verifikasi',

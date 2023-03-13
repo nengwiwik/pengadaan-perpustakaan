@@ -23,10 +23,8 @@ class PengadaanAktifController extends GroceryCrudController
         $crud->columns(['code', 'publisher_id', 'campus_id', 'total_books', 'total_items', 'total_price']);
         $crud->setRelation('publisher_id', 'publishers', 'name');
         $crud->setRelation('campus_id', 'campuses', 'name');
-        $crud->fields(['campus_note'])->setTexteditor(['campus_note']);
         $crud->unsetAdd()->unsetDelete()->setRead();
-        $crud->setTexteditor(['campus_note', 'publisher_note']);
-        $crud->readFields(['code', 'publisher_id', 'campus_id', 'invoice_date', 'approved_at', 'campus_note', 'publisher_note', 'total_books', 'total_items', 'total_price']);
+        $crud->readFields(['code', 'publisher_id', 'campus_id', 'invoice_date', 'approved_at',  'total_books', 'total_items', 'total_price']);
         $crud->callbackColumn('code', function ($value, $row) {
             return "<a href='" . route('procurements.books.active', $row->id) . "'>" . $value . "</a>";
         });

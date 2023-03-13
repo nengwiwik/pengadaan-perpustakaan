@@ -27,16 +27,13 @@ class PengadaanAktifController extends GroceryCrudController
         $crud->unsetOperations();
         $crud->setRead();
         $crud->defaultOrdering('invoice_date', 'desc');
-        $crud->columns(['code', 'status', 'campus_id', 'campus_note', 'invoice_date', 'total_price']);
-        $crud->readFields(['code', 'status', 'campus_id', 'publisher_note', 'campus_note', 'total_books', 'total_items', 'total_price', 'invoice_date', 'approved_at']);
+        $crud->columns(['code', 'status', 'campus_id', 'invoice_date', 'total_price']);
+        $crud->readFields(['code', 'status', 'campus_id', 'total_books', 'total_items', 'total_price', 'invoice_date', 'approved_at']);
         $crud->requiredFields(['campus_id']);
-        $crud->setTexteditor(['publisher_note', 'campus_note']);
         $crud->setRelation('campus_id', 'campuses', 'name');
         $crud->displayAs([
             'campus_id' => 'Kampus',
-            'publisher_note' => 'Cat. Penerbit',
-            'campus_note' => 'Cat. Kampus',
-            'invoice_date' => 'Tgl. Pengadaan',
+            'invoice_date' => 'Tgl. Penawaran',
             'approved_at' => 'Tgl. Disetujui',
             'total_books' => 'Total Buku',
             'total_price' => 'Total Harga',

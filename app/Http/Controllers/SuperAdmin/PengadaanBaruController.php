@@ -25,8 +25,7 @@ class PengadaanBaruController extends GroceryCrudController
         $crud->fieldTypeColumn('approved_at', 'invisible');
         $crud->setRelation('publisher_id', 'publishers', 'name');
         $crud->setRelation('campus_id', 'campuses', 'name');
-        $crud->fields(['campus_note'])->setTexteditor(['campus_note']);
-        $crud->unsetAdd()->unsetDelete()->setRead()->unsetReadFields(['deleted_at', 'updated_at']);
+        $crud->unsetAdd()->unsetDelete()->setRead()->unsetReadFields(['deleted_at', 'updated_at'])->unsetEdit();
         $crud->callbackColumn('status', function ($value, $row) {
             if (is_null($row->approved_at) && is_null($row->cancelled_date)) {
                 return "Pending";

@@ -27,21 +27,18 @@ class PengadaanAktifController extends GroceryCrudController
         $crud->unsetOperations()->setEdit();
         $crud->setRead();
         $crud->defaultOrdering('invoice_date', 'desc');
-        $crud->columns(['code', 'status', 'campus_id', 'publisher_note', 'campus_note', 'total_price']);
+        $crud->columns(['code', 'status', 'campus_id', 'total_price']);
         $crud->addFields(['campus_id', 'publisher_note']);
         $crud->editFields(['campus_note']);
-        $crud->readFields(['code', 'status', 'campus_id', 'publisher_id', 'publisher_note', 'campus_note', 'invoice_date', 'approved_at', 'total_books', 'total_items', 'total_price']);
+        $crud->readFields(['code', 'status', 'campus_id', 'publisher_id', 'invoice_date', 'approved_at', 'total_books', 'total_items', 'total_price']);
         $crud->unsetSearchColumns(['campus_id']);
         $crud->requiredFields(['campus_id']);
-        $crud->setTexteditor(['publisher_note', 'campus_note']);
         $crud->setRelation('campus_id', 'campuses', 'name');
         $crud->setRelation('publisher_id', 'publishers', 'name');
         $crud->displayAs([
             'code' => 'Kode',
             'campus_id' => 'Kampus',
             'publisher_id' => 'Penerbit',
-            'publisher_note' => 'Catatan Penerbit',
-            'campus_note' => 'Catatan Kampus',
             'invoice_date' => 'Tgl. Pengadaan',
             'approved_at' => 'Tgl. Disetujui',
             'total_books' => 'Total Buku',
