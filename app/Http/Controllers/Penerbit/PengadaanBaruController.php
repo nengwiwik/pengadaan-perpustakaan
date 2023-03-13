@@ -25,16 +25,14 @@ class PengadaanBaruController extends GroceryCrudController
             $table . '.status' => Invoice::STATUS_PROSES,
         ]);
         $crud->defaultOrdering('invoice_date', 'desc');
-        $crud->columns(['code', 'campus_id', 'publisher_note', 'invoice_date', 'total_books']);
-        $crud->fields(['campus_id', 'publisher_note']);
+        $crud->columns(['code', 'campus_id', 'invoice_date', 'total_books']);
+        $crud->fields(['campus_id']);
         $crud->requiredFields(['campus_id']);
-        $crud->setTexteditor(['publisher_note']);
         $crud->setRelation('campus_id', 'campuses', 'name');
         $crud->displayAs([
             'code' => 'Kode',
             'campus_id' => 'Kampus',
             'invoice_date' => 'Tgl Pengadaan',
-            'publisher_note' => 'Catatan Penerbit',
             'total_books' => 'Jumlah Buku',
         ]);
         $crud->callbackColumn('code', function ($value, $row) {

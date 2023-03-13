@@ -59,6 +59,10 @@ class SocialiteController extends Controller
             || mb_substr($email, -10) === '@gmail.com'
         ) return true;
 
+        if (app()->environment(['local', 'staging'])) {
+            return true;
+        }
+
         return false;
     }
 

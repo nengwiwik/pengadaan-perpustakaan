@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Prodi;
 
 use App\Http\Controllers\GroceryCrudController;
+use App\Models\Book;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ArsipPengadaanDetailController extends GroceryCrudController
 {
@@ -24,8 +26,8 @@ class ArsipPengadaanDetailController extends GroceryCrudController
         ]);
 
         $crud->unsetOperations();
-        $crud->columns(['major_id', 'title', 'published_year', 'eksemplar', 'price', 'is_chosen', 'isbn', 'author_name', 'suplemen']);
-        $crud->readFields(['title', 'eksemplar', 'is_chosen', 'major_id', 'published_year', 'isbn', 'author_name', 'price', 'suplemen']);
+        $crud->columns(['major_id', 'cover', 'title', 'published_year', 'eksemplar', 'price', 'is_chosen', 'isbn', 'author_name', 'suplemen']);
+        $crud->readFields(['title'. 'cover', 'eksemplar', 'is_chosen', 'major_id', 'published_year', 'isbn', 'author_name', 'price', 'suplemen']);
         $crud->setRelation('major_id', 'majors', 'name');
         $crud->fieldType('price', 'numeric');
         $crud->fieldType('eksemplar', 'numeric');
@@ -41,7 +43,12 @@ class ArsipPengadaanDetailController extends GroceryCrudController
             'price' => 'Harga',
             'title' => 'Judul Buku',
         ]);
-
+        $crud->setTexteditor(['summary']);
+        $crud->setFieldUpload('cover', 'storage', asset('storage'));
+        $crud->callbackColumn('cover', function ($value, $row) {
+            $data = Book::find($row->id);
+            return "<img src='" . $data->cover . "' height='150'>";
+        });
         $crud->callbackReadField('price', function ($value, $row) {
             return "IDR " . number_format($value, 0, ',', '.');
         });

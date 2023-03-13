@@ -29,13 +29,22 @@ class PengadaanAktifDetailController extends GroceryCrudController
         ]);
 
         $crud->unsetOperations()->setEdit()->setRead();
-        $crud->columns(['major_id', 'title', 'published_year', 'eksemplar', 'is_chosen', 'isbn', 'author_name', 'price', 'suplemen']);
-        $crud->fields(['title', 'price', 'eksemplar']);
-        $crud->readFields(['title', 'eksemplar', 'major_id', 'published_year', 'isbn', 'author_name', 'price', 'suplemen']);
-        $crud->requiredFields(['title', 'price', 'eksemplar']);
+        $crud->columns(['major_id', 'cover', 'title', 'is_chosen', 'published_year', 'eksemplar', 'is_chosen', 'isbn', 'author_name', 'price', 'suplemen']);
+        $crud->fields(['title', 'price', 'eksemplar', 'is_chosen']);
+        $crud->readFields(['title', 'cover', 'eksemplar', 'is_chosen', 'major_id', 'published_year', 'isbn', 'author_name', 'price', 'summary', 'suplemen']);
+        $crud->requiredFields(['title', 'price', 'eksemplar', 'is_chosen']);
         $crud->setRelation('major_id', 'majors', 'name');
         $crud->fieldType('price', 'numeric');
-        $crud->fieldType('is_chosen', 'checkbox_boolean');
+        $crud->fieldType('is_chosen', 'dropdown_search', [
+            1 => 'Ya',
+            0 => 'Tidak',
+        ]);
+        $crud->setTexteditor(['summary']);
+        $crud->setFieldUpload('cover', 'storage', asset('storage'));
+        $crud->callbackColumn('cover', function ($value, $row) {
+            $data = Book::find($row->id);
+            return "<img src='" . $data->cover . "' height='150'>";
+        });
         $crud->displayAs([
             'major_id' => 'Jurusan',
             'isbn' => 'ISBN',
@@ -44,6 +53,12 @@ class PengadaanAktifDetailController extends GroceryCrudController
             'suplemen' => 'Suplemen',
             'is_chosen' => 'Pilih Buku',
         ]);
+        $crud->callbackReadField('price', function ($value, $primaryKeyValue) {
+            return "IDR " . number_format($value, 0, ',', '.');
+        });
+        $crud->callbackColumn('price', function ($value, $primaryKeyValue) {
+            return "IDR " . number_format($value, 0, ',', '.');
+        });
         $crud->callbackBeforeUpdate(function ($s) {
             $book = Book::find($s->primaryKeyValue);
             $s->data['title'] = $book->title;

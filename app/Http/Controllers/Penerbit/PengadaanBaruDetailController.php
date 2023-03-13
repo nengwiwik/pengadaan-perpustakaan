@@ -34,11 +34,21 @@ class PengadaanBaruDetailController extends GroceryCrudController
         ]);
 
         $crud->setRead();
-        $crud->columns(['major_id', 'title', 'isbn', 'author_name', 'published_year', 'price', 'suplemen']);
-        $crud->fields(['major_id', 'title', 'isbn', 'author_name', 'published_year', 'price', 'suplemen']);
-        $crud->requiredFields(['major_id', 'title', 'isbn', 'author_name', 'published_year', 'price', 'suplemen']);
+        $crud->columns(['major_id', 'cover', 'title', 'isbn', 'author_name', 'published_year', 'price', 'suplemen']);
+        $crud->fields(['major_id', 'title', 'isbn', 'author_name', 'published_year', 'price', 'cover', 'summary', 'suplemen']);
+        $crud->requiredFields(['major_id', 'title', 'isbn', 'author_name', 'published_year', 'price']);
         $crud->setRelation('major_id', 'majors', 'name');
         $crud->fieldType('price', 'numeric');
+        $crud->setTexteditor(['summary']);
+        $crud->setFieldUpload('cover', 'storage', asset('storage'));
+        $crud->callbackColumn('cover', function ($value, $row) {
+            $data = Book::find($row->id);
+            return "<img src='" . $data->cover . "' height='150'>";
+        });
+        $crud->callbackReadField('cover', function ($fieldValue, $primaryKeyValue) {
+            $data = Book::find($primaryKeyValue);
+            return "<img src='" . $data->cover . "' height='150'>";
+        });
         $crud->displayAs([
             'major_id' => 'Jurusan',
             'isbn' => 'ISBN',
@@ -47,6 +57,7 @@ class PengadaanBaruDetailController extends GroceryCrudController
             'published_year' => 'Tahun Terbit',
             'price' => 'Harga',
             'title' => 'Judul Buku',
+            'summary' => 'Ringkasan',
         ]);
         $crud->callbackBeforeInsert(function ($s) use ($invoice) {
             $s->data['invoice_id'] = $invoice->getKey();

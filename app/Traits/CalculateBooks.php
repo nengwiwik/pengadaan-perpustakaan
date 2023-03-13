@@ -18,7 +18,7 @@ trait CalculateBooks
 
     public function calculatePrice(Invoice $invoice)
     {
-        $data = Book::select(DB::raw('sum(price*eksemplar) as total_price, sum(eksemplar) as total_items, count(id) as total_books'))->whereNotNull('eksemplar')->whereBelongsTo($invoice)->first();
+        $data = Book::select(DB::raw('sum(price*eksemplar)*1 as total_price, sum(eksemplar)*1 as total_items, count(id) as total_books'))->whereNotNull('eksemplar')->whereBelongsTo($invoice)->first();
 
         $invoice->total_books = $data->total_books;
         $invoice->total_items = $data->total_items;

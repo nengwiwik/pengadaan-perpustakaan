@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 class Book extends Model
 {
@@ -21,5 +22,17 @@ class Book extends Model
     public function invoice(): BelongsTo
     {
         return $this->belongsTo(Invoice::class);
+    }
+
+    public function getCoverAttribute($value)
+    {
+        if (is_null($value)) {
+            return asset('image/book-cover.png');
+        }
+        if (strpos($value, 'http') === false) {
+            return Storage::url($value);
+        } else {
+            return $value;
+        }
     }
 }

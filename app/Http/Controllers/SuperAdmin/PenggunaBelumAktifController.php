@@ -50,9 +50,11 @@ class PenggunaBelumAktifController extends GroceryCrudController
             if (!is_null($user->campus_id) and !is_null($user->major_id)) {
                 $user->assignRole('Admin Prodi');
                 $user->removeRole('Penerbit');
+                // todo: notifikasi aktif sbg Admin Prodi
             } else {
                 $user->assignRole('Penerbit');
                 $user->removeRole('Admin Prodi');
+                // todo: notifikasi aktif sbg Admin Penerbit
             }
             return $s;
         });

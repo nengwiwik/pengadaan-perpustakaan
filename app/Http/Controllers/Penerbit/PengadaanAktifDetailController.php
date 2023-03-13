@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Penerbit;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\GroceryCrudController;
+use App\Models\Book;
 use App\Models\Invoice;
 use App\Traits\CalculateBooks;
 use Illuminate\Http\Request;
@@ -33,8 +34,9 @@ class PengadaanAktifDetailController extends GroceryCrudController
             $table . '.deleted_at is null',
         ]);
 
-        $crud->unsetOperations();
-        $crud->columns(['major_id', 'title', 'isbn', 'eksemplar', 'author_name', 'published_year', 'price', 'suplemen']);
+        $crud->unsetOperations()->setRead();
+        $crud->columns(['major_id', 'cover', 'title', 'isbn', 'eksemplar', 'price']);
+        $crud->fields(['major_id', 'cover', 'title', 'isbn', 'eksemplar', 'author_name', 'published_year', 'price', 'summary', 'suplemen']);
         $crud->setRelation('major_id', 'majors', 'name');
         $crud->fieldType('price', 'numeric');
         $crud->displayAs([
@@ -45,7 +47,16 @@ class PengadaanAktifDetailController extends GroceryCrudController
             'price' => 'Harga',
             'title' => 'Judul Buku',
         ]);
-        $crud->callbackColumn('price', function ($value, $row) {
+        $crud->setTexteditor(['summary']);
+        $crud->setFieldUpload('cover', 'storage', asset('storage'));
+        $crud->callbackColumn('cover', function ($value, $row) {
+            $data = Book::find($row->id);
+            return "<img src='" . $data->cover . "' height='150'>";
+        });
+        $crud->callbackReadField('price', function ($value, $primaryKeyValue) {
+            return "IDR " . number_format($value, 0, ',', '.');
+        });
+        $crud->callbackColumn('price', function ($value, $primaryKeyValue) {
             return "IDR " . number_format($value, 0, ',', '.');
         });
 

@@ -24,8 +24,9 @@ class ArsipPengadaanDetailController extends GroceryCrudController
             $table . '.deleted_at is null',
         ]);
 
-        $crud->unsetOperations();
-        $crud->columns(['major_id', 'title', 'eksemplar', 'price', 'published_year', 'isbn', 'author_name', 'suplemen']);
+        $crud->unsetOperations()->setRead();
+        $crud->columns(['major_id', 'cover', 'title', 'eksemplar', 'price', 'published_year', 'isbn', 'author_name', 'suplemen']);
+        $crud->readFields(['title', 'cover', 'summary', 'is_chosen', 'major_id', 'published_year', 'isbn', 'author_name', 'price', 'suplemen']);
         $crud->setRelation('major_id', 'majors', 'name');
         $crud->fieldType('price', 'numeric');
         $crud->displayAs([
@@ -37,6 +38,16 @@ class ArsipPengadaanDetailController extends GroceryCrudController
             'suplemen' => 'Suplemen',
             'price' => 'Harga',
         ]);
+        $crud->fieldType('is_chosen', 'dropdown_search', [
+            1 => 'Ya',
+            0 => 'Tidak',
+        ]);
+        $crud->setTexteditor(['summary']);
+        $crud->setFieldUpload('cover', 'storage', asset('storage'));
+        $crud->callbackColumn('cover', function ($value, $row) {
+            $data = Book::find($row->id);
+            return "<img src='" . $data->cover . "' height='150'>";
+        });
         $crud->callbackReadField('price', function ($value, $row) {
             return "IDR " . number_format($value, 0, ',', '.');
         });

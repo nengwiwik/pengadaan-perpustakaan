@@ -24,8 +24,9 @@ class PengadaanBaruDetailController extends GroceryCrudController
             $table . '.deleted_at is null',
         ]);
 
-        $crud->unsetOperations()->setDelete();
-        $crud->columns(['major_id', 'title', 'published_year', 'isbn', 'author_name', 'price', 'suplemen']);
+        $crud->unsetOperations()->setDelete()->setRead();
+        $crud->columns(['major_id', 'cover', 'title', 'published_year', 'isbn', 'author_name', 'price', 'suplemen']);
+        $crud->fields(['major_id', 'cover', 'title', 'published_year', 'isbn', 'author_name', 'price', 'summary', 'suplemen']);
         $crud->setRelation('major_id', 'majors', 'name');
         $crud->fieldType('price', 'numeric');
         $crud->displayAs([
@@ -37,6 +38,16 @@ class PengadaanBaruDetailController extends GroceryCrudController
             'suplemen' => 'Suplemen',
             'price' => 'Harga',
         ]);
+        $crud->setTexteditor(['summary']);
+        $crud->setFieldUpload('cover', 'storage', asset('storage'));
+        $crud->callbackColumn('cover', function ($value, $row) {
+            $data = Book::find($row->id);
+            return "<img src='" . $data->cover . "' height='150'>";
+        });
+        $crud->callbackReadField('cover', function ($fieldValue, $primaryKeyValue) {
+            $data = Book::find($primaryKeyValue);
+            return "<img src='" . $data->cover . "' height='150'>";
+        });
         $crud->callbackReadField('price', function ($value, $row) {
             return "IDR " . number_format($value, 0, ',', '.');
         });

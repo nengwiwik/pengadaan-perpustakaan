@@ -18,8 +18,8 @@ class PenerbitRepository
         $campus_id = $invoice->campus->id;
         $majors = $invoice->books()->select('major_id')->distinct()->pluck('major_id')->toArray();
 
-        // $users = User::select(['name', 'email'])->where('campus_id', $campus_id)->whereIn('major_id', $majors)->get();
-        $users = User::select(['name', 'email'])->where('campus_id', $campus_id)->get();
+        $users = User::select(['name', 'email'])->where('campus_id', $campus_id)->whereIn('major_id', $majors)->get();
+        // $users = User::select(['name', 'email'])->where('campus_id', $campus_id)->get();
         $mail = Mail::to(config('undira.admin_email'), config('undira.admin_name'));
         $mail->cc($users);
         $mail->queue(new NewInvoice($invoice));
