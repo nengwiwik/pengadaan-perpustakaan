@@ -24,6 +24,7 @@ class Invoice extends Model
     const STATUS_PROSES = "Proses";
     const STATUS_BARU = "Baru";
     const STATUS_AKTIF = "Aktif";
+    const STATUS_INVOICE = "Invoice";
     const STATUS_SELESAI = "Selesai";
     const STATUS_DITOLAK = "Ditolak";
 

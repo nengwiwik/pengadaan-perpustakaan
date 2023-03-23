@@ -16,13 +16,16 @@ class ArsipPengadaanController extends GroceryCrudController
         $singular = 'Pengadaan';
         $plural = 'Data Pengadaan';
         $crud = $this->_getGroceryCrudEnterprise();
+        $status_invoice = INVOICE::STATUS_INVOICE;
+        $status_ditolak = INVOICE::STATUS_DITOLAK;
+        $status_selesai = INVOICE::STATUS_SELESAI;
 
         $crud->setTable($table);
         $crud->setSubject($singular, $plural);
         $crud->where([
             $table . '.publisher_id = ?' => Auth::user()->publisher_id,
             $table . '.deleted_at is null',
-            $table . ".status in ('" . Invoice::STATUS_SELESAI . "','" . Invoice::STATUS_DITOLAK . "')",
+            $table . ".status in ('$status_invoice','$status_ditolak','$status_selesai')",
         ]);
         $crud->defaultOrdering('invoice_date', 'desc');
         $crud->unsetOperations();

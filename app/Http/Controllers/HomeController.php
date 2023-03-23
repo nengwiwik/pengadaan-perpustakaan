@@ -53,7 +53,7 @@ class HomeController extends Controller
         if ($user->hasExactRoles('Super Admin')) {
             $jumlah_pengadaan_baru = Invoice::where('status', Invoice::STATUS_BARU)->count();
             $jumlah_pengadaan_aktif = Invoice::where('status', Invoice::STATUS_AKTIF)->count();
-            $jumlah_arsip_pengadaan = Invoice::whereIn('status', [Invoice::STATUS_SELESAI, Invoice::STATUS_DITOLAK])->count();
+            $jumlah_arsip_pengadaan = Invoice::whereIn('status', [Invoice::STATUS_INVOICE, Invoice::STATUS_SELESAI, Invoice::STATUS_DITOLAK])->count();
             $jumlah_penerbit = Publisher::count();
             $jumlah_user_belum_aktif = User::doesntHave('roles')->count();
 
@@ -70,7 +70,7 @@ class HomeController extends Controller
         if ($user->hasExactRoles('Admin Prodi')) {
             $jumlah_pengadaan_baru = Invoice::where('campus_id', $user->campus_id)->where('status', Invoice::STATUS_BARU)->count();
             $jumlah_pengadaan_aktif = Invoice::where('campus_id', $user->campus_id)->where('status', Invoice::STATUS_AKTIF)->count();
-            $jumlah_arsip_pengadaan = Invoice::where('campus_id', $user->campus_id)->whereIn('status', [Invoice::STATUS_SELESAI, Invoice::STATUS_DITOLAK])->count();
+            $jumlah_arsip_pengadaan = Invoice::where('campus_id', $user->campus_id)->whereIn('status', [Invoice::STATUS_SELESAI, Invoice::STATUS_DITOLAK, Invoice::STATUS_INVOICE])->count();
             $jumlah_penerbit = Invoice::where('campus_id', $user->campus_id)->count();
 
             $route_pengadaan_aktif = route('prodi.procurements.active');
@@ -84,7 +84,7 @@ class HomeController extends Controller
         if ($user->hasExactRoles('Penerbit')) {
             $jumlah_pengadaan_baru = Invoice::where('publisher_id', $user->publisher_id)->where('status', Invoice::STATUS_PROSES)->count();
             $jumlah_pengadaan_aktif = Invoice::where('publisher_id', $user->publisher_id)->whereIn('status', [Invoice::STATUS_BARU, Invoice::STATUS_AKTIF])->count();
-            $jumlah_arsip_pengadaan = Invoice::where('publisher_id', $user->publisher_id)->whereIn('status', [Invoice::STATUS_SELESAI, Invoice::STATUS_DITOLAK])->count();
+            $jumlah_arsip_pengadaan = Invoice::where('publisher_id', $user->publisher_id)->whereIn('status', [Invoice::STATUS_SELESAI, Invoice::STATUS_DITOLAK, Invoice::STATUS_INVOICE])->count();
             $jumlah_penerbit = Invoice::where('publisher_id', $user->publisher_id)->count();
 
             $route_pengadaan_baru = route('penerbit.invoices');
