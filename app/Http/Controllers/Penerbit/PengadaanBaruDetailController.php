@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Penerbit;
 use App\Http\Controllers\GroceryCrudController;
 use App\Models\Book;
 use App\Models\Invoice;
+use App\Models\Major;
 use App\Traits\CalculateBooks;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,14 +34,15 @@ class PengadaanBaruDetailController extends GroceryCrudController
             $table . '.deleted_at is null',
         ]);
 
-        $crud->setRead();
+        // $crud->setRead();
         $crud->columns(['major_id', 'cover', 'title', 'isbn', 'author_name', 'published_year', 'price', 'suplemen']);
         $crud->fields(['major_id', 'title', 'isbn', 'author_name', 'published_year', 'price', 'cover', 'summary', 'suplemen']);
         $crud->requiredFields(['major_id', 'title', 'isbn', 'author_name', 'published_year', 'price']);
-        $crud->setRelation('major_id', 'majors', 'name');
+        // $crud->setRelation('major_id', 'majors', 'name');
         $crud->fieldType('price', 'numeric');
         $crud->setTexteditor(['summary']);
         $crud->setFieldUpload('cover', 'storage', asset('storage'));
+        $crud->fieldType('major_id', 'multiselect_searchable', Major::get()->pluck('name'));
         $crud->callbackColumn('cover', function ($value, $row) {
             $data = Book::find($row->id);
             return "<img src='" . $data->cover . "' height='150'>";
@@ -60,6 +62,7 @@ class PengadaanBaruDetailController extends GroceryCrudController
             'summary' => 'Ringkasan',
         ]);
         $crud->callbackBeforeInsert(function ($s) use ($invoice) {
+            info($s->data);
             $s->data['invoice_id'] = $invoice->getKey();
             $s->data['created_at'] = now();
             $s->data['updated_at'] = now();
