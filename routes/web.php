@@ -165,6 +165,25 @@ Auth::routes();
 Route::get('/auth/{provider}', [SocialiteController::class, 'redirectToProvider'])->name('socialite.redirect');
 Route::get('/auth/{provider}/callback', [SocialiteController::class, 'handleProvideCallback']);
 
+Route::get('/tex', function () {
+    $inv = App\Models\Invoice::find(4);
+    $majors = $inv->books()->select('major_id')->get();
+    $res = [];
+    foreach($majors as $major) {
+        $d = explode(",", $major->major_id);
+        array_push($res, $d);
+    }
+
+    $result = [];
+    foreach($res as $d) {
+        foreach($d as $e) {
+            array_push($result, $e);
+        }
+    }
+    dump($result);
+    $unik = array_unique($result);
+});
+
 Route::fallback(function () {
     return to_route('homepage')->with('error', 'Kamu tersesat?');
 });

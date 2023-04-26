@@ -24,12 +24,10 @@ class PengadaanAktifController extends GroceryCrudController
             $table . '.deleted_at is null',
             $table . '.status' => Invoice::STATUS_AKTIF,
         ]);
-        $crud->unsetOperations()->setEdit();
+        $crud->unsetOperations();
         $crud->setRead();
         $crud->defaultOrdering('invoice_date', 'desc');
         $crud->columns(['code', 'status', 'campus_id', 'total_price']);
-        $crud->addFields(['campus_id', 'publisher_note']);
-        $crud->editFields(['campus_note']);
         $crud->readFields(['code', 'status', 'campus_id', 'publisher_id', 'invoice_date', 'approved_at', 'total_books', 'total_items', 'total_price']);
         $crud->unsetSearchColumns(['campus_id']);
         $crud->requiredFields(['campus_id']);

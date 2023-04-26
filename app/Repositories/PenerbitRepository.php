@@ -8,6 +8,7 @@ use App\Mail\RejectedInvoice;
 use App\Mail\SendInvoice;
 use App\Mail\VerifiedMail;
 use App\Models\Invoice;
+use App\Models\Major;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -16,10 +17,35 @@ class PenerbitRepository
 {
     public static function sendEmails(Invoice $invoice)
     {
-        $majors = $invoice->books()->select('major_id')->distinct()->pluck('major_id')->toArray();
+        // $majors = $invoice->books()->select('major_id')->distinct()->pluck('major_id')->toArray();
+        $majors = $invoice->books()->select('major_id')->get();
+        $res = [];
+        foreach ($majors as $major) {
+            $d = explode(",", $major->major_id);
+            array_push($res, $d);
+        }
+
+        $result = [];
+        foreach ($res as $d) {
+            foreach ($d as $e) {
+                array_push($result, $e);
+            }
+        }
+        $majors = array_unique($result);
+        $last_major = array_key_last($majors);
+        $data_majors = Major::all();
+        $res = "";
+        foreach ($data_majors as $key => $dmajor) {
+            foreach ($majors as $k => $major) {
+                if ($key == $major) {
+                    $res .= $dmajor->name;
+                    if ($k != $last_major) $res .= ",";
+                }
+            }
+        }
+        $majors = explode(",", $res);
 
         $users = User::select(['name', 'email'])->where('campus_id', $invoice->campus_id)->whereIn('major_id', $majors)->get();
-        // $users = User::select(['name', 'email'])->where('campus_id', $campus_id)->get();
         $mail = Mail::to(config('undira.admin_email'), config('undira.admin_name'));
         $mail->cc($users);
         $mail->queue(new NewInvoice($invoice));

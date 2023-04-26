@@ -23,11 +23,18 @@ class PengadaanAktifDetailController extends GroceryCrudController
         $plural = 'Data Buku';
         $crud = $this->_getGroceryCrudEnterprise();
 
+        $majors = Major::all();
+        foreach($majors as $key => $major) {
+            if ($major->getKey() == Auth::user()->major_id) {
+                $kunci = $key;
+            }
+        }
+
         $crud->setTable($table);
         $crud->setSubject($singular, $plural);
         $crud->where([
             $table . '.invoice_id = ?' => $invoice->getKey(),
-            $table . '.major_id = ?' => Auth::user()->major_id,
+            $table . '.major_id like ?' => "%$kunci%",
             $table . '.deleted_at is null',
         ]);
 
