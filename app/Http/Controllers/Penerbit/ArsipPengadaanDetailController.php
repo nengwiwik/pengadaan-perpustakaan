@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Penerbit;
 use App\Http\Controllers\GroceryCrudController;
 use App\Models\Book;
 use App\Models\Invoice;
+use App\Models\Major;
 use Illuminate\Http\Request;
 
 class ArsipPengadaanDetailController extends GroceryCrudController
@@ -26,7 +27,22 @@ class ArsipPengadaanDetailController extends GroceryCrudController
 
         $crud->unsetOperations();
         $crud->columns(['major_id', 'cover', 'title', 'eksemplar', 'price', 'published_year', 'isbn', 'author_name', 'suplemen']);
-        $crud->setRelation('major_id', 'majors', 'name');
+        // $crud->setRelation('major_id', 'majors', 'name');
+        $crud->fieldType('major_id', 'multiselect_searchable', Major::get()->pluck('name'));
+        $crud->callbackReadField('major_id', function ($fieldValue, $primaryKeyValue) {
+            $last_major = array_key_last($fieldValue);
+            $res = "";
+            $data_majors = Major::all();
+            foreach ($data_majors as $key => $dmajor) {
+                foreach ($fieldValue as $k => $major) {
+                    if ($key == $major) {
+                        $res .= $dmajor->name;
+                        if ($k != $last_major) $res .= ", ";
+                    }
+                }
+            }
+            return $res;
+        });
         $crud->fieldType('price', 'numeric');
         $crud->displayAs([
             'major_id' => 'Jurusan',

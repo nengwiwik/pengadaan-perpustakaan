@@ -43,7 +43,6 @@ class PengadaanBaruDetailController extends GroceryCrudController
         $crud->fieldType('price', 'numeric');
         $crud->setTexteditor(['summary']);
         $crud->setFieldUpload('cover', 'storage', asset('storage'));
-        $crud->fieldType('major_id', 'multiselect_searchable', Major::get()->pluck('name'));
         $crud->callbackColumn('cover', function ($value, $row) {
             $data = Book::find($row->id);
             return "<img src='" . $data->cover . "' height='150'>";
@@ -52,8 +51,8 @@ class PengadaanBaruDetailController extends GroceryCrudController
             $data = Book::find($primaryKeyValue);
             return "<img src='" . $data->cover . "' height='150'>";
         });
+        $crud->fieldType('major_id', 'multiselect_searchable', Major::get()->pluck('name'));
         $crud->callbackReadField('major_id', function ($fieldValue, $primaryKeyValue) {
-            // $majors = explode(",", $fieldValue);
             $last_major = array_key_last($fieldValue);
             $res = "";
             $data_majors = Major::all();

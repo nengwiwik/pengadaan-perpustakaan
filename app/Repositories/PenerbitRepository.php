@@ -43,7 +43,7 @@ class PenerbitRepository
 
     public static function newProcurement(Invoice $invoice)
     {
-        $users = User::role('Super Admin')->where('campus_id', $invoice->campus_id)->get();
+        $users = User::role('Super Admin')->get();
         $mail = Mail::to($users);
         $mail->queue(new NewProcurement($invoice));
     }
