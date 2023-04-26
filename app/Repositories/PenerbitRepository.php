@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Mail\NewInvoice;
 use App\Mail\NewProcurement;
 use App\Mail\RejectedInvoice;
+use App\Mail\SendInvoice;
 use App\Mail\VerifiedMail;
 use App\Models\Invoice;
 use App\Models\User;
@@ -15,10 +16,9 @@ class PenerbitRepository
 {
     public static function sendEmails(Invoice $invoice)
     {
-        $campus_id = $invoice->campus->id;
         $majors = $invoice->books()->select('major_id')->distinct()->pluck('major_id')->toArray();
 
-        $users = User::select(['name', 'email'])->where('campus_id', $campus_id)->whereIn('major_id', $majors)->get();
+        $users = User::select(['name', 'email'])->where('campus_id', $invoice->campus_id)->whereIn('major_id', $majors)->get();
         // $users = User::select(['name', 'email'])->where('campus_id', $campus_id)->get();
         $mail = Mail::to(config('undira.admin_email'), config('undira.admin_name'));
         $mail->cc($users);
@@ -43,8 +43,19 @@ class PenerbitRepository
 
     public static function newProcurement(Invoice $invoice)
     {
-        $users = User::role('Super Admin')->get();
+        $users = User::role('Super Admin')->where('campus_id', $invoice->campus_id)->get();
         $mail = Mail::to($users);
         $mail->queue(new NewProcurement($invoice));
+    }
+
+    public static function sendInvoice(Invoice $invoice)
+    {
+        $users = User::role(User::ROLE_SUPER_ADMIN)->get();
+        $mail = Mail::to($users);
+        $mail->queue(new SendInvoice($invoice));
+
+        $users = User::role(User::ROLE_ADMIN_PRODI)->where('campus_id', $invoice->campus_id)->get();
+        $mail = Mail::to($users);
+        $mail->queue(new SendInvoice($invoice));
     }
 }

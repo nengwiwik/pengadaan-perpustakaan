@@ -27,8 +27,9 @@ class ArsipPengadaanController extends GroceryCrudController
         $crud->unsetOperations();
         $crud->setRead();
         $crud->defaultOrdering('invoice_date', 'desc');
+        $crud->setFieldUpload('invoice', 'storage', asset('storage'));
         $crud->columns(['code', 'status', 'campus_id', 'total_price']);
-        $crud->readFields(['code', 'status', 'campus_id', 'publisher_id', 'total_books', 'total_items', 'total_price', 'invoice_date', 'approved_at', 'verified_date', 'cancelled_date']);
+        $crud->readFields(['code', 'status', 'campus_id', 'publisher_id', 'total_books', 'total_items', 'total_price', 'invoice', 'invoice_date', 'approved_at', 'verified_date', 'cancelled_date']);
         $crud->unsetSearchColumns(['campus_id']);
         $crud->setRelation('campus_id', 'campuses', 'name');
         $crud->setRelation('publisher_id', 'publishers', 'name');

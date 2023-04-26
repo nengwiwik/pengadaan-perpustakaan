@@ -27,7 +27,8 @@ class ArsipPengadaanController extends GroceryCrudController
         $crud->setRelation('publisher_id', 'publishers', 'name');
         $crud->setRelation('campus_id', 'campuses', 'name');
         $crud->unsetOperations()->setRead();
-        $crud->readFields(['code', 'status', 'publisher_id', 'campus_id', 'total_books', 'total_items', 'total_price', 'invoice_date', 'approved_at', 'verified_date', 'cancelled_date']);
+        $crud->setFieldUpload('invoice', 'storage', asset('storage'));
+        $crud->readFields(['code', 'status', 'publisher_id', 'campus_id', 'total_books', 'total_items', 'total_price', 'invoice', 'invoice_date', 'approved_at', 'verified_date', 'cancelled_date']);
         $crud->callbackColumn('code', function ($value, $row) {
             return "<a href='" . route('procurements.books.arsip', $row->id) . "'>" . $value . "</a>";
         });

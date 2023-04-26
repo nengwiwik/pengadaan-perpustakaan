@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Penerbit;
 
 use App\Http\Controllers\GroceryCrudController;
 use App\Models\Invoice;
+use App\Repositories\PenerbitRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -28,13 +29,44 @@ class ArsipPengadaanController extends GroceryCrudController
             $table . ".status in ('$status_invoice','$status_ditolak','$status_selesai')",
         ]);
         $crud->defaultOrdering('invoice_date', 'desc');
-        $crud->unsetOperations();
+        $crud->unsetOperations()->setEdit();
         $crud->setRead();
+        $crud->setFieldUpload('invoice', 'storage', asset('storage'));
         $crud->columns(['code', 'status', 'campus_id', 'invoice_date', 'total_price']);
-        $crud->addFields(['campus_id']);
-        $crud->editFields(['campus_id', 'invoice_date']);
-        $crud->requiredFields(['campus_id']);
-        $crud->readFields(['code', 'status', 'campus_id', 'total_books', 'total_items', 'total_price', 'invoice_date', 'approved_at', 'verified_date', 'cancelled_date']);
+        $crud->editFields(['invoice', 'status']);
+        $crud->fieldType('status', 'hidden');
+        $crud->requiredFields(['invoice']);
+        $crud->setLangString('edit', 'Upload Invoice');
+        $crud->callbackBeforeUpload(function ($uploadData) {
+            $fieldName = $uploadData->field_name;
+
+            $filename = isset($_FILES[$fieldName]) ? $_FILES[$fieldName]['name'] : null;
+
+            if (!preg_match('/\.(pdf)$/', $filename)) {
+                return (new \GroceryCrud\Core\Error\ErrorMessage())
+                    ->setMessage("The file extension for filename: '" . $filename . "'' is not supported! Only support PDF.");
+            }
+
+            // Don't forget to return the uploadData at the end
+            return $uploadData;
+        });
+        $crud->callbackAfterUpload(function ($data = null) {
+            logger(json_encode($data));
+
+            return $data;
+        });
+        $crud->callbackAfterUpdate(function ($s) {
+            $invoice = Invoice::find($s->primaryKeyValue);
+
+            if (is_null($invoice->invoice) == false && $invoice->status == Invoice::STATUS_INVOICE) {
+                PenerbitRepository::sendInvoice($invoice);
+                $invoice->status = Invoice::STATUS_SELESAI;
+                $invoice->save();
+            }
+
+            return $s;
+        });
+        $crud->readFields(['code', 'status', 'campus_id', 'total_books', 'total_items', 'total_price', 'invoice', 'invoice_date', 'approved_at', 'verified_date', 'cancelled_date']);
         $crud->setRelation('campus_id', 'campuses', 'name');
         $crud->displayAs([
             'campus_id' => 'Kampus',
@@ -55,17 +87,6 @@ class ArsipPengadaanController extends GroceryCrudController
         $crud->callbackColumn('total_price', function ($value, $row) {
             return "IDR " . number_format($value, 0, ',', '.');
         });
-        $crud->callbackBeforeInsert(function ($s) {
-            $s->data['code'] = "INV-" . date('ymdHis') . "-" . str_pad(Auth::user()->publisher_id, 3, '0', STR_PAD_LEFT);
-            $s->data['publisher_id'] = Auth::user()->publisher_id;
-            $s->data['created_at'] = now();
-            $s->data['updated_at'] = now();
-            return $s;
-        });
-        $crud->callbackAfterInsert(function ($s) {
-            $redirectResponse = new \GroceryCrud\Core\Redirect\RedirectResponse();
-            return $redirectResponse->setUrl(route('penerbit.invoices.books', $s->insertId));
-        });
         $crud->callbackDelete(function ($s) {
             $data = Invoice::find($s->primaryKeyValue);
 
@@ -79,6 +100,12 @@ class ArsipPengadaanController extends GroceryCrudController
             return $s;
         });
         $crud->callbackBeforeUpdate(function ($s) {
+            $status = $s->data['status'];
+            if ($status != Invoice::STATUS_INVOICE) {
+                $errorMessage = new \GroceryCrud\Core\Error\ErrorMessage();
+                return $errorMessage->setMessage('Proses upload hanya berlaku untuk pengadaan dengan status Invoice!');
+            }
+
             $s->data['updated_at'] = now();
             return $s;
         });
