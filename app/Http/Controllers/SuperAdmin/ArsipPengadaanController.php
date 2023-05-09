@@ -12,19 +12,23 @@ class ArsipPengadaanController extends GroceryCrudController
     {
         $title = "Arsip Pengadaan";
         $crud = $this->_getGroceryCrudEnterprise();
+        $status_invoice = Invoice::STATUS_INVOICE;
+        $status_selesai = Invoice::STATUS_SELESAI;
+        $status_ditolak = Invoice::STATUS_DITOLAK;
 
         $crud->setTable('invoices');
         $crud->setSubject('Pengadaan', 'Arsip Pengadaan');
         $crud->where([
             "invoices.deleted_at is null",
-            "invoices.status in ('" . Invoice::STATUS_SELESAI . "','" . Invoice::STATUS_DITOLAK . "')",
+            "invoices.status in ('$status_invoice','$status_selesai','$status_ditolak')",
         ]);
         $crud->defaultOrdering('invoice_date', 'desc');
         $crud->columns(['code', 'status', 'publisher_id', 'campus_id', 'total_books', 'total_items', 'total_price']);
         $crud->setRelation('publisher_id', 'publishers', 'name');
         $crud->setRelation('campus_id', 'campuses', 'name');
         $crud->unsetOperations()->setRead();
-        $crud->readFields(['code', 'status', 'publisher_id', 'campus_id', 'total_books', 'total_items', 'total_price', 'invoice_date', 'approved_at', 'verified_date', 'cancelled_date']);
+        $crud->setFieldUpload('invoice', 'storage', asset('storage'));
+        $crud->readFields(['code', 'status', 'publisher_id', 'campus_id', 'total_books', 'total_items', 'total_price', 'invoice', 'invoice_date', 'approved_at', 'verified_date', 'cancelled_date']);
         $crud->callbackColumn('code', function ($value, $row) {
             return "<a href='" . route('procurements.books.arsip', $row->id) . "'>" . $value . "</a>";
         });

@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Penerbit;
 use App\Http\Controllers\GroceryCrudController;
 use App\Models\Book;
 use App\Models\Invoice;
+use App\Models\Major;
 use App\Traits\CalculateBooks;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -37,7 +39,7 @@ class PengadaanBaruDetailController extends GroceryCrudController
         $crud->columns(['major_id', 'cover', 'title', 'isbn', 'author_name', 'published_year', 'price', 'suplemen']);
         $crud->fields(['major_id', 'title', 'isbn', 'author_name', 'published_year', 'price', 'cover', 'summary', 'suplemen']);
         $crud->requiredFields(['major_id', 'title', 'isbn', 'author_name', 'published_year', 'price']);
-        $crud->setRelation('major_id', 'majors', 'name');
+        // $crud->setRelation('major_id', 'majors', 'name');
         $crud->fieldType('price', 'numeric');
         $crud->setTexteditor(['summary']);
         $crud->setFieldUpload('cover', 'storage', asset('storage'));
@@ -48,6 +50,21 @@ class PengadaanBaruDetailController extends GroceryCrudController
         $crud->callbackReadField('cover', function ($fieldValue, $primaryKeyValue) {
             $data = Book::find($primaryKeyValue);
             return "<img src='" . $data->cover . "' height='150'>";
+        });
+        $crud->fieldType('major_id', 'multiselect_searchable', Major::get()->pluck('name'));
+        $crud->callbackReadField('major_id', function ($fieldValue, $primaryKeyValue) {
+            $last_major = array_key_last($fieldValue);
+            $res = "";
+            $data_majors = Major::all();
+            foreach ($data_majors as $key => $dmajor) {
+                foreach ($fieldValue as $k => $major) {
+                    if ($key == $major) {
+                        $res .= $dmajor->name;
+                        if ($k != $last_major) $res .= ", ";
+                    }
+                }
+            }
+            return $res;
         });
         $crud->displayAs([
             'major_id' => 'Jurusan',
@@ -60,6 +77,20 @@ class PengadaanBaruDetailController extends GroceryCrudController
             'summary' => 'Ringkasan',
         ]);
         $crud->callbackBeforeInsert(function ($s) use ($invoice) {
+            // info($s->data);
+            // cek buku sudah pernah dibeli atau belum
+            // gagalkan jika sudah pernah
+            $cek = Book::query()
+                ->where('isbn', $s->data['isbn'])
+                ->whereHas('invoice', function (Builder $query) {
+                    $query->WhereNotIn('status', [Invoice::STATUS_DITOLAK]);
+                    $query->where('publisher_id', auth()->user()->publisher_id);
+                })
+                ->first();
+            if ($cek) {
+                $errorMessage = new \GroceryCrud\Core\Error\ErrorMessage();
+                return $errorMessage->setMessage('Tidak bisa menawarkan buku yang sama.');
+            }
             $s->data['invoice_id'] = $invoice->getKey();
             $s->data['created_at'] = now();
             $s->data['updated_at'] = now();
@@ -68,6 +99,23 @@ class PengadaanBaruDetailController extends GroceryCrudController
         $crud->callbackAfterInsert(function ($s) {
             $inv = Book::find($s->insertId);
             $this->calculateBooks($inv->invoice);
+
+            return $s;
+        });
+        $crud->callbackBeforeUpdate(function ($s) {
+            // cek buku sudah pernah dibeli atau belum
+            // gagalkan jika sudah pernah
+            $cek = Book::query()
+                ->where('isbn', $s->data['isbn'])
+                ->whereHas('invoice', function (Builder $query) {
+                    $query->WhereNotIn('status', [Invoice::STATUS_DITOLAK]);
+                    $query->where('publisher_id', auth()->user()->publisher_id);
+                })
+                ->first();
+            if ($cek) {
+                $errorMessage = new \GroceryCrud\Core\Error\ErrorMessage();
+                return $errorMessage->setMessage('Tidak bisa menawarkan buku yang sama.');
+            }
 
             return $s;
         });

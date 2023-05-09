@@ -14,7 +14,7 @@ class VerifikasiPengadaanController extends Controller
         $data = Invoice::find(decrypt($id));
         PenerbitRepository::sendVerified($data);
         $data->verified_date = now();
-        $data->status = Invoice::STATUS_SELESAI;
+        $data->status = Invoice::STATUS_INVOICE;
         $data->save();
         return redirect()->route('procurements.archived');
     }

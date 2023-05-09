@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\GroceryCrudController;
 use App\Models\Book;
 use App\Models\Invoice;
+use App\Models\Major;
 use App\Traits\CalculateBooks;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,11 +23,18 @@ class PengadaanAktifDetailController extends GroceryCrudController
         $plural = 'Data Buku';
         $crud = $this->_getGroceryCrudEnterprise();
 
+        $majors = Major::all();
+        foreach($majors as $key => $major) {
+            if ($major->getKey() == Auth::user()->major_id) {
+                $kunci = $key;
+            }
+        }
+
         $crud->setTable($table);
         $crud->setSubject($singular, $plural);
         $crud->where([
             $table . '.invoice_id = ?' => $invoice->getKey(),
-            $table . '.major_id = ?' => Auth::user()->major_id,
+            $table . '.major_id like ?' => "%$kunci%",
             $table . '.deleted_at is null',
         ]);
 
@@ -34,7 +42,22 @@ class PengadaanAktifDetailController extends GroceryCrudController
         $crud->columns(['cover', 'title', 'is_chosen', 'published_year', 'isbn', 'author_name']);
         $crud->fields(['title', 'price', 'is_chosen']);
         $crud->readFields(['title', 'cover', 'summary', 'is_chosen', 'major_id', 'published_year', 'isbn', 'author_name', 'price', 'suplemen']);
-        $crud->setRelation('major_id', 'majors', 'name');
+        // $crud->setRelation('major_id', 'majors', 'name');
+        $crud->fieldType('major_id', 'multiselect_searchable', Major::get()->pluck('name'));
+        $crud->callbackReadField('major_id', function ($fieldValue, $primaryKeyValue) {
+            $last_major = array_key_last($fieldValue);
+            $res = "";
+            $data_majors = Major::all();
+            foreach ($data_majors as $key => $dmajor) {
+                foreach ($fieldValue as $k => $major) {
+                    if ($key == $major) {
+                        $res .= $dmajor->name;
+                        if ($k != $last_major) $res .= ", ";
+                    }
+                }
+            }
+            return $res;
+        });
         $crud->fieldType('price', 'numeric');
         $crud->fieldType('is_chosen', 'dropdown_search', [
             1 => 'Ya',

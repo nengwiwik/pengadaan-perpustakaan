@@ -6,17 +6,25 @@ use App\Http\Controllers\Controller;
 use App\Models\Invoice;
 use App\Repositories\PenerbitRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TerimaPengadaanController extends Controller
 {
     public function __invoke($id)
     {
-        $data = Invoice::find(decrypt($id));
-        PenerbitRepository::sendEmails($data);
-        $data->approved_at = now();
-        $data->cancelled_date = null;
-        $data->status = Invoice::STATUS_AKTIF;
-        $data->save();
-        return redirect()->route('procurements.active');
+        DB::beginTransaction();
+        try {
+            $data = Invoice::find(decrypt($id));
+            PenerbitRepository::sendEmails($data);
+            $data->approved_at = now();
+            $data->cancelled_date = null;
+            $data->status = Invoice::STATUS_AKTIF;
+            $data->save();
+            DB::commit();
+            return redirect()->route('procurements.active');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            abort(500, "Ada masalah pada proses penerimaan pengadaan. Hubungi Web Administrator segera!");
+        }
     }
 }
