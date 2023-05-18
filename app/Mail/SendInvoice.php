@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Models\Invoice;
+use App\Models\Procurement;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -21,7 +21,7 @@ class SendInvoice extends Mailable
      *
      * @return void
      */
-    public function __construct(public Invoice $invoice)
+    public function __construct(public Procurement $procurement)
     {
         //
     }
@@ -35,7 +35,7 @@ class SendInvoice extends Mailable
     {
         return new Envelope(
             from: new Address($this->invoice->publisher->email, $this->invoice->publisher->name),
-            subject: 'Invoice Pengadaan Buku #' . $this->invoice->code,
+            subject: 'Procurement Pengadaan Buku #' . $this->invoice->code,
         );
     }
 

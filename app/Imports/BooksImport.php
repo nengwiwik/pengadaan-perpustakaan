@@ -3,7 +3,7 @@
 namespace App\Imports;
 
 use App\Models\Book;
-use App\Models\Invoice;
+use App\Models\Procurement;
 use App\Models\Major;
 use App\Traits\CalculateBooks;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -23,7 +23,7 @@ class BooksImport implements
 {
     use CalculateBooks;
 
-    public function __construct(public Invoice $invoice)
+    public function __construct(public Procurement $procurement)
     {
     }
 

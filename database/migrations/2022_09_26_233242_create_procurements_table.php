@@ -15,17 +15,21 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('invoices', function (Blueprint $table) {
+        Schema::create('procurements', function (Blueprint $table) {
             $table->id();
             $table->string('code')->nullable();
             $table->foreignIdFor(Publisher::class)->nullable()->constrained();
             $table->foreignIdFor(Campus::class)->nullable()->constrained();
-            $table->text('publisher_note')->nullable();
-            $table->text('campus_note')->nullable();
+            $table->string('status', 10)->nullable();
+            $table->string('invoice', 50)->nullable();
             $table->date('invoice_date')->nullable();
+            $table->date('approved_at')->nullable();
             $table->date('verified_date')->nullable();
             $table->date('paid_date')->nullable();
             $table->date('cancelled_date')->nullable();
+            $table->bigInteger('total_books')->default(0);
+            $table->bigInteger('total_items')->default(0);
+            $table->bigInteger('total_price')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -38,6 +42,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('invoices');
+        Schema::dropIfExists('procurements');
     }
 };

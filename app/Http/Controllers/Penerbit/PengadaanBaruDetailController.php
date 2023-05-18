@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Penerbit;
 
 use App\Http\Controllers\GroceryCrudController;
 use App\Models\Book;
-use App\Models\Invoice;
+use App\Models\Procurement;
 use App\Models\Major;
 use App\Traits\CalculateBooks;
 use Illuminate\Database\Eloquent\Builder;
@@ -15,14 +15,14 @@ class PengadaanBaruDetailController extends GroceryCrudController
 {
     use CalculateBooks;
 
-    public function __invoke(Invoice $invoice)
+    public function __invoke(Procurement $procurement)
     {
         // otorisasi
-        if ($invoice->publisher_id != Auth::user()->publisher_id) {
+        if ($procurement->publisher_id != Auth::user()->publisher_id) {
             return abort(403);
         }
 
-        $title = "Data Buku | Nomor Pengadaan " . $invoice->code;
+        $title = "Data Buku | Nomor Pengadaan " . $procurement->code;
         $table = 'books';
         $singular = 'Buku';
         $plural = 'Data Buku';
@@ -31,7 +31,7 @@ class PengadaanBaruDetailController extends GroceryCrudController
         $crud->setTable($table);
         $crud->setSubject($singular, $plural);
         $crud->where([
-            $table . '.invoice_id = ?' => $invoice->getKey(),
+            $table . '.invoice_id = ?' => $procurement->getKey(),
             $table . '.deleted_at is null',
         ]);
 
@@ -76,14 +76,14 @@ class PengadaanBaruDetailController extends GroceryCrudController
             'title' => 'Judul Buku',
             'summary' => 'Ringkasan',
         ]);
-        $crud->callbackBeforeInsert(function ($s) use ($invoice) {
+        $crud->callbackBeforeInsert(function ($s) use ($procurement) {
             // info($s->data);
             // cek buku sudah pernah dibeli atau belum
             // gagalkan jika sudah pernah
             $cek = Book::query()
                 ->where('isbn', $s->data['isbn'])
                 ->whereHas('invoice', function (Builder $query) {
-                    $query->WhereNotIn('status', [Invoice::STATUS_DITOLAK]);
+                    $query->WhereNotIn('status', [Procurement::STATUS_DITOLAK]);
                     $query->where('publisher_id', auth()->user()->publisher_id);
                 })
                 ->first();
@@ -91,7 +91,7 @@ class PengadaanBaruDetailController extends GroceryCrudController
                 $errorMessage = new \GroceryCrud\Core\Error\ErrorMessage();
                 return $errorMessage->setMessage('Tidak bisa menawarkan buku yang sama.');
             }
-            $s->data['invoice_id'] = $invoice->getKey();
+            $s->data['invoice_id'] = $procurement->getKey();
             $s->data['created_at'] = now();
             $s->data['updated_at'] = now();
             return $s;
@@ -108,7 +108,7 @@ class PengadaanBaruDetailController extends GroceryCrudController
             $cek = Book::query()
                 ->where('isbn', $s->data['isbn'])
                 ->whereHas('invoice', function (Builder $query) {
-                    $query->WhereNotIn('status', [Invoice::STATUS_DITOLAK]);
+                    $query->WhereNotIn('status', [Procurement::STATUS_DITOLAK]);
                     $query->where('publisher_id', auth()->user()->publisher_id);
                 })
                 ->first();

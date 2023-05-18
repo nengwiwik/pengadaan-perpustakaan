@@ -7202,7 +7202,7 @@ file-invoice:
   changes:
     - 5.1.0
     - 5.10.2
-  label: File Invoice
+  label: File Procurement
   search:
     terms:
       - account
@@ -7219,7 +7219,7 @@ file-invoice-dollar:
   changes:
     - 5.1.0
     - 5.10.2
-  label: File Invoice with US Dollar
+  label: File Procurement with US Dollar
   search:
     terms:
       - $

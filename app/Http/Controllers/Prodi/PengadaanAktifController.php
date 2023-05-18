@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Prodi;
 
 use App\Http\Controllers\GroceryCrudController;
-use App\Models\Invoice;
+use App\Models\Procurement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -22,7 +22,7 @@ class PengadaanAktifController extends GroceryCrudController
         $crud->where([
             $table . '.campus_id = ?' => Auth::user()->campus_id,
             $table . '.deleted_at is null',
-            $table . '.status' => Invoice::STATUS_AKTIF,
+            $table . '.status' => Procurement::STATUS_AKTIF,
         ]);
         $crud->unsetOperations();
         $crud->setRead();

@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Invoice;
+use App\Models\Procurement;
 use App\Models\Major;
 use App\Models\Publisher;
 use Illuminate\Database\Migrations\Migration;
@@ -27,7 +27,7 @@ return new class extends Migration
       $table->string('source')->nullable();
       $table->boolean('is_chosen')->nullable();
       $table->boolean('is_verified')->nullable();
-      $table->foreignIdFor(Invoice::class)->nullable()->constrained();
+      $table->foreignIdFor(Procurement::class)->nullable()->constrained();
       $table->string('eksemplar')->nullable();
       $table->string('suplemen')->nullable();
       $table->timestamps();

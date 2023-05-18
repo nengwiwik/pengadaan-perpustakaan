@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\GroceryCrudController;
-use App\Models\Invoice;
+use App\Models\Procurement;
 use Illuminate\Http\Request;
 
 class ArsipPengadaanController extends GroceryCrudController
@@ -12,9 +12,9 @@ class ArsipPengadaanController extends GroceryCrudController
     {
         $title = "Arsip Pengadaan";
         $crud = $this->_getGroceryCrudEnterprise();
-        $status_invoice = Invoice::STATUS_INVOICE;
-        $status_selesai = Invoice::STATUS_SELESAI;
-        $status_ditolak = Invoice::STATUS_DITOLAK;
+        $status_invoice = Procurement::STATUS_INVOICE;
+        $status_selesai = Procurement::STATUS_SELESAI;
+        $status_ditolak = Procurement::STATUS_DITOLAK;
 
         $crud->setTable('invoices');
         $crud->setSubject('Pengadaan', 'Arsip Pengadaan');
@@ -68,7 +68,7 @@ class ArsipPengadaanController extends GroceryCrudController
             return $s;
         });
         $crud->callbackDelete(function ($s) {
-            $data = Invoice::find($s->primaryKeyValue);
+            $data = Procurement::find($s->primaryKeyValue);
             $data->delete();
             return $s;
         });

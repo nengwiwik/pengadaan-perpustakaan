@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\GroceryCrudController;
-use App\Models\Invoice;
+use App\Models\Procurement;
 use Illuminate\Http\Request;
 
 class PengadaanBaruController extends GroceryCrudController
@@ -17,7 +17,7 @@ class PengadaanBaruController extends GroceryCrudController
         $crud->setSubject('Pengadaan Baru', 'Data Pengadaan Baru');
         $crud->where([
             "invoices.invoice_date is not null",
-            "invoices.status" => Invoice::STATUS_BARU,
+            "invoices.status" => Procurement::STATUS_BARU,
         ]);
         $crud->defaultOrdering('invoice_date', 'desc');
         $crud->columns(['status', 'code', 'publisher_id', 'campus_id', 'cancelled_date', 'approved_at']);
@@ -63,7 +63,7 @@ class PengadaanBaruController extends GroceryCrudController
             return $s;
         });
         $crud->callbackDelete(function ($s) {
-            $data = Invoice::find($s->primaryKeyValue);
+            $data = Procurement::find($s->primaryKeyValue);
             $data->delete();
             return $s;
         });

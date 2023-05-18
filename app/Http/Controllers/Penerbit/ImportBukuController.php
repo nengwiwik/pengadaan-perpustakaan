@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Penerbit;
 
 use App\Http\Controllers\Controller;
 use App\Imports\BooksImport;
-use App\Models\Invoice;
+use App\Models\Procurement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -18,7 +18,7 @@ class ImportBukuController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function __invoke(Request $request, Invoice $invoice)
+    public function __invoke(Request $request, Procurement $procurement)
     {
         $validator = Validator::make($request->all(), [
             'upload' => 'required|file|mimes:xlsx'
@@ -33,7 +33,7 @@ class ImportBukuController extends Controller
 
         try {
             DB::beginTransaction();
-            Excel::import(new BooksImport($invoice), $path, 'public');
+            Excel::import(new BooksImport($procurement), $path, 'public');
             DB::commit();
         } catch (\Exception $ex) {
             DB::rollBack();

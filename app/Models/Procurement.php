@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Invoice extends Model
+class Procurement extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -24,7 +24,7 @@ class Invoice extends Model
     const STATUS_PROSES = "Proses";
     const STATUS_BARU = "Baru";
     const STATUS_AKTIF = "Aktif";
-    const STATUS_INVOICE = "Invoice";
+    const STATUS_INVOICE = "Procurement";
     const STATUS_SELESAI = "Selesai";
     const STATUS_DITOLAK = "Ditolak";
 

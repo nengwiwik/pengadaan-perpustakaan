@@ -4,15 +4,15 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\GroceryCrudController;
 use App\Models\Book;
-use App\Models\Invoice;
+use App\Models\Procurement;
 use App\Models\Major;
 use Illuminate\Http\Request;
 
 class PengadaanBaruDetailController extends GroceryCrudController
 {
-    public function __invoke(Invoice $invoice)
+    public function __invoke(Procurement $procurement)
     {
-        $title = "Data Buku | ID Pengadaan " . $invoice->code;
+        $title = "Data Buku | ID Pengadaan " . $procurement->code;
         $table = 'books';
         $singular = 'Buku';
         $plural = 'Data Buku';
@@ -21,7 +21,7 @@ class PengadaanBaruDetailController extends GroceryCrudController
         $crud->setTable($table);
         $crud->setSubject($singular, $plural);
         $crud->where([
-            $table . '.invoice_id = ?' => $invoice->getKey(),
+            $table . '.invoice_id = ?' => $procurement->getKey(),
             $table . '.deleted_at is null',
         ]);
 

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Penerbit;
 
 use App\Http\Controllers\GroceryCrudController;
-use App\Models\Invoice;
+use App\Models\Procurement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -22,7 +22,7 @@ class PengadaanAktifController extends GroceryCrudController
         $crud->where([
             $table . '.publisher_id = ?' => Auth::user()->publisher_id,
             $table . '.deleted_at is null',
-            $table . ".status in ('" . Invoice::STATUS_AKTIF . "','" . Invoice::STATUS_BARU . "')",
+            $table . ".status in ('" . Procurement::STATUS_AKTIF . "','" . Procurement::STATUS_BARU . "')",
         ]);
         $crud->unsetOperations();
         $crud->setRead();
@@ -73,7 +73,7 @@ class PengadaanAktifController extends GroceryCrudController
             return $redirectResponse->setUrl(route('penerbit.invoices.books', $s->insertId));
         });
         $crud->callbackDelete(function ($s) {
-            $data = Invoice::find($s->primaryKeyValue);
+            $data = Procurement::find($s->primaryKeyValue);
 
             if (!$data) {
                 $errorMessage = new \GroceryCrud\Core\Error\ErrorMessage();

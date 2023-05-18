@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Penerbit;
 
 use App\Http\Controllers\GroceryCrudController;
-use App\Models\Invoice;
+use App\Models\Procurement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -22,7 +22,7 @@ class PengadaanBaruController extends GroceryCrudController
         $crud->where([
             $table . '.publisher_id = ?' => Auth::user()->publisher_id,
             $table . '.deleted_at is null',
-            $table . '.status' => Invoice::STATUS_PROSES,
+            $table . '.status' => Procurement::STATUS_PROSES,
         ]);
         $crud->defaultOrdering('invoice_date', 'desc');
         $crud->columns(['code', 'campus_id', 'invoice_date', 'total_books']);
@@ -39,7 +39,7 @@ class PengadaanBaruController extends GroceryCrudController
             return '<a href="' . route('penerbit.invoices.books', $row->id) . '">' . $value . '</a>';
         });
         $crud->setActionButton('Kirim Pengadaan', 'fa fa-envelope', function ($row) {
-            $inv = Invoice::find($row->id);
+            $inv = Procurement::find($row->id);
             return route('penerbit.invoices.store', $inv->code);
         }, false);
         $crud->callbackBeforeInsert(function ($s) {
@@ -47,7 +47,7 @@ class PengadaanBaruController extends GroceryCrudController
             $s->data['publisher_id'] = Auth::user()->publisher_id;
             $s->data['created_at'] = now();
             $s->data['updated_at'] = now();
-            $s->data['status'] = Invoice::STATUS_PROSES;
+            $s->data['status'] = Procurement::STATUS_PROSES;
             return $s;
         });
         $crud->callbackAfterInsert(function ($s) {
@@ -55,7 +55,7 @@ class PengadaanBaruController extends GroceryCrudController
             return $redirectResponse->setUrl(route('penerbit.invoices.books', $s->insertId));
         });
         $crud->callbackDelete(function ($s) {
-            $data = Invoice::find($s->primaryKeyValue);
+            $data = Procurement::find($s->primaryKeyValue);
 
             if (!$data) {
                 $errorMessage = new \GroceryCrud\Core\Error\ErrorMessage();
