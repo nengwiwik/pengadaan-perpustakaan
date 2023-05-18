@@ -46,7 +46,7 @@ class VerifiedMail extends Mailable implements ShouldQueue
     public function content()
     {
         return new Content(
-            markdown: 'emails.invoices.verified',
+            markdown: 'emails.procurements.verified',
         );
     }
 

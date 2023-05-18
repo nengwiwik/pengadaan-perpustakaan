@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Penerbit;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\GroceryCrudController;
-use App\Models\Book;
+use App\Models\ProcurementBook;
 use App\Models\Procurement;
 use App\Models\Major;
 use App\Traits\CalculateBooks;
@@ -23,7 +23,7 @@ class PengadaanAktifDetailController extends GroceryCrudController
         }
 
         $title = "Data Buku | Nomor Pengadaan " . $procurement->code;
-        $table = 'books';
+        $table = 'procurement_books';
         $singular = 'Buku';
         $plural = 'Data Buku | Nomor Pengadaan ' . $procurement->code;
         $crud = $this->_getGroceryCrudEnterprise();
@@ -31,7 +31,7 @@ class PengadaanAktifDetailController extends GroceryCrudController
         $crud->setTable($table);
         $crud->setSubject($singular, $plural);
         $crud->where([
-            $table . '.invoice_id = ?' => $procurement->getKey(),
+            $table . '.procurement_id = ?' => $procurement->getKey(),
             $table . '.deleted_at is null',
         ]);
 
@@ -66,7 +66,7 @@ class PengadaanAktifDetailController extends GroceryCrudController
         $crud->setTexteditor(['summary']);
         $crud->setFieldUpload('cover', 'storage', asset('storage'));
         $crud->callbackColumn('cover', function ($value, $row) {
-            $data = Book::find($row->id);
+            $data = ProcurementBook::find($row->id);
             return "<img src='" . $data->cover . "' height='150'>";
         });
         $crud->callbackReadField('price', function ($value, $primaryKeyValue) {

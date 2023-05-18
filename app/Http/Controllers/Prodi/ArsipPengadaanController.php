@@ -12,7 +12,7 @@ class ArsipPengadaanController extends GroceryCrudController
     public function __invoke(Request $request)
     {
         $title = "Arsip Pengadaan";
-        $table = 'invoices';
+        $table = 'procurements';
         $singular = 'Pengadaan';
         $plural = 'Data Pengadaan';
         $crud = $this->_getGroceryCrudEnterprise();
@@ -46,7 +46,7 @@ class ArsipPengadaanController extends GroceryCrudController
             'total_price' => 'Total Harga',
         ]);
         $crud->callbackColumn('code', function ($value, $row) {
-            return '<a href="' . route('prodi.procurements.books.archived', $row->id) . '">' . $value . '</a>';
+            return '<a href="' . route('prodi.procurements.procurement-books.archived', $row->id) . '">' . $value . '</a>';
         });
         $crud->callbackReadField('total_books', function ($value, $row) {
             return number_format($value, 0, ',', '.');

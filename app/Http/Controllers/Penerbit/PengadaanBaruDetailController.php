@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Penerbit;
 
 use App\Http\Controllers\GroceryCrudController;
-use App\Models\Book;
+use App\Models\ProcurementBook;
 use App\Models\Procurement;
 use App\Models\Major;
 use App\Traits\CalculateBooks;
@@ -23,7 +23,7 @@ class PengadaanBaruDetailController extends GroceryCrudController
         }
 
         $title = "Data Buku | Nomor Pengadaan " . $procurement->code;
-        $table = 'books';
+        $table = 'procurement_books';
         $singular = 'Buku';
         $plural = 'Data Buku';
         $crud = $this->_getGroceryCrudEnterprise();
@@ -31,7 +31,7 @@ class PengadaanBaruDetailController extends GroceryCrudController
         $crud->setTable($table);
         $crud->setSubject($singular, $plural);
         $crud->where([
-            $table . '.invoice_id = ?' => $procurement->getKey(),
+            $table . '.procurement_id = ?' => $procurement->getKey(),
             $table . '.deleted_at is null',
         ]);
 
@@ -44,11 +44,11 @@ class PengadaanBaruDetailController extends GroceryCrudController
         $crud->setTexteditor(['summary']);
         $crud->setFieldUpload('cover', 'storage', asset('storage'));
         $crud->callbackColumn('cover', function ($value, $row) {
-            $data = Book::find($row->id);
+            $data = ProcurementBook::find($row->id);
             return "<img src='" . $data->cover . "' height='150'>";
         });
         $crud->callbackReadField('cover', function ($fieldValue, $primaryKeyValue) {
-            $data = Book::find($primaryKeyValue);
+            $data = ProcurementBook::find($primaryKeyValue);
             return "<img src='" . $data->cover . "' height='150'>";
         });
         $crud->fieldType('major_id', 'multiselect_searchable', Major::get()->pluck('name'));
@@ -80,9 +80,9 @@ class PengadaanBaruDetailController extends GroceryCrudController
             // info($s->data);
             // cek buku sudah pernah dibeli atau belum
             // gagalkan jika sudah pernah
-            $cek = Book::query()
+            $cek = ProcurementBook::query()
                 ->where('isbn', $s->data['isbn'])
-                ->whereHas('invoice', function (Builder $query) {
+                ->whereHas('procurement', function (Builder $query) {
                     $query->WhereNotIn('status', [Procurement::STATUS_DITOLAK]);
                     $query->where('publisher_id', auth()->user()->publisher_id);
                 })
@@ -91,23 +91,23 @@ class PengadaanBaruDetailController extends GroceryCrudController
                 $errorMessage = new \GroceryCrud\Core\Error\ErrorMessage();
                 return $errorMessage->setMessage('Tidak bisa menawarkan buku yang sama.');
             }
-            $s->data['invoice_id'] = $procurement->getKey();
+            $s->data['procurement_id'] = $procurement->getKey();
             $s->data['created_at'] = now();
             $s->data['updated_at'] = now();
             return $s;
         });
         $crud->callbackAfterInsert(function ($s) {
-            $inv = Book::find($s->insertId);
-            $this->calculateBooks($inv->invoice);
+            $inv = ProcurementBook::find($s->insertId);
+            $this->calculateBooks($inv->procurement);
 
             return $s;
         });
         $crud->callbackBeforeUpdate(function ($s) {
             // cek buku sudah pernah dibeli atau belum
             // gagalkan jika sudah pernah
-            $cek = Book::query()
+            $cek = ProcurementBook::query()
                 ->where('isbn', $s->data['isbn'])
-                ->whereHas('invoice', function (Builder $query) {
+                ->whereHas('procurement', function (Builder $query) {
                     $query->WhereNotIn('status', [Procurement::STATUS_DITOLAK]);
                     $query->where('publisher_id', auth()->user()->publisher_id);
                 })
@@ -120,13 +120,14 @@ class PengadaanBaruDetailController extends GroceryCrudController
             return $s;
         });
         $crud->callbackAfterUpdate(function ($s) {
-            $inv = Book::find($s->primaryKeyValue);
-            $this->calculateBooks($inv->invoice);
+            $inv = ProcurementBook::find($s->primaryKeyValue);
+            $this->calculateBooks($inv->procurement);
 
             return $s;
         });
         $crud->callbackDelete(function ($s) {
-            $data = Book::find($s->primaryKeyValue);
+            $data = ProcurementBook::find($s->primaryKeyValue);
+            $procurement = $data->procurement;
 
             if (!$data) {
                 $errorMessage = new \GroceryCrud\Core\Error\ErrorMessage();
@@ -135,6 +136,7 @@ class PengadaanBaruDetailController extends GroceryCrudController
 
             $data->save();
             $data->delete();
+            $this->calculateBooks($procurement);
             return $s;
         });
         $crud->callbackBeforeUpdate(function ($s) {

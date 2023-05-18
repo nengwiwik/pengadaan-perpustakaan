@@ -44,7 +44,7 @@ class RejectedInvoice extends Mailable
     public function content()
     {
         return new Content(
-            markdown: 'emails.invoices.rejected',
+            markdown: 'emails.procurements.rejected',
         );
     }
 

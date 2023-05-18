@@ -29,6 +29,6 @@ class SimpanPengadaanController extends Controller
 
         PenerbitRepository::newProcurement($procurement);
 
-        return to_route('penerbit.invoices');
+        return to_route('penerbit.procurements');
     }
 }

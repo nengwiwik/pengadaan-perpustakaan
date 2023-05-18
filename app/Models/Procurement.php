@@ -24,7 +24,7 @@ class Procurement extends Model
     const STATUS_PROSES = "Proses";
     const STATUS_BARU = "Baru";
     const STATUS_AKTIF = "Aktif";
-    const STATUS_INVOICE = "Procurement";
+    const STATUS_INVOICE = "Invoice";
     const STATUS_SELESAI = "Selesai";
     const STATUS_DITOLAK = "Ditolak";
 
@@ -38,8 +38,8 @@ class Procurement extends Model
         return $this->belongsTo(Campus::class);
     }
 
-    public function books(): HasMany
+    public function procurement_books(): HasMany
     {
-        return $this->hasMany(Book::class);
+        return $this->hasMany(ProcurementBook::class);
     }
 }

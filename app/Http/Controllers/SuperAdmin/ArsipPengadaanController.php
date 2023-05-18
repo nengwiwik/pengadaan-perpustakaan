@@ -16,11 +16,11 @@ class ArsipPengadaanController extends GroceryCrudController
         $status_selesai = Procurement::STATUS_SELESAI;
         $status_ditolak = Procurement::STATUS_DITOLAK;
 
-        $crud->setTable('invoices');
+        $crud->setTable('procurements');
         $crud->setSubject('Pengadaan', 'Arsip Pengadaan');
         $crud->where([
-            "invoices.deleted_at is null",
-            "invoices.status in ('$status_invoice','$status_selesai','$status_ditolak')",
+            "procurements.deleted_at is null",
+            "procurements.status in ('$status_invoice','$status_selesai','$status_ditolak')",
         ]);
         $crud->defaultOrdering('invoice_date', 'desc');
         $crud->columns(['code', 'status', 'publisher_id', 'campus_id', 'total_books', 'total_items', 'total_price']);
@@ -30,7 +30,7 @@ class ArsipPengadaanController extends GroceryCrudController
         $crud->setFieldUpload('invoice', 'storage', asset('storage'));
         $crud->readFields(['code', 'status', 'publisher_id', 'campus_id', 'total_books', 'total_items', 'total_price', 'invoice', 'invoice_date', 'approved_at', 'verified_date', 'cancelled_date']);
         $crud->callbackColumn('code', function ($value, $row) {
-            return "<a href='" . route('procurements.books.arsip', $row->id) . "'>" . $value . "</a>";
+            return "<a href='" . route('procurements.procurement-books.arsip', $row->id) . "'>" . $value . "</a>";
         });
         $crud->callbackReadField('total_books', function ($value, $row) {
             return number_format($value, 0, ',', '.');

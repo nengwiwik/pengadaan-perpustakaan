@@ -34,8 +34,8 @@ class SendInvoice extends Mailable
     public function envelope()
     {
         return new Envelope(
-            from: new Address($this->invoice->publisher->email, $this->invoice->publisher->name),
-            subject: 'Procurement Pengadaan Buku #' . $this->invoice->code,
+            from: new Address($this->procurement->publisher->email, $this->procurement->publisher->name),
+            subject: 'Invoice Pengadaan Buku #' . $this->procurement->code,
         );
     }
 
@@ -47,7 +47,7 @@ class SendInvoice extends Mailable
     public function content()
     {
         return new Content(
-            markdown: 'emails.invoices.send',
+            markdown: 'emails.procurements.send',
         );
     }
 
@@ -59,8 +59,8 @@ class SendInvoice extends Mailable
     public function attachments()
     {
         return [
-            Attachment::fromStorage($this->invoice->invoice)
-            ->as('invoice-' . str($this->invoice->code)->slug() . '.pdf')
+            Attachment::fromStorage($this->procurement->invoice)
+            ->as('invoice-' . str($this->procurement->code)->slug() . '.pdf')
             ->withMime('application/pdf')
         ];
     }

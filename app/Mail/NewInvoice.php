@@ -47,7 +47,7 @@ class NewInvoice extends Mailable implements ShouldQueue
     public function content()
     {
         return new Content(
-            markdown: 'emails.invoices.new',
+            markdown: 'emails.procurements.new',
         );
     }
 
@@ -68,7 +68,7 @@ class NewInvoice extends Mailable implements ShouldQueue
      */
     // public function build()
     // {
-    //     return $this->markdown('emails.invoices.new')
+    //     return $this->markdown('emails.procurements.new')
     //         ->from($this->invoice->publisher->email, $this->invoice->publisher->name)
     //         ->subject('New Procurement from ' . $this->invoice->publisher->name)
     //         ->tag('Perpustakaan');

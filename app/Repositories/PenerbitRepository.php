@@ -17,38 +17,43 @@ class PenerbitRepository
 {
     public static function sendEmails(Procurement $procurement)
     {
-        // $majors = $procurement->books()->select('major_id')->distinct()->pluck('major_id')->toArray();
-        $majors = $procurement->books()->select('major_id')->get();
-        $res = [];
-        foreach ($majors as $major) {
-            $d = explode(",", $major->major_id);
-            array_push($res, $d);
-        }
-
-        $result = [];
-        foreach ($res as $d) {
-            foreach ($d as $e) {
-                array_push($result, $e);
+        try {
+            //code...
+            // $majors = $procurement->procurement-books()->select('major_id')->distinct()->pluck('major_id')->toArray();
+            $majors = $procurement->procurement_books()->select('major_id')->get();
+            $res = [];
+            foreach ($majors as $major) {
+                $d = explode(",", $major->major_id);
+                array_push($res, $d);
             }
-        }
-        $majors = array_unique($result);
-        $last_major = array_key_last($majors);
-        $data_majors = Major::all();
-        $res = "";
-        foreach ($data_majors as $key => $dmajor) {
-            foreach ($majors as $k => $major) {
-                if ($key == $major) {
-                    $res .= $dmajor->name;
-                    if ($k != $last_major) $res .= ",";
+    
+            $result = [];
+            foreach ($res as $d) {
+                foreach ($d as $e) {
+                    array_push($result, $e);
                 }
             }
+            $majors = array_unique($result);
+            $last_major = array_key_last($majors);
+            $data_majors = Major::all();
+            $res = "";
+            foreach ($data_majors as $key => $dmajor) {
+                foreach ($majors as $k => $major) {
+                    if ($key == $major) {
+                        $res .= $dmajor->name;
+                        if ($k != $last_major) $res .= ",";
+                    }
+                }
+            }
+            $majors = explode(",", $res);
+    
+            $users = User::select(['name', 'email'])->where('campus_id', $procurement->campus_id)->whereIn('major_id', $majors)->get();
+            $mail = Mail::to(config('undira.admin_email'), config('undira.admin_name'));
+            $mail->cc($users);
+            $mail->queue(new NewInvoice($procurement));
+        } catch (\Throwable $th) {
+            info($th->getMessage());
         }
-        $majors = explode(",", $res);
-
-        $users = User::select(['name', 'email'])->where('campus_id', $procurement->campus_id)->whereIn('major_id', $majors)->get();
-        $mail = Mail::to(config('undira.admin_email'), config('undira.admin_name'));
-        $mail->cc($users);
-        $mail->queue(new NewInvoice($procurement));
     }
 
     public static function sendVerified(Procurement $procurement)

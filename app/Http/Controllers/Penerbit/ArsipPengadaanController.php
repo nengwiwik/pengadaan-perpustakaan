@@ -13,13 +13,13 @@ class ArsipPengadaanController extends GroceryCrudController
     public function __invoke(Request $request)
     {
         $title = "Arsip Pengadaan";
-        $table = 'invoices';
+        $table = 'procurements';
         $singular = 'Pengadaan';
         $plural = 'Data Pengadaan';
         $crud = $this->_getGroceryCrudEnterprise();
-        $status_invoice = INVOICE::STATUS_INVOICE;
-        $status_ditolak = INVOICE::STATUS_DITOLAK;
-        $status_selesai = INVOICE::STATUS_SELESAI;
+        $status_invoice = Procurement::STATUS_INVOICE;
+        $status_ditolak = Procurement::STATUS_DITOLAK;
+        $status_selesai = Procurement::STATUS_SELESAI;
 
         $crud->setTable($table);
         $crud->setSubject($singular, $plural);
@@ -73,7 +73,7 @@ class ArsipPengadaanController extends GroceryCrudController
             'invoice_date' => 'Tgl. Penawaran',
         ]);
         $crud->callbackColumn('code', function ($value, $row) {
-            return '<a href="' . route('penerbit.invoices.books.verified', $row->id) . '">' . $value . '</a>';
+            return '<a href="' . route('penerbit.procurements.procurement-books.verified', $row->id) . '">' . $value . '</a>';
         });
         $crud->callbackReadField('total_books', function ($value, $row) {
             return number_format($value, 0, ',', '.');

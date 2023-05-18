@@ -12,7 +12,7 @@ class PengadaanAktifController extends GroceryCrudController
     public function __invoke(Request $request)
     {
         $title = "Pengadaan Aktif";
-        $table = 'invoices';
+        $table = 'procurements';
         $singular = 'Pengadaan';
         $plural = 'Data Pengadaan';
         $crud = $this->_getGroceryCrudEnterprise();
@@ -44,7 +44,7 @@ class PengadaanAktifController extends GroceryCrudController
             'total_price' => 'Total Harga',
         ]);
         $crud->callbackColumn('code', function ($value, $row) {
-            return '<a href="' . route('prodi.procurements.books.active', $row->id) . '">' . $value . '</a>';
+            return '<a href="' . route('prodi.procurements.procurement-books.active', $row->id) . '">' . $value . '</a>';
         });
         $crud->callbackReadField('total_books', function ($value, $row) {
             return number_format($value, 0, ',', '.');

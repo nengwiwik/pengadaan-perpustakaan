@@ -13,11 +13,11 @@ class PengadaanBaruController extends GroceryCrudController
         $title = "Pengadaan Baru";
         $crud = $this->_getGroceryCrudEnterprise();
 
-        $crud->setTable('invoices');
+        $crud->setTable('procurements');
         $crud->setSubject('Pengadaan Baru', 'Data Pengadaan Baru');
         $crud->where([
-            "invoices.invoice_date is not null",
-            "invoices.status" => Procurement::STATUS_BARU,
+            "procurements.invoice_date is not null",
+            "procurements.status" => Procurement::STATUS_BARU,
         ]);
         $crud->defaultOrdering('invoice_date', 'desc');
         $crud->columns(['status', 'code', 'publisher_id', 'campus_id', 'cancelled_date', 'approved_at']);
@@ -38,7 +38,7 @@ class PengadaanBaruController extends GroceryCrudController
             }
         });
         $crud->callbackColumn('code', function ($value, $row) {
-            return "<a href='" . route('procurements.books', $row->id) . "'>" . $value . "</a>";
+            return "<a href='" . route('procurements.procurement-books', $row->id) . "'>" . $value . "</a>";
         });
         $crud->setActionButton('Terima Permintaan', 'fa fa-check', function ($row) {
             return route('procurement.approve', encrypt($row->id));

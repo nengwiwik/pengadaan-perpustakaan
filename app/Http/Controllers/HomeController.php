@@ -87,9 +87,9 @@ class HomeController extends Controller
             $jumlah_arsip_pengadaan = Procurement::where('publisher_id', $user->publisher_id)->whereIn('status', [Procurement::STATUS_SELESAI, Procurement::STATUS_DITOLAK, Procurement::STATUS_INVOICE])->count();
             $jumlah_penerbit = Procurement::where('publisher_id', $user->publisher_id)->count();
 
-            $route_pengadaan_baru = route('penerbit.invoices');
-            $route_pengadaan_aktif = route('penerbit.invoices.ongoing');
-            $route_arsip_pengadaan = route('penerbit.invoices.verified');
+            $route_pengadaan_baru = route('penerbit.procurements');
+            $route_pengadaan_aktif = route('penerbit.procurements.ongoing');
+            $route_arsip_pengadaan = route('penerbit.procurements.verified');
 
             $nominal_pengadaan_aktif = Procurement::where('publisher_id', $user->publisher_id)->where('status', Procurement::STATUS_AKTIF)->sum('total_price');
             $nominal_arsip_pengadaan = Procurement::where('publisher_id', $user->publisher_id)->where('status', Procurement::STATUS_SELESAI)->sum('total_price');
