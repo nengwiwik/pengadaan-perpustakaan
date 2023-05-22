@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('majors', function (Blueprint $table) {
             $table->id();
-            $table->string('code')->nullable()->unique();
-            $table->string('name')->unique();
+            $table->string('code', 3)->nullable()->unique();
+            $table->string('name', 100)->unique();
             $table->timestamps();
             $table->softDeletes();
         });
