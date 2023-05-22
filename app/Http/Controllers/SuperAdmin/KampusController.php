@@ -25,7 +25,9 @@ class KampusController extends GroceryCrudController
         // validasi
         $crud->setRule('name', 'lengthMax', '100');
         $crud->setRule('email', 'lengthMax', '100');
+        $crud->setRule('email', 'email');
         $crud->setRule('phone', 'lengthMax', '20');
+        $crud->setRule('phone', 'numeric');
         $crud->setRule('address', 'lengthMax', '255');
 
         $crud->displayAs([
