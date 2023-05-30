@@ -75,7 +75,6 @@ class SocialiteController extends Controller
                 $authUser->update([
                     'name' => $user->name,
                     'google_id' => $user->id,
-                    'photo' => $user->avatar,
                 ]);
 
                 // login user
@@ -87,7 +86,6 @@ class SocialiteController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'google_id' => $user->id,
-                'photo' => $user->avatar,
                 'email_verified_at' => now(),
                 'password' => bcrypt($user->email),
             ]);

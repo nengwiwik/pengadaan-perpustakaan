@@ -15,11 +15,11 @@ return new class extends Migration
   {
     Schema::create('publishers', function (Blueprint $table) {
       $table->id();
-      $table->string('code')->nullable();
-      $table->string('name')->nullable();
-      $table->string('address')->nullable();
-      $table->string('email')->nullable();
-      $table->string('phone')->nullable();
+      $table->string('code', 10)->nullable();
+      $table->string('name', 100)->nullable();
+      $table->string('address', 100)->nullable();
+      $table->string('email', 100)->nullable();
+      $table->string('phone', 20)->nullable();
       $table->timestamps();
       $table->softDeletes();
     });
