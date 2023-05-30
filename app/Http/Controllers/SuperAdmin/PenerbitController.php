@@ -57,7 +57,7 @@ class PenerbitController extends GroceryCrudController
             ],
             [
                 'fieldName' => 'email',
-                'rule' => 'email',
+                'rule' => 'emailDNS',
                 'parameters' => ''
             ],
         ]);

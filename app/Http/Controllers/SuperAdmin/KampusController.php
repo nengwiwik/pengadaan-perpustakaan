@@ -36,7 +36,7 @@ class KampusController extends GroceryCrudController
             ],
             [
                 'fieldName' => 'email',
-                'rule' => 'email',
+                'rule' => 'emailDNS',
                 'parameters' => null
             ],
             [
