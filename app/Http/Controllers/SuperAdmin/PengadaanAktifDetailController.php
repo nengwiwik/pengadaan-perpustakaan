@@ -30,12 +30,26 @@ class PengadaanAktifDetailController extends GroceryCrudController
         ]);
 
         $crud->unsetOperations()->setEdit()->setRead();
-        $crud->columns(['major_id', 'cover', 'title', 'is_chosen', 'published_year', 'eksemplar', 'is_chosen', 'isbn', 'author_name', 'price', 'suplemen']);
+        $crud->columns(['major_id', 'cover', 'title', 'is_chosen', 'published_year', 'eksemplar', 'isbn', 'author_name', 'price', 'suplemen']);
         $crud->fields(['title', 'price', 'eksemplar', 'is_chosen']);
         $crud->readFields(['title', 'cover', 'eksemplar', 'is_chosen', 'major_id', 'published_year', 'isbn', 'author_name', 'price', 'summary', 'suplemen']);
         $crud->requiredFields(['title', 'price', 'eksemplar', 'is_chosen']);
-        // $crud->setRelation('major_id', 'majors', 'name');
         $crud->fieldType('major_id', 'multiselect_searchable', Major::get()->pluck('name'));
+
+        // validasi
+        $crud->setRules([
+            [
+                'fieldName' => 'price',
+                'rule' => 'lengthMax',
+                'parameters' => '9'
+            ],
+            [
+                'fieldName' => 'price',
+                'rule' => 'numeric',
+                'parameters' => ''
+            ],
+        ]);
+
         $crud->callbackReadField('major_id', function ($fieldValue, $primaryKeyValue) {
             $last_major = array_key_last($fieldValue);
             $res = "";
@@ -67,7 +81,9 @@ class PengadaanAktifDetailController extends GroceryCrudController
             'published_year' => 'Tahun Terbit',
             'author_name' => 'Nama Penulis',
             'suplemen' => 'Suplemen',
-            'is_chosen' => 'Pilih Buku',
+            'is_chosen' => 'Buku Terpilih',
+            'price' => 'Harga',
+            'title' => 'Judul Buku'
         ]);
         $crud->callbackReadField('price', function ($value, $primaryKeyValue) {
             return "IDR " . number_format($value, 0, ',', '.');
