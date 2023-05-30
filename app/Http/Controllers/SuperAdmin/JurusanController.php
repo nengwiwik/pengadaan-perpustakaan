@@ -23,8 +23,18 @@ class JurusanController extends GroceryCrudController
         $crud->requiredFields(['code', 'name']);
 
         // validasi
-        $crud->setRule('code', 'lengthMax', '3');
-        $crud->setRule('name', 'lengthMax', '100');
+        $crud->setRules([
+            [
+                'fieldName' => 'code',
+                'rule' => 'lengthMax',
+                'parameters' => 10
+            ],
+            [
+                'fieldName' => 'name',
+                'rule' => 'lengthMax',
+                'parameters' => 100
+            ],
+        ]);
 
         $crud->displayAs([
             'code' => 'Kode',
