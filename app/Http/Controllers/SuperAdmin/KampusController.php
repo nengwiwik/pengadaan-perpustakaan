@@ -23,7 +23,6 @@ class KampusController extends GroceryCrudController
         $crud->requiredFields(['name', 'address', 'email', 'phone']);
 
         // validasi
-        // validasi
         $crud->setRules([
             [
                 'fieldName' => 'name',
