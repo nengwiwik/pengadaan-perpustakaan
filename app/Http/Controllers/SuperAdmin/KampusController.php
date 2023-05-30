@@ -53,7 +53,7 @@ class KampusController extends GroceryCrudController
             [
                 'fieldName' => 'address',
                 'rule' => 'lengthMax',
-                'parameters' => 255
+                'parameters' => 100
             ],
         ]);
 
