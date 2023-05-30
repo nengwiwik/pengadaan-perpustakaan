@@ -39,7 +39,7 @@ class AdminProdiController extends GroceryCrudController
             ],
             [
                 'fieldName' => 'email',
-                'rule' => 'email',
+                'rule' => 'emailDNS',
                 'parameters' => null
             ],
             [

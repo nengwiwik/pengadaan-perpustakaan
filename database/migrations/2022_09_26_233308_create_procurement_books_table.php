@@ -16,7 +16,7 @@ return new class extends Migration
     {
         Schema::create('procurement_books', function (Blueprint $table) {
             $table->id();
-            $table->string('title')->nullable();
+            $table->string('title', 100)->nullable();
             $table->string('isbn', 20)->nullable();
             $table->string('author_name', 100)->nullable();
             $table->year('published_year')->nullable();

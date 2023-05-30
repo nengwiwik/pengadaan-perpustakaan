@@ -17,7 +17,7 @@ return new class extends Migration
     {
         Schema::create('procurements', function (Blueprint $table) {
             $table->id();
-            $table->string('code')->nullable();
+            $table->string('code', 50)->nullable();
             $table->foreignIdFor(Publisher::class)->nullable()->constrained();
             $table->foreignIdFor(Campus::class)->nullable()->constrained();
             $table->string('status', 10)->nullable();

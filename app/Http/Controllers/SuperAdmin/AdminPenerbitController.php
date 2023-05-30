@@ -39,7 +39,7 @@ class AdminPenerbitController extends GroceryCrudController
             ],
             [
                 'fieldName' => 'email',
-                'rule' => 'email',
+                'rule' => 'emailDNS',
                 'parameters' => null
             ],
             [
