@@ -40,6 +40,11 @@ class PenggunaBelumAktifController extends GroceryCrudController
                 'rule' => 'lengthMax',
                 'parameters' => 100
             ],
+            [
+                'fieldName' => 'email',
+                'rule' => 'email',
+                'parameters' => null
+            ],
         ]);
 
         $crud->callbackBeforeInsert(function ($s) {

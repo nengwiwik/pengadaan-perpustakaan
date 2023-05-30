@@ -38,6 +38,11 @@ class AdminPenerbitController extends GroceryCrudController
                 'parameters' => 100
             ],
             [
+                'fieldName' => 'email',
+                'rule' => 'email',
+                'parameters' => null
+            ],
+            [
                 'fieldName' => 'password',
                 'rule' => 'lengthMin',
                 'parameters' => 8

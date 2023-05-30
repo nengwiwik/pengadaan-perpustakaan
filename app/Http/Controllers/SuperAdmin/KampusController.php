@@ -23,12 +23,46 @@ class KampusController extends GroceryCrudController
         $crud->requiredFields(['name', 'address', 'email', 'phone']);
 
         // validasi
-        $crud->setRule('name', 'lengthMax', '100');
-        $crud->setRule('email', 'lengthMax', '100');
-        $crud->setRule('email', 'email');
-        $crud->setRule('phone', 'lengthMax', '20');
-        $crud->setRule('phone', 'numeric');
-        $crud->setRule('address', 'lengthMax', '255');
+        // validasi
+        $crud->setRules([
+            [
+                'fieldName' => 'name',
+                'rule' => 'lengthMax',
+                'parameters' => 100
+            ],
+            [
+                'fieldName' => 'email',
+                'rule' => 'lengthMax',
+                'parameters' => 100
+            ],
+            [
+                'fieldName' => 'email',
+                'rule' => 'email',
+                'parameters' => null
+            ],
+            [
+                'fieldName' => 'phone',
+                'rule' => 'lengthMax',
+                'parameters' => 20
+            ],
+            [
+                'fieldName' => 'phone',
+                'rule' => 'numeric',
+                'parameters' => null
+            ],
+            [
+                'fieldName' => 'address',
+                'rule' => 'lengthMax',
+                'parameters' => 255
+            ],
+        ]);
+
+        // $crud->setRule('name', 'lengthMax', '100');
+        // $crud->setRule('email', 'lengthMax', '100');
+        // $crud->setRule('email', 'email');
+        // $crud->setRule('phone', 'lengthMax', '20');
+        // $crud->setRule('phone', 'numeric');
+        // $crud->setRule('address', 'lengthMax', '255');
 
         $crud->displayAs([
             'name' => 'Nama',
