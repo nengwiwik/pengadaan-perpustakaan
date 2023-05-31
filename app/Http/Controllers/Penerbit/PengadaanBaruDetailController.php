@@ -39,10 +39,65 @@ class PengadaanBaruDetailController extends GroceryCrudController
         $crud->columns(['major_id', 'cover', 'title', 'isbn', 'author_name', 'published_year', 'price', 'suplemen']);
         $crud->fields(['major_id', 'title', 'isbn', 'author_name', 'published_year', 'price', 'cover', 'summary', 'suplemen']);
         $crud->requiredFields(['major_id', 'title', 'isbn', 'author_name', 'published_year', 'price']);
-        // $crud->setRelation('major_id', 'majors', 'name');
+
+        // validasi
+        $crud->setRules([
+            [
+                'fieldName' => 'major_id',
+                'rule' => 'lengthMin',
+                'parameters' => '1'
+            ],
+            [
+                'fieldName' => 'title',
+                'rule' => 'lengthMax',
+                'parameters' => '100'
+            ],
+            [
+                'fieldName' => 'isbn',
+                'rule' => 'lengthMax',
+                'parameters' => '20'
+            ],
+            [
+                'fieldName' => 'author_name',
+                'rule' => 'lengthMax',
+                'parameters' => '100'
+            ],
+            [
+                'fieldName' => 'published_year',
+                'rule' => 'numeric',
+                'parameters' => ''
+            ],
+            [
+                'fieldName' => 'published_year',
+                'rule' => 'length',
+                'parameters' => '4'
+            ],
+            [
+                'fieldName' => 'price',
+                'rule' => 'numeric',
+                'parameters' => ''
+            ],
+            [
+                'fieldName' => 'price',
+                'rule' => 'lengthMax',
+                'parameters' => '9'
+            ],
+            [
+                'fieldName' => 'suplemen',
+                'rule' => 'lengthMax',
+                'parameters' => '20'
+            ],
+            [
+                'fieldName' => '',
+                'rule' => '',
+                'parameters' => ''
+            ],
+        ]);
+
         $crud->fieldType('price', 'numeric');
         $crud->setTexteditor(['summary']);
         $crud->setFieldUpload('cover', 'storage', asset('storage'));
+
         $crud->callbackColumn('cover', function ($value, $row) {
             $data = ProcurementBook::find($row->id);
             return "<img src='" . $data->cover . "' height='150'>";
@@ -77,7 +132,6 @@ class PengadaanBaruDetailController extends GroceryCrudController
             'summary' => 'Ringkasan',
         ]);
         $crud->callbackBeforeInsert(function ($s) use ($procurement) {
-            // info($s->data);
             // cek buku sudah pernah dibeli atau belum
             // gagalkan jika sudah pernah
             $cek = ProcurementBook::query()

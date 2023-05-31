@@ -29,7 +29,7 @@ class UserSeeder extends Seeder
 
     $penerbit = User::updateOrCreate(
       [
-        'email' => 'wiwik@nurfachmi.com'
+        'email' => 'wiwik@penerbit.com'
       ],
       [
         'name' => 'Penerbit Wiwik',
@@ -39,19 +39,6 @@ class UserSeeder extends Seeder
       ]
     );
     $penerbit->assignRole(User::ROLE_PENERBIT);
-
-    // $penerbit = User::updateOrCreate(
-    //   [
-    //     'email' => 'penerbit@gmail.com'
-    //   ],
-    //   [
-    //     'name' => 'Penerbit Erlangga',
-    //     'email_verified_at' => now(),
-    //     'password' => bcrypt('password'),
-    //     'publisher_id' => 2,
-    //   ]
-    // );
-    // $penerbit->assignRole(User::ROLE_PENERBIT);
 
     $prodi = User::updateOrCreate(
       [

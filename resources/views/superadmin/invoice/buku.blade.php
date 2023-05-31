@@ -5,7 +5,15 @@
 
   <div class="mb-3">
 
-    <a name="" id="" class="btn btn-dark" href="#back" onclick="history.back()" role="button">
+    @php
+        if (is_null(auth()->user()->publisher_id) and is_null(auth()->user()->campus_id)) {
+            $link = route('procurements.new');
+        } else if (is_null(auth()->user()->publisher_id) and !is_null(auth()->user()->campus_id)) {
+            $link = route('prodi.procurements.active');
+        } 
+    @endphp
+
+    <a class="btn btn-dark" href="{{ $link }}" role="button">
       <i class="fa fa-arrow-circle-left" aria-hidden="true"></i> Back
     </a>
   </div>

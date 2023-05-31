@@ -23,6 +23,45 @@ class PenerbitController extends GroceryCrudController
         $crud->requiredFields(['code', 'name', 'address', 'email', 'phone']);
         $crud->uniqueFields(['code']);
 
+        // validasi
+        $crud->setRules([
+            [
+                'fieldName' => 'code',
+                'rule' => 'lengthMax',
+                'parameters' => 10
+            ],
+            [
+                'fieldName' => 'name',
+                'rule' => 'lengthMax',
+                'parameters' => 100
+            ],
+            [
+                'fieldName' => 'address',
+                'rule' => 'lengthMax',
+                'parameters' => 100
+            ],
+            [
+                'fieldName' => 'phone',
+                'rule' => 'lengthMax',
+                'parameters' => 20
+            ],
+            [
+                'fieldName' => 'phone',
+                'rule' => 'numeric',
+                'parameters' => ''
+            ],
+            [
+                'fieldName' => 'email',
+                'rule' => 'lengthMax',
+                'parameters' => 100
+            ],
+            [
+                'fieldName' => 'email',
+                'rule' => 'emailDNS',
+                'parameters' => ''
+            ],
+        ]);
+
         $crud->displayAs([
             'code' => 'Kode',
             'name' => 'Nama',

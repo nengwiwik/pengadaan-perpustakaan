@@ -16,20 +16,20 @@ return new class extends Migration
     {
         Schema::create('procurement_books', function (Blueprint $table) {
             $table->id();
-            $table->string('title')->nullable();
-            $table->string('isbn')->nullable();
-            $table->string('author_name')->nullable();
+            $table->string('title', 100)->nullable();
+            $table->string('isbn', 20)->nullable();
+            $table->string('author_name', 100)->nullable();
             $table->year('published_year')->nullable();
-            $table->string('price')->nullable();
-            $table->string('major_id')->nullable();
+            $table->string('price', 9)->nullable();
+            $table->string('major_id', 25)->nullable();
             $table->text('summary')->nullable();
-            $table->string("cover")->nullable();
-            $table->string('source')->nullable();
+            $table->string("cover", 50)->nullable();
+            $table->string('source', 50)->nullable();
             $table->boolean('is_chosen')->nullable();
             $table->boolean('is_verified')->nullable();
             $table->foreignIdFor(Procurement::class)->nullable()->constrained();
-            $table->string('eksemplar')->nullable();
-            $table->string('suplemen')->nullable();
+            $table->integer('eksemplar')->nullable();
+            $table->string('suplemen', 20)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

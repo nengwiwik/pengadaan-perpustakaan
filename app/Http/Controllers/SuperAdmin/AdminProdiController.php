@@ -25,6 +25,30 @@ class AdminProdiController extends GroceryCrudController
             "campus_id is not null",
         ]);
 
+        // validasi
+        $crud->setRules([
+            [
+                'fieldName' => 'name',
+                'rule' => 'lengthMax',
+                'parameters' => 100
+            ],
+            [
+                'fieldName' => 'email',
+                'rule' => 'lengthMax',
+                'parameters' => 100
+            ],
+            [
+                'fieldName' => 'email',
+                'rule' => 'emailDNS',
+                'parameters' => null
+            ],
+            [
+                'fieldName' => 'password',
+                'rule' => 'lengthMin',
+                'parameters' => 8
+            ],
+        ]);
+
         $crud->callbackBeforeInsert(function ($s) {
             $s->data['password'] = bcrypt($s->data['password']);
             $s->data['email_verified_at'] = now();

@@ -18,7 +18,7 @@ class PenggunaBelumAktifController extends GroceryCrudController
         $crud->setSubject('User', 'Pengguna Belum Aktif');
 
         $crud->unsetAdd();
-        $crud->fields(['name', 'campus_id', 'major_id', 'publisher_id']);
+        $crud->fields(['name', 'email', 'campus_id', 'major_id', 'publisher_id']);
         $crud->requiredFields(['name']);
         $crud->columns(['name', 'email', 'updated_at']);
 
@@ -26,6 +26,25 @@ class PenggunaBelumAktifController extends GroceryCrudController
             "publisher_id is null",
             "campus_id is null",
             "email != ?" => config('undira.admin_email'),
+        ]);
+
+        // validasi
+        $crud->setRules([
+            [
+                'fieldName' => 'name',
+                'rule' => 'lengthMax',
+                'parameters' => 100
+            ],
+            [
+                'fieldName' => 'email',
+                'rule' => 'lengthMax',
+                'parameters' => 100
+            ],
+            [
+                'fieldName' => 'email',
+                'rule' => 'email',
+                'parameters' => null
+            ],
         ]);
 
         $crud->callbackBeforeInsert(function ($s) {

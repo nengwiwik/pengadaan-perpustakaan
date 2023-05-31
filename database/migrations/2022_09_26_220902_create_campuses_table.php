@@ -18,10 +18,10 @@ return new class extends Migration
     {
         Schema::create('campuses', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('address');
-            $table->string('email');
-            $table->string('phone');
+            $table->string('name', 100)->nullable();
+            $table->string('address', 100)->nullable();
+            $table->string('email', 100)->nullable();
+            $table->string('phone', 20)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
