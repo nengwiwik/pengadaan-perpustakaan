@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Models\Invoice;
+use App\Models\Procurement;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -19,7 +19,7 @@ class RejectedInvoice extends Mailable
      *
      * @return void
      */
-    public function __construct(public Invoice $invoice)
+    public function __construct(public Procurement $procurement)
     {
         //
     }
@@ -44,7 +44,7 @@ class RejectedInvoice extends Mailable
     public function content()
     {
         return new Content(
-            markdown: 'emails.invoices.rejected',
+            markdown: 'emails.procurements.rejected',
         );
     }
 

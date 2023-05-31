@@ -18,7 +18,7 @@
             </button>
           </div>
           <div class="modal-body">
-            <form action="{{ route('penerbit.invoices.books.import', Request::segment(3)) }}" method="post" id="form-upload" enctype="multipart/form-data">
+            <form action="{{ route('penerbit.procurements.procurement-books.import', Request::segment(3)) }}" method="post" id="form-upload" enctype="multipart/form-data">
               @csrf
               <div class="form-group">
                 <label for="upload">File</label>
@@ -27,7 +27,7 @@
             </form>
 
             <hr>
-            <p>Unduh template <a href="{{ asset('template/import-books.xlsx') }}" download>di sini</a></p>
+            <p>Unduh template <a href="{{ asset('template/import-procurement-books.xlsx') }}" download>di sini</a></p>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>

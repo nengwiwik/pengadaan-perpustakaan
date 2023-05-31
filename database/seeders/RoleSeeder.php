@@ -54,7 +54,7 @@ class RoleSeeder extends Seeder
       ['guard_name' => 'web']
     );
     $permissions = [
-      'manage books',
+      'manage procurement-books',
     ];
     foreach ($permissions as $permission) {
       Permission::updateOrCreate(

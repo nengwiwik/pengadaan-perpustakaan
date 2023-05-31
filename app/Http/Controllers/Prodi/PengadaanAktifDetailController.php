@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Prodi;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\GroceryCrudController;
-use App\Models\Book;
-use App\Models\Invoice;
+use App\Models\ProcurementBook;
+use App\Models\Procurement;
 use App\Models\Major;
 use App\Traits\CalculateBooks;
 use Illuminate\Http\Request;
@@ -15,10 +15,10 @@ class PengadaanAktifDetailController extends GroceryCrudController
 {
     use CalculateBooks;
 
-    public function __invoke(Invoice $invoice)
+    public function __invoke(Procurement $procurement)
     {
-        $title = "Data Buku | ID Pengadaan " . $invoice->code;
-        $table = 'books';
+        $title = "Data Buku | ID Pengadaan " . $procurement->code;
+        $table = 'procurement_books';
         $singular = 'Buku';
         $plural = 'Data Buku';
         $crud = $this->_getGroceryCrudEnterprise();
@@ -33,7 +33,7 @@ class PengadaanAktifDetailController extends GroceryCrudController
         $crud->setTable($table);
         $crud->setSubject($singular, $plural);
         $crud->where([
-            $table . '.invoice_id = ?' => $invoice->getKey(),
+            $table . '.procurement_id = ?' => $procurement->getKey(),
             $table . '.major_id like ?' => "%$kunci%",
             $table . '.deleted_at is null',
         ]);
@@ -66,7 +66,7 @@ class PengadaanAktifDetailController extends GroceryCrudController
         $crud->setTexteditor(['summary']);
         $crud->setFieldUpload('cover', 'storage', asset('storage'));
         $crud->callbackColumn('cover', function ($value, $row) {
-            $data = Book::find($row->id);
+            $data = ProcurementBook::find($row->id);
             return "<img src='" . $data->cover . "' height='150'>";
         });
         $crud->callbackReadField('price', function ($value, $primaryKeyValue) {
@@ -82,7 +82,7 @@ class PengadaanAktifDetailController extends GroceryCrudController
         ]);
 
         $crud->callbackBeforeUpdate(function ($s) {
-            $book = Book::find($s->primaryKeyValue);
+            $book = ProcurementBook::find($s->primaryKeyValue);
             $s->data['title'] = $book->title;
             $s->data['price'] = $book->price;
 
@@ -90,7 +90,7 @@ class PengadaanAktifDetailController extends GroceryCrudController
         });
 
         $crud->callbackAfterUpdate(function ($s) {
-            $inv = Book::find($s->primaryKeyValue);
+            $inv = ProcurementBook::find($s->primaryKeyValue);
 
             if ($inv->is_chosen > 0) {
                 if (is_null($inv->eksemplar)) {
@@ -103,7 +103,7 @@ class PengadaanAktifDetailController extends GroceryCrudController
                     $inv->save();
                 }
             }
-            $this->calculatePrice($inv->invoice);
+            $this->calculatePrice($inv->procurement);
 
             $inv->save();
 

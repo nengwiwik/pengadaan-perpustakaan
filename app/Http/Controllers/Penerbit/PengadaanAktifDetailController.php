@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Penerbit;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\GroceryCrudController;
-use App\Models\Book;
-use App\Models\Invoice;
+use App\Models\ProcurementBook;
+use App\Models\Procurement;
 use App\Models\Major;
 use App\Traits\CalculateBooks;
 use Illuminate\Http\Request;
@@ -15,23 +15,23 @@ class PengadaanAktifDetailController extends GroceryCrudController
 {
     use CalculateBooks;
 
-    public function __invoke(Invoice $invoice)
+    public function __invoke(Procurement $procurement)
     {
         // otorisasi
-        if ($invoice->publisher_id != Auth::user()->publisher_id) {
+        if ($procurement->publisher_id != Auth::user()->publisher_id) {
             return abort(403);
         }
 
-        $title = "Data Buku | Nomor Pengadaan " . $invoice->code;
-        $table = 'books';
+        $title = "Data Buku | Nomor Pengadaan " . $procurement->code;
+        $table = 'procurement_books';
         $singular = 'Buku';
-        $plural = 'Data Buku | Nomor Pengadaan ' . $invoice->code;
+        $plural = 'Data Buku | Nomor Pengadaan ' . $procurement->code;
         $crud = $this->_getGroceryCrudEnterprise();
 
         $crud->setTable($table);
         $crud->setSubject($singular, $plural);
         $crud->where([
-            $table . '.invoice_id = ?' => $invoice->getKey(),
+            $table . '.procurement_id = ?' => $procurement->getKey(),
             $table . '.deleted_at is null',
         ]);
 
@@ -66,7 +66,7 @@ class PengadaanAktifDetailController extends GroceryCrudController
         $crud->setTexteditor(['summary']);
         $crud->setFieldUpload('cover', 'storage', asset('storage'));
         $crud->callbackColumn('cover', function ($value, $row) {
-            $data = Book::find($row->id);
+            $data = ProcurementBook::find($row->id);
             return "<img src='" . $data->cover . "' height='150'>";
         });
         $crud->callbackReadField('price', function ($value, $primaryKeyValue) {

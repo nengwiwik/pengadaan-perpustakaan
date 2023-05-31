@@ -2,8 +2,8 @@
 
 namespace App\Imports;
 
-use App\Models\Book;
-use App\Models\Invoice;
+use App\Models\ProcurementBook;
+use App\Models\Procurement;
 use App\Models\Major;
 use App\Traits\CalculateBooks;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -23,7 +23,7 @@ class BooksImport implements
 {
     use CalculateBooks;
 
-    public function __construct(public Invoice $invoice)
+    public function __construct(public Procurement $procurement)
     {
     }
 
@@ -39,9 +39,9 @@ class BooksImport implements
                 continue;
             }
             $major = $this->getMajor($row[0]);
-            $inv = Book::updateOrCreate(
+            $inv = ProcurementBook::updateOrCreate(
                 [
-                    'invoice_id' => $this->invoice->getKey(),
+                    'procurement_id' => $this->invoice->getKey(),
                     'major_id' => $major,
                     'isbn' => $row[2],
                 ],
@@ -53,7 +53,7 @@ class BooksImport implements
                     'suplemen' => $row[6],
                 ]
             );
-            $this->calculateBooks($inv->invoice);
+            $this->calculateBooks($inv->procurement);
         }
     }
 
@@ -66,7 +66,7 @@ class BooksImport implements
     public function rules(): array
     {
         return [
-            '*.0' => 'required|exists:invoices,code',
+            '*.0' => 'required|exists:procurements,code',
             '*.1' => 'required|exists:majors,name',
             '*.2' => 'required|string|max:255',
             '*.3' => 'required|alpha_num|max:255',

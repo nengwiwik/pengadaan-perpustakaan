@@ -115,19 +115,19 @@
   </div>
 
   <li class="nav-item">
-    <a class="nav-link" href="{{ route('penerbit.invoices') }}">
+    <a class="nav-link" href="{{ route('penerbit.procurements') }}">
       <i class="fas fa-fw fa-file"></i>
       <span>Pengadaan Baru</span></a>
   </li>
 
   <li class="nav-item">
-    <a class="nav-link" href="{{ route('penerbit.invoices.ongoing') }}">
+    <a class="nav-link" href="{{ route('penerbit.procurements.ongoing') }}">
       <i class="fas fa-fw fa-book"></i>
       <span>Pengadaan Aktif</span></a>
   </li>
 
   <li class="nav-item">
-    <a class="nav-link" href="{{ route('penerbit.invoices.verified') }}">
+    <a class="nav-link" href="{{ route('penerbit.procurements.verified') }}">
     <i class="fas fa-fw fa-box"></i>
       <span>Arsip Pengadaan</span></a>
   </li>

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Invoice extends Model
+class Procurement extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -38,8 +38,8 @@ class Invoice extends Model
         return $this->belongsTo(Campus::class);
     }
 
-    public function books(): HasMany
+    public function procurement_books(): HasMany
     {
-        return $this->hasMany(Book::class);
+        return $this->hasMany(ProcurementBook::class);
     }
 }

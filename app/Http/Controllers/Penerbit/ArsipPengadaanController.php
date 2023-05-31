@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Penerbit;
 
 use App\Http\Controllers\GroceryCrudController;
-use App\Models\Invoice;
+use App\Models\Procurement;
 use App\Repositories\PenerbitRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,13 +13,13 @@ class ArsipPengadaanController extends GroceryCrudController
     public function __invoke(Request $request)
     {
         $title = "Arsip Pengadaan";
-        $table = 'invoices';
+        $table = 'procurements';
         $singular = 'Pengadaan';
         $plural = 'Data Pengadaan';
         $crud = $this->_getGroceryCrudEnterprise();
-        $status_invoice = INVOICE::STATUS_INVOICE;
-        $status_ditolak = INVOICE::STATUS_DITOLAK;
-        $status_selesai = INVOICE::STATUS_SELESAI;
+        $status_invoice = Procurement::STATUS_INVOICE;
+        $status_ditolak = Procurement::STATUS_DITOLAK;
+        $status_selesai = Procurement::STATUS_SELESAI;
 
         $crud->setTable($table);
         $crud->setSubject($singular, $plural);
@@ -36,7 +36,7 @@ class ArsipPengadaanController extends GroceryCrudController
         $crud->editFields(['invoice', 'status']);
         $crud->fieldType('status', 'hidden');
         $crud->requiredFields(['invoice']);
-        $crud->setLangString('edit', 'Upload Invoice');
+        $crud->setLangString('edit', 'Upload Procurement');
         $crud->callbackBeforeUpload(function ($uploadData) {
             $fieldName = $uploadData->field_name;
 
@@ -56,12 +56,12 @@ class ArsipPengadaanController extends GroceryCrudController
             return $data;
         });
         $crud->callbackAfterUpdate(function ($s) {
-            $invoice = Invoice::find($s->primaryKeyValue);
+            $procurement = Procurement::find($s->primaryKeyValue);
 
-            if (is_null($invoice->invoice) == false && $invoice->status == Invoice::STATUS_INVOICE) {
-                PenerbitRepository::sendInvoice($invoice);
-                $invoice->status = Invoice::STATUS_SELESAI;
-                $invoice->save();
+            if (is_null($procurement->invoice) == false && $procurement->status == Procurement::STATUS_INVOICE) {
+                PenerbitRepository::sendInvoice($procurement);
+                $procurement->status = Procurement::STATUS_SELESAI;
+                $procurement->save();
             }
 
             return $s;
@@ -73,7 +73,7 @@ class ArsipPengadaanController extends GroceryCrudController
             'invoice_date' => 'Tgl. Penawaran',
         ]);
         $crud->callbackColumn('code', function ($value, $row) {
-            return '<a href="' . route('penerbit.invoices.books.verified', $row->id) . '">' . $value . '</a>';
+            return '<a href="' . route('penerbit.procurements.procurement-books.verified', $row->id) . '">' . $value . '</a>';
         });
         $crud->callbackReadField('total_books', function ($value, $row) {
             return number_format($value, 0, ',', '.');
@@ -88,7 +88,7 @@ class ArsipPengadaanController extends GroceryCrudController
             return "IDR " . number_format($value, 0, ',', '.');
         });
         $crud->callbackDelete(function ($s) {
-            $data = Invoice::find($s->primaryKeyValue);
+            $data = Procurement::find($s->primaryKeyValue);
 
             if (!$data) {
                 $errorMessage = new \GroceryCrud\Core\Error\ErrorMessage();
@@ -101,9 +101,9 @@ class ArsipPengadaanController extends GroceryCrudController
         });
         $crud->callbackBeforeUpdate(function ($s) {
             $status = $s->data['status'];
-            if ($status != Invoice::STATUS_INVOICE) {
+            if ($status != Procurement::STATUS_INVOICE) {
                 $errorMessage = new \GroceryCrud\Core\Error\ErrorMessage();
-                return $errorMessage->setMessage('Proses upload hanya berlaku untuk pengadaan dengan status Invoice!');
+                return $errorMessage->setMessage('Proses upload hanya berlaku untuk pengadaan dengan status Procurement!');
             }
 
             $s->data['updated_at'] = now();

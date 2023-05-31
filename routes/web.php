@@ -76,20 +76,20 @@ Route::prefix('admin')->middleware(['role:Super Admin', 'auth', 'verified'])->gr
     Route::get('/pengadaan/baru', PengadaanBaruController::class)->name('procurements.new');
     Route::post('/pengadaan/baru', PengadaanBaruController::class);
 
-    Route::get('/pengadaan/{invoice}/baru', PengadaanBaruDetailController::class)->name('procurements.books');
-    Route::post('/pengadaan/{invoice}/baru', PengadaanBaruDetailController::class);
+    Route::get('/pengadaan/{procurement}/baru', PengadaanBaruDetailController::class)->name('procurements.procurement-books');
+    Route::post('/pengadaan/{procurement}/baru', PengadaanBaruDetailController::class);
 
     Route::get('/pengadaan/aktif', PengadaanAktifController::class)->name('procurements.active');
     Route::post('/pengadaan/aktif', PengadaanAktifController::class);
 
-    Route::get('/pengadaan/{invoice}/aktif', PengadaanAktifDetailController::class)->name('procurements.books.active');
-    Route::post('/pengadaan/{invoice}/aktif', PengadaanAktifDetailController::class);
+    Route::get('/pengadaan/{procurement}/aktif', PengadaanAktifDetailController::class)->name('procurements.procurement-books.active');
+    Route::post('/pengadaan/{procurement}/aktif', PengadaanAktifDetailController::class);
 
     Route::get('/pengadaan/arsip', ArsipPengadaanController::class)->name('procurements.archived');
     Route::post('/pengadaan/arsip', ArsipPengadaanController::class);
 
-    Route::get('/pengadaan/{invoice}/arsip', ArsipPengadaanDetailController::class)->name('procurements.books.arsip');
-    Route::post('/pengadaan/{invoice}/arsip', ArsipPengadaanDetailController::class);
+    Route::get('/pengadaan/{procurement}/arsip', ArsipPengadaanDetailController::class)->name('procurements.procurement-books.arsip');
+    Route::post('/pengadaan/{procurement}/arsip', ArsipPengadaanDetailController::class);
 
     Route::get('/pengadaan/{id}/approve', TerimaPengadaanController::class)->name('procurement.approve');
     Route::get('/pengadaan/{id}/reject', TolakPengadaanController::class)->name('procurement.reject');
@@ -97,41 +97,41 @@ Route::prefix('admin')->middleware(['role:Super Admin', 'auth', 'verified'])->gr
 });
 
 Route::prefix('penerbit')->middleware(['role:Penerbit', 'auth', 'verified'])->group(function () {
-    Route::get('/pengadaan/baru', PenerbitPengadaanBaruController::class)->name('penerbit.invoices');
+    Route::get('/pengadaan/baru', PenerbitPengadaanBaruController::class)->name('penerbit.procurements');
     Route::post('/pengadaan/baru', PenerbitPengadaanBaruController::class);
 
-    Route::get('/pengadaan/{invoice:code}/store', SimpanPengadaanController::class)->name('penerbit.invoices.store');
+    Route::get('/pengadaan/{procurement:code}/store', SimpanPengadaanController::class)->name('penerbit.procurements.store');
 
-    Route::get('/pengadaan/{invoice}/baru', PenerbitPengadaanBaruDetailController::class)->name('penerbit.invoices.books');
-    Route::post('/pengadaan/{invoice}/baru', PenerbitPengadaanBaruDetailController::class);
+    Route::get('/pengadaan/{procurement}/baru', PenerbitPengadaanBaruDetailController::class)->name('penerbit.procurements.procurement-books');
+    Route::post('/pengadaan/{procurement}/baru', PenerbitPengadaanBaruDetailController::class);
 
-    Route::post('/pengadaan/{invoice}/import', ImportBukuController::class)->name('penerbit.invoices.books.import');
+    Route::post('/pengadaan/{procurement}/import', ImportBukuController::class)->name('penerbit.procurements.procurement-books.import');
 
-    Route::get('/pengadaan/aktif', PenerbitPengadaanAktifController::class)->name('penerbit.invoices.ongoing');
+    Route::get('/pengadaan/aktif', PenerbitPengadaanAktifController::class)->name('penerbit.procurements.ongoing');
     Route::post('/pengadaan/aktif', PenerbitPengadaanAktifController::class);
 
-    Route::get('/pengadaan/{invoice}/aktif', PenerbitPengadaanAktifDetailController::class)->name('penerbit.invoices.books.ongoing');
-    Route::post('/pengadaan/{invoice}/aktif', PenerbitPengadaanAktifDetailController::class);
+    Route::get('/pengadaan/{procurement}/aktif', PenerbitPengadaanAktifDetailController::class)->name('penerbit.procurements.procurement-books.ongoing');
+    Route::post('/pengadaan/{procurement}/aktif', PenerbitPengadaanAktifDetailController::class);
 
-    Route::get('/pengadaan/arsip', PenerbitArsipPengadaanController::class)->name('penerbit.invoices.verified');
+    Route::get('/pengadaan/arsip', PenerbitArsipPengadaanController::class)->name('penerbit.procurements.verified');
     Route::post('/pengadaan/arsip', PenerbitArsipPengadaanController::class);
 
-    Route::get('/pengadaan/{invoice}/arsip', PenerbitArsipPengadaanDetailController::class)->name('penerbit.invoices.books.verified');
-    Route::post('/pengadaan/{invoice}/arsip', PenerbitArsipPengadaanDetailController::class);
+    Route::get('/pengadaan/{procurement}/arsip', PenerbitArsipPengadaanDetailController::class)->name('penerbit.procurements.procurement-books.verified');
+    Route::post('/pengadaan/{procurement}/arsip', PenerbitArsipPengadaanDetailController::class);
 });
 
 Route::prefix('prodi')->middleware(['role:Admin Prodi', 'auth', 'verified'])->group(function () {
     Route::get('/pengadaan/aktif', ProdiPengadaanAktifController::class)->name('prodi.procurements.active');
     Route::post('/pengadaan/aktif', ProdiPengadaanAktifController::class);
 
-    Route::get('/pengadaan/{invoice}/aktif', ProdiPengadaanAktifDetailController::class)->name('prodi.procurements.books.active');
-    Route::post('/pengadaan/{invoice}/aktif', ProdiPengadaanAktifDetailController::class);
+    Route::get('/pengadaan/{procurement}/aktif', ProdiPengadaanAktifDetailController::class)->name('prodi.procurements.procurement-books.active');
+    Route::post('/pengadaan/{procurement}/aktif', ProdiPengadaanAktifDetailController::class);
 
     Route::get('/pengadaan/arsip', ProdiArsipPengadaanController::class)->name('prodi.procurements.archived');
     Route::post('/pengadaan/arsip', ProdiArsipPengadaanController::class);
 
-    Route::get('/pengadaan/{invoice}/arsip', ProdiArsipPengadaanDetailController::class)->name('prodi.procurements.books.archived');
-    Route::post('/pengadaan/{invoice}/arsip', ProdiArsipPengadaanDetailController::class);
+    Route::get('/pengadaan/{procurement}/arsip', ProdiArsipPengadaanDetailController::class)->name('prodi.procurements.procurement-books.archived');
+    Route::post('/pengadaan/{procurement}/arsip', ProdiArsipPengadaanDetailController::class);
 });
 
 Route::middleware('auth')->group(function () {
@@ -166,8 +166,8 @@ Route::get('/auth/{provider}', [SocialiteController::class, 'redirectToProvider'
 Route::get('/auth/{provider}/callback', [SocialiteController::class, 'handleProvideCallback']);
 
 Route::get('/tex', function () {
-    $inv = App\Models\Invoice::find(4);
-    $majors = $inv->books()->select('major_id')->get();
+    $inv = App\Models\Procurement::find(4);
+    $majors = $inv->procurement-books()->select('major_id')->get();
     $res = [];
     foreach($majors as $major) {
         $d = explode(",", $major->major_id);

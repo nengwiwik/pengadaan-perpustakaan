@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Models\Invoice;
+use App\Models\Procurement;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -20,7 +20,7 @@ class NewInvoice extends Mailable implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(public Invoice $invoice)
+    public function __construct(public Procurement $procurement)
     {
         //
     }
@@ -47,7 +47,7 @@ class NewInvoice extends Mailable implements ShouldQueue
     public function content()
     {
         return new Content(
-            markdown: 'emails.invoices.new',
+            markdown: 'emails.procurements.new',
         );
     }
 
@@ -68,7 +68,7 @@ class NewInvoice extends Mailable implements ShouldQueue
      */
     // public function build()
     // {
-    //     return $this->markdown('emails.invoices.new')
+    //     return $this->markdown('emails.procurements.new')
     //         ->from($this->invoice->publisher->email, $this->invoice->publisher->name)
     //         ->subject('New Procurement from ' . $this->invoice->publisher->name)
     //         ->tag('Perpustakaan');

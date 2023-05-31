@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Prodi;
 
 use App\Http\Controllers\GroceryCrudController;
-use App\Models\Invoice;
+use App\Models\Procurement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,7 +12,7 @@ class ArsipPengadaanController extends GroceryCrudController
     public function __invoke(Request $request)
     {
         $title = "Arsip Pengadaan";
-        $table = 'invoices';
+        $table = 'procurements';
         $singular = 'Pengadaan';
         $plural = 'Data Pengadaan';
         $crud = $this->_getGroceryCrudEnterprise();
@@ -22,7 +22,7 @@ class ArsipPengadaanController extends GroceryCrudController
         $crud->where([
             $table . '.campus_id = ?' => Auth::user()->campus_id,
             $table . '.deleted_at is null',
-            $table . ".status in ('" . Invoice::STATUS_SELESAI . "','" . Invoice::STATUS_DITOLAK . "')",
+            $table . ".status in ('" . Procurement::STATUS_SELESAI . "','" . Procurement::STATUS_DITOLAK . "')",
         ]);
         $crud->unsetOperations();
         $crud->setRead();
@@ -46,7 +46,7 @@ class ArsipPengadaanController extends GroceryCrudController
             'total_price' => 'Total Harga',
         ]);
         $crud->callbackColumn('code', function ($value, $row) {
-            return '<a href="' . route('prodi.procurements.books.archived', $row->id) . '">' . $value . '</a>';
+            return '<a href="' . route('prodi.procurements.procurement-books.archived', $row->id) . '">' . $value . '</a>';
         });
         $crud->callbackReadField('total_books', function ($value, $row) {
             return number_format($value, 0, ',', '.');

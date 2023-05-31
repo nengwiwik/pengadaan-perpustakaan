@@ -73,7 +73,7 @@ address-book:
     - '4.7'
     - 5.0.0
     - 5.0.3
-  label: Address Book
+  label: Address ProcurementBook
   search:
     terms:
       - contact
@@ -1988,7 +1988,7 @@ book:
 book-dead:
   changes:
     - 5.4.0
-  label: Book of the Dead
+  label: ProcurementBook of the Dead
   search:
     terms:
       - Dungeons & Dragons
@@ -2013,7 +2013,7 @@ book-dead:
 book-medical:
   changes:
     - 5.7.0
-  label: Medical Book
+  label: Medical ProcurementBook
   search:
     terms:
       - diary
@@ -2033,7 +2033,7 @@ book-open:
     - 5.0.13
     - 5.1.0
     - 5.2.0
-  label: Book Open
+  label: ProcurementBook Open
   search:
     terms:
       - flyer
@@ -2049,7 +2049,7 @@ book-open:
 book-reader:
   changes:
     - 5.2.0
-  label: Book Reader
+  label: ProcurementBook Reader
   search:
     terms:
       - flyer
@@ -7202,7 +7202,7 @@ file-invoice:
   changes:
     - 5.1.0
     - 5.10.2
-  label: File Invoice
+  label: File Procurement
   search:
     terms:
       - account
@@ -7219,7 +7219,7 @@ file-invoice-dollar:
   changes:
     - 5.1.0
     - 5.10.2
-  label: File Invoice with US Dollar
+  label: File Procurement with US Dollar
   search:
     terms:
       - $

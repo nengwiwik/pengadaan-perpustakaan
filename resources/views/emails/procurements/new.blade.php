@@ -4,9 +4,9 @@
 The body of your message.
 
 @component('mail::table')
-| No Invoice | Nama Penerbit      | Tanggal     | Total Buku |
+| No Pengadaan | Nama Penerbit      | Tanggal     | Total Buku |
 | :--------- | :----------------- | :--------- | ---------: |
-| {{ $invoice->code }} | {{ $invoice->publisher->name }} | {{ $invoice->invoice_date->format('d M Y')}} | {{ $invoice->total_books }} |
+| {{ $procurement->code }} | {{ $procurement->publisher->name }} | {{ $procurement->invoice_date->format('d M Y')}} | {{ $procurement->total_books }} |
 @endcomponent
 
 @component('mail::button', ['url' => route('homepage')])

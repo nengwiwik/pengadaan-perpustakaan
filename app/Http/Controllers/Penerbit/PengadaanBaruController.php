@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Penerbit;
 
 use App\Http\Controllers\GroceryCrudController;
-use App\Models\Invoice;
+use App\Models\Procurement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,7 +12,7 @@ class PengadaanBaruController extends GroceryCrudController
     public function __invoke(Request $request)
     {
         $title = "Pengadaan Baru";
-        $table = 'invoices';
+        $table = 'procurements';
         $singular = 'Pengadaan';
         $plural = 'Data Pengadaan';
         $crud = $this->_getGroceryCrudEnterprise();
@@ -22,7 +22,7 @@ class PengadaanBaruController extends GroceryCrudController
         $crud->where([
             $table . '.publisher_id = ?' => Auth::user()->publisher_id,
             $table . '.deleted_at is null',
-            $table . '.status' => Invoice::STATUS_PROSES,
+            $table . '.status' => Procurement::STATUS_PROSES,
         ]);
         $crud->defaultOrdering('invoice_date', 'desc');
         $crud->columns(['code', 'campus_id', 'invoice_date', 'total_books']);
@@ -36,26 +36,31 @@ class PengadaanBaruController extends GroceryCrudController
             'total_books' => 'Jumlah Buku',
         ]);
         $crud->callbackColumn('code', function ($value, $row) {
-            return '<a href="' . route('penerbit.invoices.books', $row->id) . '">' . $value . '</a>';
+            return '<a href="' . route('penerbit.procurements.procurement-books', $row->id) . '">' . $value . '</a>';
         });
         $crud->setActionButton('Kirim Pengadaan', 'fa fa-envelope', function ($row) {
-            $inv = Invoice::find($row->id);
-            return route('penerbit.invoices.store', $inv->code);
+            $inv = Procurement::find($row->id);
+            return route('penerbit.procurements.store', $inv->code);
         }, false);
         $crud->callbackBeforeInsert(function ($s) {
             $s->data['code'] = "BOOK-" . date('ymdHis') . "-" . str_pad(Auth::user()->publisher_id, 3, '0', STR_PAD_LEFT);
             $s->data['publisher_id'] = Auth::user()->publisher_id;
             $s->data['created_at'] = now();
             $s->data['updated_at'] = now();
-            $s->data['status'] = Invoice::STATUS_PROSES;
+            $s->data['status'] = Procurement::STATUS_PROSES;
             return $s;
         });
         $crud->callbackAfterInsert(function ($s) {
             $redirectResponse = new \GroceryCrud\Core\Redirect\RedirectResponse();
-            return $redirectResponse->setUrl(route('penerbit.invoices.books', $s->insertId));
+            return $redirectResponse->setUrl(route('penerbit.procurements.procurement-books', $s->insertId));
         });
         $crud->callbackDelete(function ($s) {
+<<<<<<< HEAD
             $data = Invoice::find($s->primaryKeyValue);
+=======
+            $data = Procurement::find($s->primaryKeyValue);
+
+>>>>>>> d0c90ccc4932229cba018c5b1d280a61be33d5f8
             if (!$data) {
                 $errorMessage = new \GroceryCrud\Core\Error\ErrorMessage();
                 return $errorMessage->setMessage('Data not found');

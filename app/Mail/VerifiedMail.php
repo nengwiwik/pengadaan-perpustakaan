@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Models\Invoice;
+use App\Models\Procurement;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -20,7 +20,7 @@ class VerifiedMail extends Mailable implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(public Invoice $invoice)
+    public function __construct(public Procurement $procurement)
     {
         //
     }
@@ -46,7 +46,7 @@ class VerifiedMail extends Mailable implements ShouldQueue
     public function content()
     {
         return new Content(
-            markdown: 'emails.invoices.verified',
+            markdown: 'emails.procurements.verified',
         );
     }
 

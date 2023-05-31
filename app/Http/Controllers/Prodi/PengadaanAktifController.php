@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Prodi;
 
 use App\Http\Controllers\GroceryCrudController;
-use App\Models\Invoice;
+use App\Models\Procurement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,7 +12,7 @@ class PengadaanAktifController extends GroceryCrudController
     public function __invoke(Request $request)
     {
         $title = "Pengadaan Aktif";
-        $table = 'invoices';
+        $table = 'procurements';
         $singular = 'Pengadaan';
         $plural = 'Data Pengadaan';
         $crud = $this->_getGroceryCrudEnterprise();
@@ -22,7 +22,7 @@ class PengadaanAktifController extends GroceryCrudController
         $crud->where([
             $table . '.campus_id = ?' => Auth::user()->campus_id,
             $table . '.deleted_at is null',
-            $table . '.status' => Invoice::STATUS_AKTIF,
+            $table . '.status' => Procurement::STATUS_AKTIF,
         ]);
         $crud->unsetOperations();
         $crud->setRead();
@@ -44,7 +44,7 @@ class PengadaanAktifController extends GroceryCrudController
             'total_price' => 'Total Harga',
         ]);
         $crud->callbackColumn('code', function ($value, $row) {
-            return '<a href="' . route('prodi.procurements.books.active', $row->id) . '">' . $value . '</a>';
+            return '<a href="' . route('prodi.procurements.procurement-books.active', $row->id) . '">' . $value . '</a>';
         });
         $crud->callbackReadField('total_books', function ($value, $row) {
             return number_format($value, 0, ',', '.');

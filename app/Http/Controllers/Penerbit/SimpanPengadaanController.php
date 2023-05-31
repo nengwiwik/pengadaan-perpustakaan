@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Penerbit;
 
 use App\Http\Controllers\Controller;
-use App\Models\Invoice;
+use App\Models\Procurement;
 use App\Repositories\PenerbitRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,19 +16,19 @@ class SimpanPengadaanController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function __invoke(Invoice $invoice)
+    public function __invoke(Procurement $procurement)
     {
         // otorisasi
-        if ($invoice->publisher_id != Auth::user()->publisher_id) {
+        if ($procurement->publisher_id != Auth::user()->publisher_id) {
             return abort(404);
         }
 
-        $invoice->invoice_date = now();
-        $invoice->status = Invoice::STATUS_BARU;
-        $invoice->save();
+        $procurement->invoice_date = now();
+        $procurement->status = Procurement::STATUS_BARU;
+        $procurement->save();
 
-        PenerbitRepository::newProcurement($invoice);
+        PenerbitRepository::newProcurement($procurement);
 
-        return to_route('penerbit.invoices');
+        return to_route('penerbit.procurements');
     }
 }

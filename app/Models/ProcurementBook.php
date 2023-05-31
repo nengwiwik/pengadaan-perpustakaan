@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 
-class Book extends Model
+class ProcurementBook extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -19,9 +19,9 @@ class Book extends Model
         return $this->belongsTo(Major::class);
     }
 
-    public function invoice(): BelongsTo
+    public function procurement(): BelongsTo
     {
-        return $this->belongsTo(Invoice::class);
+        return $this->belongsTo(Procurement::class);
     }
 
     public function getCoverAttribute($value)

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Invoice;
+use App\Models\Procurement;
 use App\Models\Publisher;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -51,9 +51,9 @@ class HomeController extends Controller
 
         // untuk super admin
         if ($user->hasExactRoles('Super Admin')) {
-            $jumlah_pengadaan_baru = Invoice::where('status', Invoice::STATUS_BARU)->count();
-            $jumlah_pengadaan_aktif = Invoice::where('status', Invoice::STATUS_AKTIF)->count();
-            $jumlah_arsip_pengadaan = Invoice::whereIn('status', [Invoice::STATUS_INVOICE, Invoice::STATUS_SELESAI, Invoice::STATUS_DITOLAK])->count();
+            $jumlah_pengadaan_baru = Procurement::where('status', Procurement::STATUS_BARU)->count();
+            $jumlah_pengadaan_aktif = Procurement::where('status', Procurement::STATUS_AKTIF)->count();
+            $jumlah_arsip_pengadaan = Procurement::whereIn('status', [Procurement::STATUS_INVOICE, Procurement::STATUS_SELESAI, Procurement::STATUS_DITOLAK])->count();
             $jumlah_penerbit = Publisher::count();
             $jumlah_user_belum_aktif = User::doesntHave('roles')->count();
 
@@ -62,37 +62,37 @@ class HomeController extends Controller
             $route_arsip_pengadaan = route('procurements.archived');
             $route_jumlah_penerbit = route('publisher');
 
-            $nominal_pengadaan_aktif = Invoice::where('status', Invoice::STATUS_AKTIF)->sum('total_price');
-            $nominal_arsip_pengadaan = Invoice::where('status', Invoice::STATUS_SELESAI)->sum('total_price');
+            $nominal_pengadaan_aktif = Procurement::where('status', Procurement::STATUS_AKTIF)->sum('total_price');
+            $nominal_arsip_pengadaan = Procurement::where('status', Procurement::STATUS_SELESAI)->sum('total_price');
         }
 
         // untuk prodi
         if ($user->hasExactRoles('Admin Prodi')) {
-            $jumlah_pengadaan_baru = Invoice::where('campus_id', $user->campus_id)->where('status', Invoice::STATUS_BARU)->count();
-            $jumlah_pengadaan_aktif = Invoice::where('campus_id', $user->campus_id)->where('status', Invoice::STATUS_AKTIF)->count();
-            $jumlah_arsip_pengadaan = Invoice::where('campus_id', $user->campus_id)->whereIn('status', [Invoice::STATUS_SELESAI, Invoice::STATUS_DITOLAK, Invoice::STATUS_INVOICE])->count();
-            $jumlah_penerbit = Invoice::where('campus_id', $user->campus_id)->count();
+            $jumlah_pengadaan_baru = Procurement::where('campus_id', $user->campus_id)->where('status', Procurement::STATUS_BARU)->count();
+            $jumlah_pengadaan_aktif = Procurement::where('campus_id', $user->campus_id)->where('status', Procurement::STATUS_AKTIF)->count();
+            $jumlah_arsip_pengadaan = Procurement::where('campus_id', $user->campus_id)->whereIn('status', [Procurement::STATUS_SELESAI, Procurement::STATUS_DITOLAK, Procurement::STATUS_INVOICE])->count();
+            $jumlah_penerbit = Procurement::where('campus_id', $user->campus_id)->count();
 
             $route_pengadaan_aktif = route('prodi.procurements.active');
             $route_arsip_pengadaan = route('prodi.procurements.archived');
 
-            $nominal_pengadaan_aktif = Invoice::where('campus_id', $user->campus_id)->where('status', Invoice::STATUS_AKTIF)->sum('total_price');
-            $nominal_arsip_pengadaan = Invoice::where('campus_id', $user->campus_id)->where('status', Invoice::STATUS_SELESAI)->sum('total_price');
+            $nominal_pengadaan_aktif = Procurement::where('campus_id', $user->campus_id)->where('status', Procurement::STATUS_AKTIF)->sum('total_price');
+            $nominal_arsip_pengadaan = Procurement::where('campus_id', $user->campus_id)->where('status', Procurement::STATUS_SELESAI)->sum('total_price');
         }
 
         // untuk penerbit
         if ($user->hasExactRoles('Penerbit')) {
-            $jumlah_pengadaan_baru = Invoice::where('publisher_id', $user->publisher_id)->where('status', Invoice::STATUS_PROSES)->count();
-            $jumlah_pengadaan_aktif = Invoice::where('publisher_id', $user->publisher_id)->whereIn('status', [Invoice::STATUS_BARU, Invoice::STATUS_AKTIF])->count();
-            $jumlah_arsip_pengadaan = Invoice::where('publisher_id', $user->publisher_id)->whereIn('status', [Invoice::STATUS_SELESAI, Invoice::STATUS_DITOLAK, Invoice::STATUS_INVOICE])->count();
-            $jumlah_penerbit = Invoice::where('publisher_id', $user->publisher_id)->count();
+            $jumlah_pengadaan_baru = Procurement::where('publisher_id', $user->publisher_id)->where('status', Procurement::STATUS_PROSES)->count();
+            $jumlah_pengadaan_aktif = Procurement::where('publisher_id', $user->publisher_id)->whereIn('status', [Procurement::STATUS_BARU, Procurement::STATUS_AKTIF])->count();
+            $jumlah_arsip_pengadaan = Procurement::where('publisher_id', $user->publisher_id)->whereIn('status', [Procurement::STATUS_SELESAI, Procurement::STATUS_DITOLAK, Procurement::STATUS_INVOICE])->count();
+            $jumlah_penerbit = Procurement::where('publisher_id', $user->publisher_id)->count();
 
-            $route_pengadaan_baru = route('penerbit.invoices');
-            $route_pengadaan_aktif = route('penerbit.invoices.ongoing');
-            $route_arsip_pengadaan = route('penerbit.invoices.verified');
+            $route_pengadaan_baru = route('penerbit.procurements');
+            $route_pengadaan_aktif = route('penerbit.procurements.ongoing');
+            $route_arsip_pengadaan = route('penerbit.procurements.verified');
 
-            $nominal_pengadaan_aktif = Invoice::where('publisher_id', $user->publisher_id)->where('status', Invoice::STATUS_AKTIF)->sum('total_price');
-            $nominal_arsip_pengadaan = Invoice::where('publisher_id', $user->publisher_id)->where('status', Invoice::STATUS_SELESAI)->sum('total_price');
+            $nominal_pengadaan_aktif = Procurement::where('publisher_id', $user->publisher_id)->where('status', Procurement::STATUS_AKTIF)->sum('total_price');
+            $nominal_arsip_pengadaan = Procurement::where('publisher_id', $user->publisher_id)->where('status', Procurement::STATUS_SELESAI)->sum('total_price');
         }
 
         $nominal_pengadaan_aktif = "IDR " . number_format($nominal_pengadaan_aktif, 0, ',', '.');

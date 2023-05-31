@@ -4,7 +4,7 @@
     <h1 class="h3 mb-4 text-gray-800">{{ $title }}</h1>
 
     <div class="mb-3">
-      <a name="" id="" class="btn btn-dark" href="{{ route('penerbit.invoices.verified') }}" role="button"><i class="fa fa-arrow-circle-left" aria-hidden="true"></i> Back</a>
+      <a name="" id="" class="btn btn-dark" href="{{ route('penerbit.procurements.verified') }}" role="button"><i class="fa fa-arrow-circle-left" aria-hidden="true"></i> Back</a>
     </div>
 
     {!! $output !!}
