@@ -55,13 +55,11 @@ class PengadaanBaruController extends GroceryCrudController
             return $redirectResponse->setUrl(route('penerbit.procurements.procurement-books', $s->insertId));
         });
         $crud->callbackDelete(function ($s) {
-<<<<<<< HEAD
-            $data = Invoice::find($s->primaryKeyValue);
-=======
             $data = Procurement::find($s->primaryKeyValue);
 
->>>>>>> d0c90ccc4932229cba018c5b1d280a61be33d5f8
-            if (!$data) {
+            $data = Procurement::find($s->primaryKeyValue);
+
+           if (!$data) {
                 $errorMessage = new \GroceryCrud\Core\Error\ErrorMessage();
                 return $errorMessage->setMessage('Data not found');
             }
