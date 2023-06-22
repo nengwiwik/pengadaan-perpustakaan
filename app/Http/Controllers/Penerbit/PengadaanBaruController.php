@@ -57,11 +57,12 @@ class PengadaanBaruController extends GroceryCrudController
         $crud->callbackDelete(function ($s) {
             $data = Procurement::find($s->primaryKeyValue);
 
-            if (!$data) {
+            $data = Procurement::find($s->primaryKeyValue);
+
+           if (!$data) {
                 $errorMessage = new \GroceryCrud\Core\Error\ErrorMessage();
                 return $errorMessage->setMessage('Data not found');
             }
-
             $data->save();
             $data->delete();
             return $s;
@@ -70,9 +71,7 @@ class PengadaanBaruController extends GroceryCrudController
             $s->data['updated_at'] = now();
             return $s;
         });
-
         $output = $crud->render();
-
         return $this->_showOutput($output, $title);
     }
 }

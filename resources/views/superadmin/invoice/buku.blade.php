@@ -10,10 +10,10 @@
             $link = route('procurements.new');
         } else if (is_null(auth()->user()->publisher_id) and !is_null(auth()->user()->campus_id)) {
             $link = route('prodi.procurements.active');
-        } 
+        }
     @endphp
 
-    <a class="btn btn-dark" href="{{ $link }}" role="button">
+    <a class="btn btn-dark" href="{{$link}}" role="button">
       <i class="fa fa-arrow-circle-left" aria-hidden="true"></i> Back
     </a>
   </div>
