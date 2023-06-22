@@ -28,7 +28,7 @@ class UpdatePasswordController extends Controller
         if (Hash::check($request->current_password, $user->password)) {
             $user->password = Hash::make($request->password);
         } else {
-            return redirect()->back()->withInput();
+            return redirect()->back()->withInput()->with('status_password_error', 'Current password tidak cocok!');
         }
         $user->save();
         return back()->with('status_password', 'Password changed!');

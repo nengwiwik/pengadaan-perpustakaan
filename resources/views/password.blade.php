@@ -18,6 +18,15 @@
               </div>
             @endif
 
+            @if (session('status_password_error'))
+              <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ session('status_password_error') }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            @endif
+
             <div class="row">
               <div class="col-md-12">
                 <form method="POST" action="{{ route('profil.update-password') }}" enctype="multipart/form-data">
