@@ -18,7 +18,7 @@ class AdminProdiController extends GroceryCrudController
         $crud->setSubject('Admin', 'Admin Prodi');
 
         $crud->fields(['name', 'email', 'password', 'campus_id', 'major_id']);
-        $crud->requiredFields(['name', 'email', 'password', 'campus_id', 'major_id']);
+        $crud->requiredFields(['name', 'email', 'campus_id', 'major_id']);
         $crud->columns(['name', 'email', 'campus_id', 'major_id', 'updated_at']);
 
         $crud->where([
@@ -49,14 +49,6 @@ class AdminProdiController extends GroceryCrudController
             ],
         ]);
 
-        $crud->callbackBeforeInsert(function ($s) {
-            $s->data['password'] = bcrypt($s->data['password']);
-            $s->data['email_verified_at'] = now();
-            $s->data['created_at'] = now();
-            $s->data['updated_at'] = now();
-            return $s;
-        });
-
         $crud->setRelation('campus_id', 'campuses', 'name');
         $crud->setRelation('major_id', 'majors', 'name');
 
@@ -67,7 +59,11 @@ class AdminProdiController extends GroceryCrudController
             'updated_at' => 'Terakhir diubah',
         ]);
         $crud->callbackBeforeInsert(function ($s) {
+            if ($s->data['password'] == '') {
+                $s->data['password'] = 'password';
+            }
             $s->data['password'] = bcrypt($s->data['password']);
+            $s->data['email_verified_at'] = now();
             $s->data['created_at'] = now();
             $s->data['updated_at'] = now();
             return $s;

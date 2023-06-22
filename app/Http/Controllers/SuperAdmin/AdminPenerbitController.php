@@ -18,7 +18,7 @@ class AdminPenerbitController extends GroceryCrudController
         $crud->setSubject('Admin', 'Admin Penerbit');
 
         $crud->fields(['name', 'email', 'password', 'publisher_id']);
-        $crud->requiredFields(['name', 'email', 'password', 'publisher_id']);
+        $crud->requiredFields(['name', 'email', 'publisher_id']);
         $crud->columns(['name', 'email', 'publisher_id', 'updated_at']);
 
         $crud->where([
@@ -50,6 +50,9 @@ class AdminPenerbitController extends GroceryCrudController
         ]);
 
         $crud->callbackBeforeInsert(function ($s) {
+            if ($s->data['password'] == '') {
+                $s->data['password'] = 'password';
+            }
             $s->data['password'] = bcrypt($s->data['password']);
             $s->data['email_verified_at'] = now();
             $s->data['created_at'] = now();
