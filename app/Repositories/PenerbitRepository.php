@@ -26,7 +26,7 @@ class PenerbitRepository
                 $d = explode(",", $major->major_id);
                 array_push($res, $d);
             }
-    
+
             $result = [];
             foreach ($res as $d) {
                 foreach ($d as $e) {
@@ -40,13 +40,14 @@ class PenerbitRepository
             foreach ($data_majors as $key => $dmajor) {
                 foreach ($majors as $k => $major) {
                     if ($key == $major) {
-                        $res .= $dmajor->name;
+                        $res .= $dmajor->getKey();
                         if ($k != $last_major) $res .= ",";
                     }
                 }
             }
             $majors = explode(",", $res);
-    
+            info($majors);
+
             $users = User::select(['name', 'email'])->where('campus_id', $procurement->campus_id)->whereIn('major_id', $majors)->get();
             $mail = Mail::to(config('undira.admin_email'), config('undira.admin_name'));
             $mail->cc($users);
@@ -85,6 +86,7 @@ class PenerbitRepository
         $mail = Mail::to($users);
         $mail->queue(new SendInvoice($procurement));
 
+        // seharusnya prodi tidak dapat email
         $users = User::role(User::ROLE_ADMIN_PRODI)->where('campus_id', $procurement->campus_id)->get();
         $mail = Mail::to($users);
         $mail->queue(new SendInvoice($procurement));

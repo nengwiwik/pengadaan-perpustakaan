@@ -6,8 +6,8 @@
     <div class="mb-3">
         <a class="btn btn-dark" href="{{ route('penerbit.procurements') }}" role="button"><i class="fa fa-arrow-circle-left"
                 aria-hidden="true"></i> Kembali</a>
-        <button class="btn btn-primary" href="#" role="button" data-toggle="modal" data-target="#exampleModal"><i
-                class="fas fa-file-import"></i> Impor Buku</button>
+        {{-- <button class="btn btn-primary" href="#" role="button" data-toggle="modal" data-target="#exampleModal"><i
+                class="fas fa-file-import"></i> Impor Buku</button> --}}
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">

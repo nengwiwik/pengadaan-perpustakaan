@@ -33,8 +33,8 @@ class NewInvoice extends Mailable implements ShouldQueue
     public function envelope()
     {
         return new Envelope(
-            from: new Address($this->invoice->publisher->email, $this->invoice->publisher->name),
-            subject: 'New Procurement from ' . $this->invoice->publisher->name,
+            from: new Address($this->procurement->publisher->email, $this->procurement->publisher->name),
+            subject: 'New Procurement from ' . $this->procurement->publisher->name,
             tags: ['Perpustakaan'],
         );
     }
