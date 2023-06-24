@@ -87,8 +87,8 @@ class PenerbitRepository
         $mail->queue(new SendInvoice($procurement));
 
         // seharusnya prodi tidak dapat email
-        $users = User::role(User::ROLE_ADMIN_PRODI)->where('campus_id', $procurement->campus_id)->get();
-        $mail = Mail::to($users);
-        $mail->queue(new SendInvoice($procurement));
+        // $users = User::role(User::ROLE_ADMIN_PRODI)->where('campus_id', $procurement->campus_id)->get();
+        // $mail = Mail::to($users);
+        // $mail->queue(new SendInvoice($procurement));
     }
 }
