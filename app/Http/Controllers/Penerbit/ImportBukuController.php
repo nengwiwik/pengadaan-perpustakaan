@@ -21,6 +21,7 @@ class ImportBukuController extends Controller
     public function __invoke(Request $request, Procurement $procurement)
     {
         $validator = Validator::make($request->all(), [
+            'jurusan' => 'required|numeric|exists:majors,id',
             'upload' => 'required|file|mimes:xlsx'
         ]);
 
@@ -33,7 +34,7 @@ class ImportBukuController extends Controller
 
         try {
             DB::beginTransaction();
-            Excel::import(new BooksImport($procurement), $path, 'public');
+            Excel::import(new BooksImport($procurement, $request->jurusan), $path, 'public');
             DB::commit();
         } catch (\Exception $ex) {
             DB::rollBack();

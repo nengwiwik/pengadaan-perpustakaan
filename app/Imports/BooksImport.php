@@ -23,7 +23,7 @@ class BooksImport implements
 {
     use CalculateBooks;
 
-    public function __construct(public Procurement $procurement)
+    public function __construct(public Procurement $procurement, public $major_id)
     {
     }
 
@@ -38,12 +38,11 @@ class BooksImport implements
             if ($key == 0) {
                 continue;
             }
-            $major = $this->getMajor($row[0]);
             $inv = ProcurementBook::updateOrCreate(
                 [
-                    'procurement_id' => $this->invoice->getKey(),
-                    'major_id' => $major,
+                    'procurement_id' => $this->procurement->getKey(),
                     'isbn' => $row[2],
+                    'major_id' => $this->major_id,
                 ],
                 [
                     'title' => $row[1],

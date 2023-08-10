@@ -6,8 +6,8 @@
     <div class="mb-3">
         <a class="btn btn-dark" href="{{ route('penerbit.procurements') }}" role="button"><i class="fa fa-arrow-circle-left"
                 aria-hidden="true"></i> Kembali</a>
-        {{-- <button class="btn btn-primary" href="#" role="button" data-toggle="modal" data-target="#exampleModal"><i
-                class="fas fa-file-import"></i> Impor Buku</button> --}}
+        <button class="btn btn-primary" href="#" role="button" data-toggle="modal" data-target="#exampleModal"><i
+                class="fas fa-file-import"></i> Impor Buku</button>
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -22,14 +22,23 @@
                             method="post" id="form-upload" enctype="multipart/form-data">
                             @csrf
                             <div class="form-group">
+                              <label for="jurusan">Jurusan</label>
+                              <select class="form-control" name="jurusan" id="jurusan">
+                                <option value="">Pilih jurusan</option>
+                                @foreach ($data['data_jurusan'] as $jurusan)
+                                <option value="{{ $jurusan->getKey() }}">{{ $jurusan->name }}</option>
+                                @endforeach
+                              </select>
+                            </div>
+                            <div class="form-group">
                                 <label for="upload">File</label>
                                 <input type="file" class="form-control-file" name="upload" id="upload"
-                                    placeholder="File" aria-describedby="uploadId">
+                                    placeholder="File">
                             </div>
                         </form>
 
                         <hr>
-                        <p>Unduh template <a href="{{ asset('template/import-procurement-books.xlsx') }}" download>di
+                        <p>Unduh template <a href="{{ asset('template/import-books.xlsx') }}" download>di
                                 sini</a></p>
                     </div>
                     <div class="modal-footer">

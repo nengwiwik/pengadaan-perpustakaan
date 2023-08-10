@@ -23,6 +23,7 @@ class PengadaanBaruDetailController extends GroceryCrudController
         }
 
         $title = "Data Buku | Nomor Pengadaan " . $procurement->code;
+        $data['data_jurusan'] = Major::orderBy('id')->get();
         $table = 'procurement_books';
         $singular = 'Buku';
         $plural = 'Data Buku';
@@ -106,21 +107,22 @@ class PengadaanBaruDetailController extends GroceryCrudController
             $data = ProcurementBook::find($primaryKeyValue);
             return "<img src='" . $data->cover . "' height='150'>";
         });
-        $crud->fieldType('major_id', 'multiselect_searchable', Major::get()->pluck('name'));
-        $crud->callbackReadField('major_id', function ($fieldValue, $primaryKeyValue) {
-            $last_major = array_key_last($fieldValue);
-            $res = "";
-            $data_majors = Major::all();
-            foreach ($data_majors as $key => $dmajor) {
-                foreach ($fieldValue as $k => $major) {
-                    if ($key == $major) {
-                        $res .= $dmajor->name;
-                        if ($k != $last_major) $res .= ", ";
-                    }
-                }
-            }
-            return $res;
-        });
+        $crud->setRelation('major_id', 'majors', 'name');
+        // $crud->fieldType('major_id', 'multiselect_searchable', Major::get()->pluck('name'));
+        // $crud->callbackReadField('major_id', function ($fieldValue, $primaryKeyValue) {
+        //     $last_major = array_key_last($fieldValue);
+        //     $res = "";
+        //     $data_majors = Major::all();
+        //     foreach ($data_majors as $key => $dmajor) {
+        //         foreach ($fieldValue as $k => $major) {
+        //             if ($key == $major) {
+        //                 $res .= $dmajor->name;
+        //                 if ($k != $last_major) $res .= ", ";
+        //             }
+        //         }
+        //     }
+        //     return $res;
+        // });
         $crud->displayAs([
             'major_id' => 'Jurusan',
             'isbn' => 'ISBN',
@@ -200,6 +202,6 @@ class PengadaanBaruDetailController extends GroceryCrudController
 
         $output = $crud->render();
 
-        return $this->_showOutput($output, $title, 'penerbit.invoice.buku');
+        return $this->_showOutput($output, $title, 'penerbit.invoice.buku', data: $data);
     }
 }

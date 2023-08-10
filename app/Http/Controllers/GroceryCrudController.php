@@ -18,7 +18,7 @@ class GroceryCrudController extends Controller
         return $crud;
     }
 
-    public function _showOutput($output, $title = "Page", $view = 'grocery', $type_menu = null)
+    public function _showOutput($output, $title = "Page", $view = 'grocery', $type_menu = null, array $data = [])
     {
         if ($output->isJSONResponse) {
             return response($output->output, 200)
@@ -36,6 +36,7 @@ class GroceryCrudController extends Controller
             'js_files' => $js_files,
             'title' => $title,
             'type_menu' => $type_menu,
+            'data' => $data
         ]);
     }
 
