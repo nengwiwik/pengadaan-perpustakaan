@@ -18,13 +18,17 @@ use Maatwebsite\Excel\Concerns\WithValidation;
 class BooksImport implements
     ToCollection,
     WithChunkReading,
-    ShouldQueue
-// WithValidation
+    ShouldQueue,
+    SkipsEmptyRows,
+    WithHeadingRow,
+    WithValidation
 {
     use CalculateBooks;
 
-    public function __construct(public Procurement $procurement, public $major_id)
-    {
+    public function __construct(
+        public Procurement $procurement,
+        public $major_id
+    ) {
     }
 
     /**
@@ -34,22 +38,20 @@ class BooksImport implements
      */
     public function collection(Collection $rows)
     {
-        foreach ($rows as $key => $row) {
-            if ($key == 0) {
-                continue;
-            }
+        foreach ($rows as $row) {
             $inv = ProcurementBook::updateOrCreate(
                 [
                     'procurement_id' => $this->procurement->getKey(),
-                    'isbn' => $row[2],
+                    'isbn' => $row['isbn'],
                     'major_id' => $this->major_id,
                 ],
                 [
-                    'title' => $row[1],
-                    'author_name' => $row[3],
-                    'published_year' => $row[4],
-                    'price' => $row[5],
-                    'suplemen' => $row[6],
+                    'title' => $row['title'],
+                    'author_name' => $row['author_name'],
+                    'published_year' => $row['published_year'],
+                    'price' => $row['price'],
+                    'suplemen' => $row['suplement'],
+                    'summary' => $row['summary'],
                 ]
             );
             $this->calculateBooks($inv->procurement);
@@ -65,14 +67,13 @@ class BooksImport implements
     public function rules(): array
     {
         return [
-            '*.0' => 'required|exists:procurements,code',
-            '*.1' => 'required|exists:majors,name',
-            '*.2' => 'required|string|max:255',
-            '*.3' => 'required|alpha_num|max:255',
-            '*.4' => 'required|string|max:255',
-            '*.5' => 'required|integer',
-            '*.6' => 'required|integer',
-            '*.7' => 'required|string|max:255',
+            'title' => 'required|string|max:100',
+            'isbn' => 'required|string|max:20',
+            'author_name' => 'required|string|max:100',
+            'published_year' => 'required|numeric',
+            'price' => 'required|numeric',
+            'suplement' => 'nullable|string|max:20',
+            'summary'   => 'nullable|string'
         ];
     }
 

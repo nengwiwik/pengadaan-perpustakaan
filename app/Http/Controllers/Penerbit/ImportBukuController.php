@@ -36,6 +36,18 @@ class ImportBukuController extends Controller
             DB::beginTransaction();
             Excel::import(new BooksImport($procurement, $request->jurusan), $path, 'public');
             DB::commit();
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+            DB::rollBack();
+
+            if (count($failures) > 0) {
+                $row = $failures[0]->row(); // row that went wrong
+                $column = $failures[0]->attribute(); // either heading key (if using heading row concern) or column index
+                $error = $failures[0]->errors(); // Actual error messages from Laravel validator
+                // $value = $failures[0]->values(); // The values of the row that has failed.
+
+                return back()->with('errors', "Terjadi kesalahan pada Baris $row, Kolom $column, dengan pesan $error[0]")->withInput();
+            }
         } catch (\Exception $ex) {
             DB::rollBack();
             return back()->with('errors', $ex->getMessage())->withInput();
