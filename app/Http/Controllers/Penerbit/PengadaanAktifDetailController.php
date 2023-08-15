@@ -38,22 +38,7 @@ class PengadaanAktifDetailController extends GroceryCrudController
         $crud->unsetOperations()->setRead();
         $crud->columns(['major_id', 'cover', 'title', 'isbn', 'eksemplar', 'price']);
         $crud->fields(['major_id', 'cover', 'title', 'isbn', 'eksemplar', 'author_name', 'published_year', 'price', 'summary', 'suplemen']);
-        // $crud->setRelation('major_id', 'majors', 'name');
-        $crud->fieldType('major_id', 'multiselect_searchable', Major::get()->pluck('name', 'id')->toArray());
-        $crud->callbackReadField('major_id', function ($fieldValue, $primaryKeyValue) {
-            $last_major = array_key_last($fieldValue);
-            $res = "";
-            $data_majors = Major::all();
-            foreach ($data_majors as $key => $dmajor) {
-                foreach ($fieldValue as $k => $major) {
-                    if ($key == $major) {
-                        $res .= $dmajor->name;
-                        if ($k != $last_major) $res .= ", ";
-                    }
-                }
-            }
-            return $res;
-        });
+        $crud->setRelation('major_id', 'majors', 'name');
         $crud->fieldType('price', 'numeric');
         $crud->displayAs([
             'major_id' => 'Jurusan',

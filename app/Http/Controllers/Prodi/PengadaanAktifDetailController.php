@@ -34,7 +34,7 @@ class PengadaanAktifDetailController extends GroceryCrudController
         $crud->setSubject($singular, $plural);
         $crud->where([
             $table . '.procurement_id = ?' => $procurement->getKey(),
-            $table . '.major_id like ?' => "%$kunci%",
+            $table . '.major_id = ?' => Auth::user()->major_id,
             $table . '.deleted_at is null',
         ]);
 
@@ -43,7 +43,7 @@ class PengadaanAktifDetailController extends GroceryCrudController
         $crud->fields(['title', 'price', 'is_chosen']);
         $crud->readFields(['title', 'cover', 'summary', 'is_chosen', 'major_id', 'published_year', 'isbn', 'author_name', 'price', 'suplemen']);
         $crud->fieldType('major_id', 'multiselect_searchable', Major::get()->pluck('name'));
-
+        $crud->setRelation('major_id', 'majors', 'name');
         // validasi
         $crud->setRules([
             [
@@ -58,20 +58,6 @@ class PengadaanAktifDetailController extends GroceryCrudController
             ],
         ]);
 
-        $crud->callbackReadField('major_id', function ($fieldValue, $primaryKeyValue) {
-            $last_major = array_key_last($fieldValue);
-            $res = "";
-            $data_majors = Major::all();
-            foreach ($data_majors as $key => $dmajor) {
-                foreach ($fieldValue as $k => $major) {
-                    if ($key == $major) {
-                        $res .= $dmajor->name;
-                        if ($k != $last_major) $res .= ", ";
-                    }
-                }
-            }
-            return $res;
-        });
         $crud->fieldType('price', 'numeric');
         $crud->fieldType('is_chosen', 'dropdown_search', [
             1 => 'Ya',

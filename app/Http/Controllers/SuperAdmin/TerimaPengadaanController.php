@@ -15,11 +15,11 @@ class TerimaPengadaanController extends Controller
         DB::beginTransaction();
         try {
             $data = Procurement::find(decrypt($id));
-            PenerbitRepository::sendEmails($data);
             $data->approved_at = now();
             $data->cancelled_date = null;
             $data->status = Procurement::STATUS_AKTIF;
             $data->save();
+            PenerbitRepository::sendEmails($data);
             DB::commit();
             return redirect()->route('procurements.active');
         } catch (\Throwable $th) {

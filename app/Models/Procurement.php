@@ -14,11 +14,11 @@ class Procurement extends Model
     use HasFactory, SoftDeletes;
 
     protected $guarded = [];
-    protected $dates = [
-        'invoice_date',
-        'verified_date',
-        'paid_date',
-        'cancelled_date',
+    protected $casts = [
+        'invoice_date' => 'date:Y-m-d',
+        'verified_date' => 'date:Y-m-d',
+        'paid_date' => 'date:Y-m-d',
+        'cancelled_date' => 'date:Y-m-d',
     ];
 
     const STATUS_PROSES = "Proses";

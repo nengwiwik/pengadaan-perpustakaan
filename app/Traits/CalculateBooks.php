@@ -10,9 +10,9 @@ trait CalculateBooks
 {
     public function calculateBooks(Procurement $procurement)
     {
-        $data = ProcurementBook::select(DB::raw('count(id) as total_books'))->whereNull('eksemplar')->whereBelongsTo($procurement)->first();
+        $data = ProcurementBook::select('isbn')->groupBy('isbn')->whereNull('eksemplar')->whereBelongsTo($procurement)->get()->count();
 
-        $procurement->total_books = $data->total_books;
+        $procurement->total_books = $data;
         $procurement->save();
     }
 

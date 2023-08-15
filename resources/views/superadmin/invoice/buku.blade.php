@@ -10,6 +10,8 @@
             $link = route('procurements.new');
         } else if (is_null(auth()->user()->publisher_id) and !is_null(auth()->user()->campus_id)) {
             $link = route('prodi.procurements.active');
+        } else {
+            $link = route('penerbit.procurements.verified');
         }
     @endphp
 

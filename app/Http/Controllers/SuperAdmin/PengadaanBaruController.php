@@ -4,10 +4,13 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\GroceryCrudController;
 use App\Models\Procurement;
+use App\Traits\CalculateBooks;
 use Illuminate\Http\Request;
 
 class PengadaanBaruController extends GroceryCrudController
 {
+    use CalculateBooks;
+
     public function __invoke(Request $request)
     {
         $title = "Pengadaan Baru";
@@ -51,6 +54,14 @@ class PengadaanBaruController extends GroceryCrudController
             'created_at' => 'Status',
             'publisher_id' => 'Penerbit',
             'campus_id' => 'Kampus',
+            'invoice_date' => 'Tanggal Invoice',
+            'approved_date' => 'Tanggal Diterima',
+            'verified_date' => 'Tanggal Diverifikasi',
+            'paid_date' => 'Tanggal Pembayaran',
+            'cancelled_date' => 'Tanggal Dibatalkan',
+            'total_books' => 'Jumlah Buku',
+            'total_items' => 'Total Barang',
+            'total_price' => 'Total Biaya',
         ]);
 
         $crud->callbackBeforeInsert(function ($s) {
@@ -64,6 +75,8 @@ class PengadaanBaruController extends GroceryCrudController
         });
         $crud->callbackDelete(function ($s) {
             $data = Procurement::find($s->primaryKeyValue);
+            $data->procurement_books()->delete();
+            $this->calculateBooks($data);
             $data->delete();
             return $s;
         });

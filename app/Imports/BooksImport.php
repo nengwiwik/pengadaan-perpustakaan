@@ -7,6 +7,7 @@ use App\Models\Procurement;
 use App\Models\Major;
 use App\Traits\CalculateBooks;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\ToCollection;
@@ -39,7 +40,19 @@ class BooksImport implements
     public function collection(Collection $rows)
     {
         foreach ($rows as $row) {
-            $inv = ProcurementBook::updateOrCreate(
+            // skip jika ada buku dengan ISBN yang sama
+            $cek = ProcurementBook::query()
+                ->where('isbn', $row['isbn'])
+                ->whereHas('procurement', function (Builder $query) {
+                    $query->WhereNotIn('status', [Procurement::STATUS_DITOLAK]);
+                    $query->where('publisher_id', auth()->user()->publisher_id);
+                    $query->where('major_id', $this->major_id);
+                })
+                ->first();
+            if ($cek) continue;
+
+            // input buku
+            ProcurementBook::updateOrCreate(
                 [
                     'procurement_id' => $this->procurement->getKey(),
                     'isbn' => $row['isbn'],
@@ -54,8 +67,10 @@ class BooksImport implements
                     'summary' => $row['summary'],
                 ]
             );
-            $this->calculateBooks($inv->procurement);
         }
+
+        // hitung ulang jumlah buku (total_books) pada tabel procurements
+        $this->calculateBooks($this->procurement);
     }
 
     public function getMajor($major)
