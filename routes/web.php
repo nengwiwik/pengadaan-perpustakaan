@@ -14,6 +14,7 @@ use App\Http\Controllers\Prodi\ArsipPengadaanController as ProdiArsipPengadaanCo
 use App\Http\Controllers\Prodi\ArsipPengadaanDetailController as ProdiArsipPengadaanDetailController;
 use App\Http\Controllers\Prodi\PengadaanAktifController as ProdiPengadaanAktifController;
 use App\Http\Controllers\Prodi\PengadaanAktifDetailController as ProdiPengadaanAktifDetailController;
+use App\Http\Controllers\Prodi\SimpanBukuController;
 use App\Http\Controllers\Profile\UpdatePasswordController;
 use App\Http\Controllers\Profile\UpdateProfileController;
 use App\Http\Controllers\SuperAdmin\AdminPenerbitController;
@@ -126,6 +127,7 @@ Route::prefix('prodi')->middleware(['role:Admin Prodi', 'auth', 'verified'])->gr
 
     Route::get('/pengadaan/{procurement}/aktif', ProdiPengadaanAktifDetailController::class)->name('prodi.procurements.procurement-books.active');
     Route::post('/pengadaan/{procurement}/aktif', ProdiPengadaanAktifDetailController::class);
+    Route::post('/pengadaan/save', SimpanBukuController::class)->name('prodi.procurements.procurement-books.save');
 
     Route::get('/pengadaan/arsip', ProdiArsipPengadaanController::class)->name('prodi.procurements.archived');
     Route::post('/pengadaan/arsip', ProdiArsipPengadaanController::class);

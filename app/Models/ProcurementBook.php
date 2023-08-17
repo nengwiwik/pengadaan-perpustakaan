@@ -13,6 +13,10 @@ class ProcurementBook extends Model
     use HasFactory, SoftDeletes;
 
     protected $guarded = [];
+    protected $casts = [
+        'is_chosen' => 'boolean',
+        'is_verified' => 'boolean',
+    ];
 
     public function major(): BelongsTo
     {

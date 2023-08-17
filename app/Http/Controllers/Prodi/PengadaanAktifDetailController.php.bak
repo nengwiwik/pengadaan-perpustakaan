@@ -9,7 +9,6 @@ use App\Models\Procurement;
 use App\Models\Major;
 use App\Traits\CalculateBooks;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 
 class PengadaanAktifDetailController extends GroceryCrudController
@@ -18,14 +17,7 @@ class PengadaanAktifDetailController extends GroceryCrudController
 
     public function __invoke(Procurement $procurement)
     {
-        Paginator::useBootstrapFour();
-        $data['title'] = "Data Buku | ID Pengadaan " . $procurement->code;
-        $data['books'] = ProcurementBook::where([
-            'procurement_id' => $procurement->getKey(),
-            'major_id' => Auth::user()->major_id,
-        ])->paginate();
-        return view('prodi.aktif', $data);
-
+        $title = "Data Buku | ID Pengadaan " . $procurement->code;
         $table = 'procurement_books';
         $singular = 'Buku';
         $plural = 'Data Buku';
