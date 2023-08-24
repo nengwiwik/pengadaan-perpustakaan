@@ -45,6 +45,9 @@ class RejectedInvoice extends Mailable
     {
         return new Content(
             markdown: 'emails.procurements.rejected',
+            with: [
+                'email' => 'mailto:' . config('perpustakaan.admin_email')
+            ],
         );
     }
 

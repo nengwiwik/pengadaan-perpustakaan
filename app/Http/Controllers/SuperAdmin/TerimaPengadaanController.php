@@ -4,6 +4,7 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Procurement;
+use App\Repositories\AdminRepository;
 use App\Repositories\PenerbitRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -19,7 +20,7 @@ class TerimaPengadaanController extends Controller
             $data->cancelled_date = null;
             $data->status = Procurement::STATUS_AKTIF;
             $data->save();
-            PenerbitRepository::sendEmails($data);
+            AdminRepository::sendEmails($data);
             DB::commit();
             return redirect()->route('procurements.active');
         } catch (\Throwable $th) {

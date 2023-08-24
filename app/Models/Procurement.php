@@ -42,4 +42,9 @@ class Procurement extends Model
     {
         return $this->hasMany(ProcurementBook::class);
     }
+
+    public function books(): HasMany
+    {
+        return $this->hasMany(Book::class);
+    }
 }

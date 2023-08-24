@@ -1,7 +1,7 @@
 @component('mail::message')
-# Introduction
+# Penawaran Buku Baru
 
-The body of your message.
+Berikut adalah detail penawaran buku baru untuk Perpustakaan Universitas Dian Nusantara, kampus {{ $procurement->campus->name }}
 
 @component('mail::table')
 | No Pengadaan | Nama Penerbit      | Tanggal     | Total Buku |
