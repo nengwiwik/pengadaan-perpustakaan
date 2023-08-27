@@ -38,19 +38,19 @@ class MajorSeeder extends Seeder
                 ]
             );
 
-            // $prodi = User::updateOrCreate(
-            //     [
-            //         'email' => str($major->name)->slug() . '@undira.ac.id'
-            //     ],
-            //     [
-            //         'name' => "Dosen {$major->name}",
-            //         'email_verified_at' => now(),
-            //         'password' => bcrypt('password'),
-            //         'campus_id' => 1,
-            //         'major_id' => $major->getKey(),
-            //     ]
-            // );
-            // $prodi->assignRole('Admin Prodi');
+            $prodi = User::updateOrCreate(
+                [
+                    'email' => str($major->name)->slug() . '@undira.biz.id'
+                ],
+                [
+                    'name' => "Dosen {$major->name}",
+                    'email_verified_at' => now(),
+                    'password' => bcrypt('password'),
+                    'campus_id' => 1,
+                    'major_id' => $major->getKey(),
+                ]
+            );
+            $prodi->assignRole(User::ROLE_ADMIN_PRODI);
         }
     }
 }

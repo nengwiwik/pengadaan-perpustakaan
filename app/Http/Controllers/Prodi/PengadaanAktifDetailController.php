@@ -14,7 +14,7 @@ class PengadaanAktifDetailController extends Controller
 {
     use CalculateBooks;
 
-    public function __invoke(Procurement $procurement)
+    public function __invoke(Request $request, Procurement $procurement)
     {
         Paginator::useBootstrapFour();
         $data['title'] = "Data Buku | ID Pengadaan " . $procurement->code;

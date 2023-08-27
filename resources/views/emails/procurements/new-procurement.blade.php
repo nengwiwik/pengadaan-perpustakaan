@@ -1,16 +1,16 @@
 <x-mail::message>
-# Introduction
+# Penawaran Buku
 
-The body of your message.
+Berikut adalah ringkasan dari penawaran buku oleh Penerbit {{ $procurement->publisher->name }}.
 
 @component('mail::table')
-| No Pengadaan | Nama Penerbit      | Tanggal     | Total Buku |
-| :--------- | :----------------- | :--------- | ---------: |
-| {{ $procurement->code }} | {{ $procurement->publisher->name }} | {{ $procurement->invoice_date->format('d M Y')}} | {{ $procurement->total_books }} |
+    | No Pengadaan | Tanggal | Total Buku |
+    | :--------- | :--------- | ---------: |
+    | {{ $procurement->code }} | {{ $procurement->invoice_date->format('d M Y') }} | {{ $procurement->total_books }} |
 @endcomponent
 
 <x-mail::button :url="route('procurements.new')">
-View Books
+    View Books
 </x-mail::button>
 
 Thanks,<br>

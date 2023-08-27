@@ -23,7 +23,7 @@ class PenerbitRepository
     public static function newProcurement(Procurement $procurement)
     {
         try {
-            $users = User::role('Super Admin')->get();
+            $users = User::role(User::ROLE_SUPER_ADMIN)->get();
             $mail = Mail::to($users);
             $mail->queue(new NewProcurement($procurement));
         } catch (\Throwable $th) {

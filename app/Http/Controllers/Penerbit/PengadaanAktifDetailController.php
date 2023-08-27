@@ -36,8 +36,8 @@ class PengadaanAktifDetailController extends GroceryCrudController
         ]);
 
         $crud->unsetOperations()->setRead();
-        $crud->columns(['major_id', 'cover', 'title', 'isbn', 'eksemplar', 'price']);
-        $crud->fields(['major_id', 'cover', 'title', 'isbn', 'eksemplar', 'author_name', 'published_year', 'price', 'summary', 'suplemen']);
+        $crud->columns(['major_id', 'cover', 'title', 'isbn', 'price']);
+        $crud->fields(['major_id', 'cover', 'title', 'isbn', 'author_name', 'published_year', 'price', 'summary', 'suplemen']);
         $crud->setRelation('major_id', 'majors', 'name');
         $crud->fieldType('price', 'numeric');
         $crud->displayAs([

@@ -63,14 +63,17 @@ class SimpanBukuController extends Controller
 
         // jika tidak ada, hapus dari tabel books
         if (!$cek) {
-            Book::where([
+            $books = Book::where([
                 'procurement_id' => $procurementBook->procurement_id,
                 'isbn' => $procurementBook->isbn
-            ])->delete();
+            ])->get();
+            foreach($books as $book) {
+                $book->delete();
+            }
         }
 
         // kalkulasi ulang total_items dan total_price pada tabel procurements
-        $this->recalculateTotalItems($procurementBook->procurement);
+        // $this->recalculateTotalItems($procurementBook->procurement);
     }
 
     function recalculateTotalItems(Procurement $procurement): void

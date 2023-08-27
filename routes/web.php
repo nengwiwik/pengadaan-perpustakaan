@@ -21,6 +21,7 @@ use App\Http\Controllers\SuperAdmin\AdminPenerbitController;
 use App\Http\Controllers\SuperAdmin\AdminProdiController;
 use App\Http\Controllers\SuperAdmin\ArsipPengadaanController;
 use App\Http\Controllers\SuperAdmin\ArsipPengadaanDetailController;
+use App\Http\Controllers\SuperAdmin\DeleteBukuController;
 use App\Http\Controllers\SuperAdmin\JurusanController;
 use App\Http\Controllers\SuperAdmin\KampusController;
 use App\Http\Controllers\SuperAdmin\PenerbitController;
@@ -31,6 +32,7 @@ use App\Http\Controllers\SuperAdmin\PengadaanBaruDetailController;
 use App\Http\Controllers\SuperAdmin\PenggunaBelumAktifController;
 use App\Http\Controllers\SuperAdmin\TerimaPengadaanController;
 use App\Http\Controllers\SuperAdmin\TolakPengadaanController;
+use App\Http\Controllers\SuperAdmin\UpdateJumlahBukuController;
 use App\Http\Controllers\SuperAdmin\VerifikasiPengadaanController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
@@ -53,6 +55,7 @@ Route::get('/logout', function () {
     Auth::logout();
     return to_route('login');
 })->middleware('auth');
+
 Route::prefix('admin')->middleware(['role:Super Admin', 'auth', 'verified'])->group(function () {
     Route::get('/users/prodi', AdminProdiController::class)->name('prodi_users');
     Route::post('/users/prodi', AdminProdiController::class);
@@ -82,7 +85,9 @@ Route::prefix('admin')->middleware(['role:Super Admin', 'auth', 'verified'])->gr
     Route::post('/pengadaan/aktif', PengadaanAktifController::class);
 
     Route::get('/pengadaan/{procurement}/aktif', PengadaanAktifDetailController::class)->name('procurements.procurement-books.active');
-    Route::post('/pengadaan/{procurement}/aktif', PengadaanAktifDetailController::class);
+    // Route::post('/pengadaan/{procurement}/aktif', PengadaanAktifDetailController::class);
+    Route::post('/pengadaan/aktif/update', UpdateJumlahBukuController::class)->name('procurements.update-buku');
+    Route::delete('/pengadaan/aktif/delete', DeleteBukuController::class)->name('procurements.delete-buku');
 
     Route::get('/pengadaan/arsip', ArsipPengadaanController::class)->name('procurements.archived');
     Route::post('/pengadaan/arsip', ArsipPengadaanController::class);
