@@ -21,7 +21,7 @@ class PengadaanAktifDetailController extends Controller
         $data['books'] = ProcurementBook::where([
             'procurement_id' => $procurement->getKey(),
             'major_id' => Auth::user()->major_id,
-        ])->paginate(4);
+        ])->paginate();
         return view('prodi.aktif', $data);
     }
 }
