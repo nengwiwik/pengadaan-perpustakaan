@@ -1,7 +1,7 @@
 <x-mail::message>
-# Introduction
+# Terima Kasih
 
-The body of your message.
+Berikut sudah dikirimkan Invoice atas penawaran buku baru.
 
 Thanks,<br>
 {{ config('app.name') }}

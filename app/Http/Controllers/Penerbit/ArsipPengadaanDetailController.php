@@ -13,22 +13,21 @@ class ArsipPengadaanDetailController extends GroceryCrudController
     public function __invoke(Procurement $procurement)
     {
         $title = "Data Buku | ID Pengadaan " . $procurement->code;
-        $table = 'procurement_books';
+        $table = 'books';
         $singular = 'Buku';
-        $plural = 'Data Buku';
+        $plural = $title;
         $crud = $this->_getGroceryCrudEnterprise();
 
         $crud->setTable($table);
         $crud->setSubject($singular, $plural);
         $crud->where([
             $table . '.procurement_id = ?' => $procurement->getKey(),
-            $table . '.deleted_at is null',
+            // $table . '.deleted_at is null',
             // $table . '.is_chosen = ?' => 1,
         ]);
 
         $crud->unsetOperations();
-        $crud->columns(['major_id', 'cover', 'title', 'eksemplar', 'price', 'published_year', 'isbn', 'author_name', 'suplemen']);
-        $crud->setRelation('major_id', 'majors', 'name');
+        $crud->columns(['title', 'eksemplar', 'price', 'published_year', 'isbn', 'author_name', 'suplemen']);
         $crud->fieldType('price', 'numeric');
         $crud->displayAs([
             'major_id' => 'Jurusan',

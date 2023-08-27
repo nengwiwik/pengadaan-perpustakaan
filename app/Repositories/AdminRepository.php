@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Mail\NewInvoice;
 use App\Mail\RejectedInvoice;
+use App\Mail\VerifiedMail;
 use App\Models\Procurement;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
@@ -30,5 +31,12 @@ class AdminRepository
         $mail = Mail::to($procurement->publisher->email, $procurement->publisher->name);
         $mail->cc($users);
         $mail->queue(new RejectedInvoice($procurement));
+    }
+    public static function sendVerified(Procurement $procurement)
+    {
+        $users = User::select(['name', 'email'])->where('publisher_id', $procurement->publisher_id)->get();
+        $mail = Mail::to($procurement->publisher->email, $procurement->publisher->name);
+        $mail->cc($users);
+        $mail->queue(new VerifiedMail($procurement));
     }
 }

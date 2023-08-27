@@ -13,7 +13,7 @@ class ArsipPengadaanDetailController extends GroceryCrudController
     public function __invoke(Procurement $procurement)
     {
         $title = "Data Buku | ID Pengadaan " . $procurement->code;
-        $table = 'procurement_books';
+        $table = 'books';
         $singular = 'Buku';
         $plural = 'Data Buku';
         $crud = $this->_getGroceryCrudEnterprise();
@@ -22,13 +22,11 @@ class ArsipPengadaanDetailController extends GroceryCrudController
         $crud->setSubject($singular, $plural);
         $crud->where([
             $table . '.procurement_id = ?' => $procurement->getKey(),
-            $table . '.deleted_at is null',
         ]);
 
         $crud->unsetOperations()->setRead();
-        $crud->columns(['major_id', 'cover', 'title', 'eksemplar', 'price', 'published_year', 'isbn', 'author_name', 'suplemen']);
-        $crud->readFields(['title', 'cover', 'summary', 'is_chosen', 'major_id', 'published_year', 'isbn', 'author_name', 'price', 'suplemen']);
-        $crud->setRelation('major_id', 'majors', 'name');
+        $crud->columns(['title', 'eksemplar', 'price', 'published_year', 'isbn', 'author_name', 'suplemen']);
+        $crud->readFields(['title', 'summary', 'is_chosen', 'published_year', 'isbn', 'author_name', 'price', 'suplemen']);
         $crud->fieldType('price', 'numeric');
         $crud->displayAs([
             'major_id' => 'Jurusan',
@@ -44,11 +42,6 @@ class ArsipPengadaanDetailController extends GroceryCrudController
             0 => 'Tidak',
         ]);
         $crud->setTexteditor(['summary']);
-        $crud->setFieldUpload('cover', 'storage', asset('storage'));
-        $crud->callbackColumn('cover', function ($value, $row) {
-            $data = ProcurementBook::find($row->id);
-            return "<img src='" . $data->cover . "' height='150'>";
-        });
         $crud->callbackReadField('price', function ($value, $row) {
             return "IDR " . number_format($value, 0, ',', '.');
         });
@@ -58,6 +51,6 @@ class ArsipPengadaanDetailController extends GroceryCrudController
 
         $output = $crud->render();
 
-        return $this->_showOutput($output, $title, 'superadmin.invoice.buku');
+        return $this->_showOutput($output, $title, 'superadmin.invoice.arsip');
     }
 }

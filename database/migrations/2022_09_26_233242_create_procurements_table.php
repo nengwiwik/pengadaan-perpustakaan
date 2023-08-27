@@ -21,7 +21,7 @@ return new class extends Migration
             $table->foreignIdFor(Publisher::class)->nullable()->constrained();
             $table->foreignIdFor(Campus::class)->nullable()->constrained();
             $table->string('status', 10)->nullable();
-            $table->string('invoice', 50)->nullable();
+            $table->text('invoice')->nullable();
             $table->date('invoice_date')->nullable();
             $table->date('approved_at')->nullable();
             $table->date('verified_date')->nullable();

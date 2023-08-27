@@ -1,7 +1,5 @@
 <x-mail::message>
-# Introduction
-
-The body of your message.
+# Penawaran Buku
 
 Nomor Pengadaan: **{{ $procurement->code }}**
 

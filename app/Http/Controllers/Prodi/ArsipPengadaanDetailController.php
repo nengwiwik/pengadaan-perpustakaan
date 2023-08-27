@@ -13,7 +13,7 @@ class ArsipPengadaanDetailController extends GroceryCrudController
 {
     public function __invoke(Procurement $procurement)
     {
-        $title = "Data Buku | ID Pengadaan " . $procurement->code;
+        $title = "Data Buku | Arsip | ID Pengadaan " . $procurement->code;
         $table = 'procurement_books';
         $singular = 'Buku';
         $plural = 'Data Buku';
@@ -24,27 +24,15 @@ class ArsipPengadaanDetailController extends GroceryCrudController
         $crud->where([
             $table . '.procurement_id = ?' => $procurement->getKey(),
             $table . '.deleted_at is null',
+            $table . '.major_id = ?' => Auth::user()->major_id,
+            // $table . '.is_chosen = ?' => 1,
         ]);
 
         $crud->unsetOperations();
-        $crud->columns(['major_id', 'cover', 'title', 'published_year', 'eksemplar', 'price', 'is_chosen', 'isbn', 'author_name', 'suplemen']);
-        $crud->readFields(['title'. 'cover', 'eksemplar', 'is_chosen', 'major_id', 'published_year', 'isbn', 'author_name', 'price', 'suplemen']);
-        // $crud->setRelation('major_id', 'majors', 'name');
-        $crud->fieldType('major_id', 'multiselect_searchable', Major::get()->pluck('name'));
-        $crud->callbackReadField('major_id', function ($fieldValue, $primaryKeyValue) {
-            $last_major = array_key_last($fieldValue);
-            $res = "";
-            $data_majors = Major::all();
-            foreach ($data_majors as $key => $dmajor) {
-                foreach ($fieldValue as $k => $major) {
-                    if ($key == $major) {
-                        $res .= $dmajor->name;
-                        if ($k != $last_major) $res .= ", ";
-                    }
-                }
-            }
-            return $res;
-        });
+        $crud->columns(['cover', 'title', 'published_year', 'isbn', 'author_name', 'suplemen', 'is_chosen']);
+        $crud->readFields(['title'. 'cover', 'is_chosen', 'major_id', 'published_year', 'isbn', 'author_name', 'price', 'suplemen']);
+        $crud->setRelation('major_id', 'majors', 'name');
+        $crud->defaultOrdering('is_chosen', 'desc');
         $crud->fieldType('price', 'numeric');
         $crud->fieldType('eksemplar', 'numeric');
         $crud->fieldType('is_chosen', 'checkbox_boolean');
@@ -74,6 +62,6 @@ class ArsipPengadaanDetailController extends GroceryCrudController
 
         $output = $crud->render();
 
-        return $this->_showOutput($output, $title, 'superadmin.invoice.buku');
+        return $this->_showOutput($output, $title, 'prodi.arsip');
     }
 }

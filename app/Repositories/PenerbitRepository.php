@@ -12,14 +12,6 @@ use Illuminate\Support\Facades\Mail;
 
 class PenerbitRepository
 {
-    public static function sendVerified(Procurement $procurement)
-    {
-        $users = User::select(['name', 'email'])->where('publisher_id', $procurement->publisher_id)->get();
-        $mail = Mail::to($procurement->publisher->email, $procurement->publisher->name);
-        $mail->cc($users);
-        $mail->queue(new VerifiedMail($procurement));
-    }
-
     public static function newProcurement(Procurement $procurement)
     {
         try {

@@ -70,7 +70,7 @@
             const savingRoute = $('#savingRoute').val();
             const csrfToken = $('meta[name="csrf-token"]').attr('content');
 
-            $('tr').on('click', function(event) {
+            $('tbody tr').on('click', function(event) {
                 // Find the checkbox within the clicked row and trigger its click event
                 var checkbox = $(this).find('.custom-control-input');
                 var checkboxValue = checkbox.val();

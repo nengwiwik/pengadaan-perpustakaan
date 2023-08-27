@@ -20,6 +20,7 @@ class PengadaanAktifDetailController extends Controller
         $data['type_menu'] = 'pengadaan';
         $data['title'] = "Data Buku | ID Pengadaan " . $procurement->code;
         $data['books'] = $procurement->books()->paginate();
+        $data['procurement'] = $procurement;
         return view('superadmin.aktif', $data);
     }
 }
