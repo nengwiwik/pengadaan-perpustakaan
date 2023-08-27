@@ -82,7 +82,7 @@ class BooksImport implements
     public function rules(): array
     {
         return [
-            'title' => 'required|string|max:100',
+            'title' => 'required|string',
             'isbn' => 'required|string|max:20',
             'author_name' => 'required|string|max:100',
             'published_year' => 'required|numeric',
