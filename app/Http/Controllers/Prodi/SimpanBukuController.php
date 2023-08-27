@@ -31,7 +31,7 @@ class SimpanBukuController extends Controller
             return response()->json($request->all());
         } catch (\Throwable $th) {
             DB::rollBack();
-            return response($th->getMessage(), 500);
+            // return response($th->getMessage(), 500);
         }
     }
 

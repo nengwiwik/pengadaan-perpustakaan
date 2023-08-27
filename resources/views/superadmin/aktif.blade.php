@@ -17,6 +17,14 @@
         </div>
     </div>
 
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <p>Total Buku: <span>00</span></p>
+            <p>Total Barang: <span>00</span></p>
+            <p>Total Harga: <span>00</span></p>
+        </div>
+    </div>
+
     <table class="table table-hover">
         <thead>
             <tr>
