@@ -11,9 +11,9 @@ use Laravel\Socialite\Facades\Socialite;
 
 class SocialiteController extends Controller
 {
-    protected $isPenerbit = false;
-    protected $isDosen = false;
-    protected $isMahasiswa = false;
+    protected bool $isPenerbit = false;
+    protected bool $isDosen = false;
+    protected bool $isMahasiswa = false;
     public function redirectToProvider($provider)
     {
         return Socialite::driver($provider)->redirect();
@@ -45,20 +45,26 @@ class SocialiteController extends Controller
         return to_route('login')->withErrors(["email" => "Your account is created succesfully but not activated yet."])->withInput();
     }
 
-    public function isUndira($email)
+    public function isUndira($email): bool
     {
         $email = trim($email); // in case there's any whitespace
 
+        $authUser = User::where('email', $email)->first();
+
         if (mb_substr($email, -13) === '@undira.ac.id') $this->isDosen = true;
         if (mb_substr($email, -23) === '@mahasiswa.undira.ac.id') $this->isMahasiswa = true;
-        if (mb_substr($email, -10) === '@gmail.com') $this->isPenerbit = true;
+        // if (mb_substr($email, -10) === '@gmail.com') $this->isPenerbit = true;
+        else $this->isPenerbit = true;
 
-        if (
-            mb_substr($email, -13) === '@undira.ac.id'
-            || mb_substr($email, -23) === '@mahasiswa.undira.ac.id'
-            || mb_substr($email, -10) === '@gmail.com'
-        ) return true;
+        // jika sbg penerbit dan belum terdaftar, maka lempar gagal
+        if ($this->isPenerbit && !$authUser) return false;
+        // jika sbg penerbit dan sudah terdaftar, maka sukses
+        if ($this->isPenerbit && $authUser) return true;
 
+        // jika email dosen/mahasiswa, maka sukses
+        if ($this->isDosen || $this->isMahasiswa) return true;
+
+        // kalau development, gas sukses
         if (app()->environment(['local', 'staging'])) {
             return true;
         }
@@ -66,7 +72,7 @@ class SocialiteController extends Controller
         return false;
     }
 
-    public function findOrCreateUser($user)
+    public function findOrCreateUser($user): bool
     {
         $authUser = User::where('email', $user->email)->first();
 
@@ -82,6 +88,8 @@ class SocialiteController extends Controller
                 return true;
             }
         } else {
+            if (!$this->isDosen) return false;
+
             $authUser = User::create([
                 'name' => $user->name,
                 'email' => $user->email,
@@ -89,9 +97,8 @@ class SocialiteController extends Controller
                 'email_verified_at' => now(),
                 'password' => bcrypt($user->email),
             ]);
+            event(new Registered($authUser));
+            return false;
         }
-
-        event(new Registered($authUser));
-        return false;
     }
 }
