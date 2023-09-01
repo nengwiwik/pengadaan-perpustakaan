@@ -43,6 +43,24 @@ class PengadaanBaruController extends GroceryCrudController
             return route('penerbit.procurements.store', $inv->code);
         }, false);
         $crud->callbackBeforeInsert(function ($s) {
+            // cek dulu sudah ada pengadaan yang berlangsung atau belum untuk kampus terpilih
+            $campus_id = $s->data['campus_id'];
+            $publisher_id = Auth::user()->publisher_id;
+            $stasuses = [
+                Procurement::STATUS_PROSES,
+                Procurement::STATUS_BARU,
+                Procurement::STATUS_AKTIF
+            ];
+            $data = Procurement::where([
+                'campus_id' => $campus_id,
+                'publisher_id' => $publisher_id,
+            ])->whereIn('status', $stasuses)->first();
+
+            if ($data) {
+                $errorMessage = new \GroceryCrud\Core\Error\ErrorMessage();
+                return $errorMessage->setMessage('Mohon maaf. Proses tidak bisa dilanjutkan hingga menyelesaikan proses pengadaan lain yang sedang berlangsung untuk kampus yang sama.');
+            }
+
             $s->data['code'] = "BOOK-" . date('ymdHis') . "-" . str_pad(Auth::user()->publisher_id, 3, '0', STR_PAD_LEFT);
             $s->data['publisher_id'] = Auth::user()->publisher_id;
             $s->data['created_at'] = now();
@@ -57,17 +75,35 @@ class PengadaanBaruController extends GroceryCrudController
         $crud->callbackDelete(function ($s) {
             $data = Procurement::find($s->primaryKeyValue);
 
-            $data = Procurement::find($s->primaryKeyValue);
-
-           if (!$data) {
+            if (!$data) {
                 $errorMessage = new \GroceryCrud\Core\Error\ErrorMessage();
                 return $errorMessage->setMessage('Data not found');
             }
+
             $data->save();
             $data->delete();
             return $s;
         });
         $crud->callbackBeforeUpdate(function ($s) {
+            // cek dulu sudah ada pengadaan yang berlangsung atau belum untuk kampus terpilih
+            $current_id = $s->primaryKeyValue;
+            $campus_id = $s->data['campus_id'];
+            $publisher_id = Auth::user()->publisher_id;
+            $stasuses = [
+                Procurement::STATUS_PROSES,
+                Procurement::STATUS_BARU,
+                Procurement::STATUS_AKTIF
+            ];
+            $data = Procurement::where([
+                'campus_id' => $campus_id,
+                'publisher_id' => $publisher_id,
+            ])->whereIn('status', $stasuses)->where('id', '!=', $current_id)->first();
+
+            if ($data) {
+                $errorMessage = new \GroceryCrud\Core\Error\ErrorMessage();
+                return $errorMessage->setMessage('Mohon maaf. Proses tidak bisa dilanjutkan hingga menyelesaikan proses pengadaan lain yang sedang berlangsung untuk kampus yang sama.');
+            }
+
             $s->data['updated_at'] = now();
             return $s;
         });
