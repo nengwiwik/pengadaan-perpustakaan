@@ -24,7 +24,7 @@ class ArsipPengadaanDetailController extends GroceryCrudController
             $table . '.procurement_id = ?' => $procurement->getKey(),
         ]);
 
-        $crud->unsetOperations()->setRead();
+        $crud->unsetOperations();
         $crud->columns(['title', 'eksemplar', 'price', 'published_year', 'isbn', 'author_name', 'suplemen']);
         $crud->readFields(['title', 'summary', 'is_chosen', 'published_year', 'isbn', 'author_name', 'price', 'suplemen']);
         $crud->fieldType('price', 'numeric');
