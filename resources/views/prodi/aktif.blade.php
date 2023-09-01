@@ -107,14 +107,15 @@
                         });
                     },
                     error: function(xhr) {
-                        console.log(xhr);
+                        // kembalikan lagi posisi checkbox-nya
+                        checkbox.prop('checked', !checkbox.prop('checked'));
                         // Handle AJAX request error if needed
                         Swal.fire({
                             position: 'top-end',
                             toast: true,
                             showConfirmButton: false,
                             icon: 'error',
-                            title: 'Error',
+                            title: 'Error! ' + xhr.responseText,
                             timer: 3000,
                             timerProgressBar: true,
                             didOpen: (toast) => {

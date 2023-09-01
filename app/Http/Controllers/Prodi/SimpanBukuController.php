@@ -23,6 +23,12 @@ class SimpanBukuController extends Controller
                 'checked' => 'required|boolean'
             ]);
             $book = ProcurementBook::find($request->id);
+
+            // cek statusnya. hanya boleh jika status pengadaan AKTIF
+            if ($book->procurement->status != Procurement::STATUS_AKTIF) {
+                throw new \Exception('Tidak bisa memilih buku: Pengadaan sudah tidak aktif');
+            }
+
             $book->is_chosen = $request->checked;
             $book->save();
 
