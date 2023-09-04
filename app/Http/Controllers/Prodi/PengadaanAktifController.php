@@ -27,8 +27,9 @@ class PengadaanAktifController extends GroceryCrudController
         $crud->unsetOperations();
         $crud->setRead();
         $crud->defaultOrdering('invoice_date', 'desc');
-        $crud->columns(['code', 'status', 'campus_id', 'total_price']);
-        $crud->readFields(['code', 'status', 'campus_id', 'publisher_id', 'invoice_date', 'approved_at', 'total_books', 'total_items', 'total_price']);
+        $crud->columns(['code']);
+        // $crud->columns(['code', 'campus_id', 'publisher_id', 'approved_at']);
+        $crud->readFields(['code', 'status', 'campus_id', 'publisher_id', 'approved_at', 'total_books']);
         $crud->unsetSearchColumns(['campus_id']);
         $crud->requiredFields(['campus_id']);
         $crud->setRelation('campus_id', 'campuses', 'name');
@@ -39,25 +40,16 @@ class PengadaanAktifController extends GroceryCrudController
             'publisher_id' => 'Penerbit',
             'invoice_date' => 'Tgl. Pengadaan',
             'approved_at' => 'Tgl. Disetujui',
-            'total_books' => 'Total Buku',
+            'total_books' => 'Total Buku Ditawarkan',
             'total_items' => 'Total Barang',
             'total_price' => 'Total Harga',
         ]);
         $crud->callbackColumn('code', function ($value, $row) {
             return '<a href="' . route('prodi.procurements.procurement-books.active', $row->id) . '">' . $value . '</a>';
         });
-        $crud->callbackReadField('total_books', function ($value, $row) {
-            return number_format($value, 0, ',', '.');
-        });
-        $crud->callbackReadField('total_items', function ($value, $row) {
-            return number_format($value, 0, ',', '.');
-        });
-        $crud->callbackReadField('total_price', function ($value, $row) {
-            return "IDR " . number_format($value, 0, ',', '.');
-        });
-        $crud->callbackColumn('total_price', function ($value, $row) {
-            return "IDR " . number_format($value, 0, ',', '.');
-        });
+        // $crud->callbackReadField('total_books', function ($value, $row) {
+        //     return number_format($value, 0, ',', '.');
+        // });
 
         $output = $crud->render();
 
