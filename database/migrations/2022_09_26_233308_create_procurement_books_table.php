@@ -19,13 +19,13 @@ return new class extends Migration
             $table->id();
             $table->text('title')->nullable();
             $table->string('isbn', 20)->nullable();
-            $table->string('author_name', 100)->nullable();
+            $table->text('author_name')->nullable();
             $table->year('published_year')->nullable();
             $table->string('price', 9)->nullable();
             $table->foreignIdFor(Major::class)->nullable()->constrained()->cascadeOnDelete();
             $table->text('summary')->nullable();
-            $table->string("cover", 50)->nullable();
-            $table->string('source', 50)->nullable();
+            $table->text("cover")->nullable();
+            $table->string('source', 191)->nullable();
             $table->boolean('is_chosen')->nullable();
             $table->boolean('is_verified')->nullable();
             $table->foreignIdFor(Procurement::class)->nullable()->constrained()->cascadeOnDelete();

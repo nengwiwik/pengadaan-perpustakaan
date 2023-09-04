@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('eksemplar')->default(1);
             $table->text('title')->nullable();
             $table->string('isbn', 20)->nullable();
-            $table->string('author_name', 100)->nullable();
+            $table->text('author_name')->nullable();
             $table->year('published_year')->nullable();
             $table->string('price', 9)->nullable();
             $table->string('suplemen', 20)->nullable();
