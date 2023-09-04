@@ -63,7 +63,7 @@ class HomeController extends Controller
             $route_jumlah_penerbit = route('publisher');
 
             $nominal_pengadaan_aktif = Procurement::where('status', Procurement::STATUS_AKTIF)->sum('total_price');
-            $nominal_arsip_pengadaan = Procurement::where('status', Procurement::STATUS_SELESAI)->sum('total_price');
+            $nominal_arsip_pengadaan = Procurement::whereIn('status', [Procurement::STATUS_SELESAI, Procurement::STATUS_INVOICE])->sum('total_price');
         }
 
         // untuk prodi
@@ -75,9 +75,6 @@ class HomeController extends Controller
 
             $route_pengadaan_aktif = route('prodi.procurements.active');
             $route_arsip_pengadaan = route('prodi.procurements.archived');
-
-            $nominal_pengadaan_aktif = Procurement::where('campus_id', $user->campus_id)->where('status', Procurement::STATUS_AKTIF)->sum('total_price');
-            $nominal_arsip_pengadaan = Procurement::where('campus_id', $user->campus_id)->where('status', Procurement::STATUS_SELESAI)->sum('total_price');
         }
 
         // untuk penerbit
@@ -92,7 +89,7 @@ class HomeController extends Controller
             $route_arsip_pengadaan = route('penerbit.procurements.verified');
 
             $nominal_pengadaan_aktif = Procurement::where('publisher_id', $user->publisher_id)->where('status', Procurement::STATUS_AKTIF)->sum('total_price');
-            $nominal_arsip_pengadaan = Procurement::where('publisher_id', $user->publisher_id)->where('status', Procurement::STATUS_SELESAI)->sum('total_price');
+            $nominal_arsip_pengadaan = Procurement::where('publisher_id', $user->publisher_id)->whereIn('status', [Procurement::STATUS_SELESAI, Procurement::STATUS_INVOICE])->sum('total_price');
         }
 
         $nominal_pengadaan_aktif = "IDR " . number_format($nominal_pengadaan_aktif, 0, ',', '.');

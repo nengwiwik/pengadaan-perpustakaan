@@ -26,7 +26,10 @@ class UpdateJumlahBukuController extends Controller
             $book->save();
             DB::commit();
             return response()->json([
-                'message' => 'success'
+                'message' => 'success',
+                'total_books' => $book->procurement->total_books,
+                'total_items' => $book->procurement->total_items,
+                'total_price' => number_format($book->procurement->total_price, 0, ',', '.'),
             ]);
         } catch (\Throwable $th) {
             DB::rollBack();

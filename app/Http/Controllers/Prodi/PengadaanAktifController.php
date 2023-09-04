@@ -40,7 +40,7 @@ class PengadaanAktifController extends GroceryCrudController
             'publisher_id' => 'Penerbit',
             'invoice_date' => 'Tgl. Pengadaan',
             'approved_at' => 'Tgl. Disetujui',
-            'total_books' => 'Total Buku Ditawarkan',
+            'total_books' => 'Total Buku Terpilih',
             'total_items' => 'Total Barang',
             'total_price' => 'Total Harga',
         ]);

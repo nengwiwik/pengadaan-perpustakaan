@@ -122,18 +122,16 @@
                     })
                     .then(response => {
                         if (response.ok) {
-                            // Request was successful
-                            // You can handle the response here if needed
-                            console.log(response);
                             return response.json();
                         } else {
                             // Handle errors here
                             console.error('Request failed with status:', response.status);
                         }
                     })
-                    .catch(error => {
-                        // Handle network or other errors here
-                        console.error('Request failed:', error);
+                    .then((data) => {
+                        $('#total-buku').html(data.total_books + ' buku')
+                        $('#total-barang').html(data.total_items + ' eksemplar')
+                        $('#total-harga').html('Rp ' + data.total_price)
                     });
             }
         }
@@ -172,9 +170,10 @@
                             console.error('Request failed with status:', response.status);
                         }
                     })
-                    .catch(error => {
-                        // Handle network or other errors here
-                        console.error('Request failed:', error);
+                    .then((data) => {
+                        $('#total-buku').html(data.total_books + ' buku')
+                        $('#total-barang').html(data.total_items + ' eksemplar')
+                        $('#total-harga').html('Rp ' + data.total_price)
                     });
 
                 // Remove the row from the table

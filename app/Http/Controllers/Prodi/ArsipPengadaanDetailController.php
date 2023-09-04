@@ -29,7 +29,7 @@ class ArsipPengadaanDetailController extends GroceryCrudController
         ]);
 
         $crud->unsetOperations();
-        $crud->columns(['cover', 'title', 'published_year', 'isbn', 'author_name', 'suplemen', 'is_chosen']);
+        $crud->columns(['is_chosen', 'title', 'published_year', 'isbn', 'author_name', 'suplemen', 'cover']);
         $crud->readFields(['title'. 'cover', 'is_chosen', 'major_id', 'published_year', 'isbn', 'author_name', 'price', 'suplemen']);
         $crud->setRelation('major_id', 'majors', 'name');
         $crud->defaultOrdering('is_chosen', 'desc');

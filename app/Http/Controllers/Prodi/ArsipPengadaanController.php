@@ -22,14 +22,14 @@ class ArsipPengadaanController extends GroceryCrudController
         $crud->where([
             $table . '.campus_id = ?' => Auth::user()->campus_id,
             $table . '.deleted_at is null',
-            $table . ".status in ('" . Procurement::STATUS_SELESAI . "','" . Procurement::STATUS_DITOLAK . "')",
+            $table . ".status in ('" . Procurement::STATUS_SELESAI . "','" . Procurement::STATUS_INVOICE . "','" . Procurement::STATUS_DITOLAK . "')",
         ]);
         $crud->unsetOperations();
         $crud->setRead();
         $crud->defaultOrdering('invoice_date', 'desc');
         $crud->setFieldUpload('invoice', 'storage', asset('storage'));
-        $crud->columns(['code', 'status', 'campus_id', 'total_price']);
-        $crud->readFields(['code', 'status', 'campus_id', 'publisher_id', 'total_books', 'total_items', 'total_price', 'invoice', 'invoice_date', 'approved_at', 'verified_date', 'cancelled_date']);
+        $crud->columns(['code', 'campus_id', 'total_books', 'total_items']);
+        $crud->readFields(['code', 'campus_id', 'publisher_id', 'total_books', 'total_items', 'invoice_date', 'approved_at', 'verified_date', 'cancelled_date']);
         $crud->unsetSearchColumns(['campus_id']);
         $crud->setRelation('campus_id', 'campuses', 'name');
         $crud->setRelation('publisher_id', 'publishers', 'name');

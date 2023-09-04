@@ -47,9 +47,9 @@ class ArsipPengadaanDetailController extends GroceryCrudController
         $crud->callbackReadField('price', function ($value, $row) {
             return "IDR " . number_format($value, 0, ',', '.');
         });
-        $crud->callbackColumn('price', function ($value, $row) {
-            return "IDR " . number_format($value, 0, ',', '.');
-        });
+        // $crud->callbackColumn('price', function ($value, $row) {
+        //     return "IDR " . number_format($value, 0, ',', '.');
+        // });
 
         $output = $crud->render();
 

@@ -10,12 +10,15 @@ class BookObserver
     {
         $total_items = 0;
         $total_price = 0;
+        $total_books = 0;
         $procurement = $book->procurement;
         foreach ($procurement->books as $book) {
+            $total_books++;
             $total_items += $book->eksemplar;
             $total_price += $book->eksemplar * $book->price;
         }
 
+        $procurement->total_books = $total_books;
         $procurement->total_items = $total_items;
         $procurement->total_price = $total_price;
         $procurement->save();
