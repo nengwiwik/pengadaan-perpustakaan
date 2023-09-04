@@ -4,14 +4,12 @@ namespace App\Imports;
 
 use App\Models\ProcurementBook;
 use App\Models\Procurement;
-use App\Models\Major;
 use App\Traits\CalculateBooks;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\ToCollection;
-use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
@@ -47,6 +45,7 @@ class BooksImport implements
                     $query->WhereNotIn('status', [Procurement::STATUS_DITOLAK]);
                     $query->where('publisher_id', auth()->user()->publisher_id);
                     $query->where('major_id', $this->major_id);
+                    $query->where('campus_id', $this->procurement->campus_id);
                 })
                 ->first();
             if ($cek) continue;
@@ -73,20 +72,14 @@ class BooksImport implements
         $this->calculateBooks($this->procurement);
     }
 
-    public function getMajor($major)
-    {
-        $data =  Major::firstWhere('name', $major);
-        return $data->id;
-    }
-
     public function rules(): array
     {
         return [
-            'title' => 'required|string',
+            'title' => 'required|string|max:1000',
             'isbn' => 'required|string|max:20',
-            'author_name' => 'required|string|max:100',
+            'author_name' => 'required|string|max:1000',
             'published_year' => 'required|numeric',
-            'price' => 'required|numeric',
+            'price' => 'required|numeric|max_digits:9',
             'suplement' => 'nullable|string|max:20',
             'summary'   => 'nullable|string'
         ];

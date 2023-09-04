@@ -8,7 +8,6 @@ use App\Models\Procurement;
 use App\Models\Major;
 use App\Traits\CalculateBooks;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class PengadaanBaruDetailController extends GroceryCrudController
@@ -51,7 +50,7 @@ class PengadaanBaruDetailController extends GroceryCrudController
             [
                 'fieldName' => 'title',
                 'rule' => 'lengthMax',
-                'parameters' => '100'
+                'parameters' => '1000'
             ],
             [
                 'fieldName' => 'isbn',
@@ -61,7 +60,7 @@ class PengadaanBaruDetailController extends GroceryCrudController
             [
                 'fieldName' => 'author_name',
                 'rule' => 'lengthMax',
-                'parameters' => '100'
+                'parameters' => '1000'
             ],
             [
                 'fieldName' => 'published_year',
@@ -88,11 +87,11 @@ class PengadaanBaruDetailController extends GroceryCrudController
                 'rule' => 'lengthMax',
                 'parameters' => '20'
             ],
-            [
-                'fieldName' => '',
-                'rule' => '',
-                'parameters' => ''
-            ],
+            // [
+            //     'fieldName' => '',
+            //     'rule' => '',
+            //     'parameters' => ''
+            // ],
         ]);
 
         $crud->fieldType('price', 'numeric');
@@ -108,21 +107,6 @@ class PengadaanBaruDetailController extends GroceryCrudController
             return "<img src='" . $data->cover . "' height='150'>";
         });
         $crud->setRelation('major_id', 'majors', 'name');
-        // $crud->fieldType('major_id', 'multiselect_searchable', Major::get()->pluck('name'));
-        // $crud->callbackReadField('major_id', function ($fieldValue, $primaryKeyValue) {
-        //     $last_major = array_key_last($fieldValue);
-        //     $res = "";
-        //     $data_majors = Major::all();
-        //     foreach ($data_majors as $key => $dmajor) {
-        //         foreach ($fieldValue as $k => $major) {
-        //             if ($key == $major) {
-        //                 $res .= $dmajor->name;
-        //                 if ($k != $last_major) $res .= ", ";
-        //             }
-        //         }
-        //     }
-        //     return $res;
-        // });
         $crud->displayAs([
             'major_id' => 'Jurusan',
             'isbn' => 'ISBN',
@@ -138,9 +122,13 @@ class PengadaanBaruDetailController extends GroceryCrudController
             // gagalkan jika sudah pernah
             $cek = ProcurementBook::query()
                 ->where('isbn', $s->data['isbn'])
-                ->whereHas('procurement', function (Builder $query) {
+                ->whereHas('procurement', function (Builder $query) use ($procurement, $s) {
                     $query->WhereNotIn('status', [Procurement::STATUS_DITOLAK]);
-                    $query->where('publisher_id', auth()->user()->publisher_id);
+                    $query->where([
+                        'publisher_id' => auth()->user()->publisher_id,
+                        'campus_id' => $procurement->campus_id,
+                        'major_id' => $s->data['major_id']
+                    ]);
                 })
                 ->first();
             if ($cek) {

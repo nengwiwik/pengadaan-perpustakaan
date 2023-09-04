@@ -7,6 +7,7 @@ use App\Imports\BooksImport;
 use App\Models\Procurement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -30,7 +31,6 @@ class ImportBukuController extends Controller
         }
 
         $path = $request->file('upload')->store('import-books');
-        info($path);
 
         try {
             DB::beginTransaction();
@@ -45,11 +45,13 @@ class ImportBukuController extends Controller
                 $column = $failures[0]->attribute(); // either heading key (if using heading row concern) or column index
                 $error = $failures[0]->errors(); // Actual error messages from Laravel validator
                 // $value = $failures[0]->values(); // The values of the row that has failed.
-
-                return back()->with('errors', "Terjadi kesalahan pada Baris $row, Kolom $column, dengan pesan $error[0]")->withInput();
+                $text = "Terjadi kesalahan pada Baris $row, Kolom $column, dengan pesan $error[0]";
+                Log::warning("Error import: " . $text);
+                return back()->with('errors', $text)->withInput();
             }
         } catch (\Exception $ex) {
             DB::rollBack();
+            Log::warning("Error import: " . $ex->getMessage());
             return back()->with('errors', $ex->getMessage())->withInput();
         }
 
