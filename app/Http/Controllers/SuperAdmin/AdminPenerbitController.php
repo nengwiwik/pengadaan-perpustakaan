@@ -17,7 +17,7 @@ class AdminPenerbitController extends GroceryCrudController
         $crud->setTable('users');
         $crud->setSubject('Admin', 'Admin Penerbit');
 
-        $crud->fields(['name', 'email', 'password', 'publisher_id']);
+        $crud->fields(['name', 'publisher_id', 'email', 'password']);
         $crud->requiredFields(['name', 'email', 'publisher_id']);
         $crud->columns(['name', 'email', 'publisher_id', 'updated_at']);
 

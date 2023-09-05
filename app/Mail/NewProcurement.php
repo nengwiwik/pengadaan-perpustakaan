@@ -34,7 +34,7 @@ class NewProcurement extends Mailable implements ShouldQueue
     {
         return new Envelope(
             from: new Address($this->procurement->publisher->email, $this->procurement->publisher->name),
-            subject: 'New Procurement Request from ' . $this->procurement->publisher->name,
+            subject: 'New Procurement Request #' . $this->procurement->code,
             tags: ['Perpustakaan'],
         );
     }

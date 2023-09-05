@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class RejectedInvoice extends Mailable
+class RejectedInvoice extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -46,7 +46,7 @@ class RejectedInvoice extends Mailable
         return new Content(
             markdown: 'emails.procurements.rejected',
             with: [
-                'email' => 'mailto:' . config('perpustakaan.admin_email')
+                'email' => 'mailto:' . config('undira.admin_email')
             ],
         );
     }

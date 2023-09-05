@@ -1,7 +1,9 @@
 <x-mail::message>
 # Penawaran Buku
 
-Berikut adalah ringkasan dari penawaran buku oleh Penerbit {{ $procurement->publisher->name }}.
+Penerbit: {{ $procurement->publisher->name }}
+
+Kampus: {{ $procurement->campus->name }}
 
 @component('mail::table')
     | No Pengadaan | Tanggal | Total Buku |

@@ -17,7 +17,7 @@ class AdminProdiController extends GroceryCrudController
         $crud->setTable('users');
         $crud->setSubject('Admin', 'Admin Prodi');
 
-        $crud->fields(['name', 'email', 'password', 'campus_id', 'major_id']);
+        $crud->fields(['name', 'email', 'campus_id', 'major_id', 'password']);
         $crud->requiredFields(['name', 'email', 'campus_id', 'major_id']);
         $crud->columns(['name', 'email', 'campus_id', 'major_id', 'updated_at']);
 

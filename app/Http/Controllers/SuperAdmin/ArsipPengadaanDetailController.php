@@ -14,6 +14,9 @@ class ArsipPengadaanDetailController extends GroceryCrudController
     {
         $title = "Data Buku | ID Pengadaan " . $procurement->code;
         $table = 'books';
+        if ($procurement->status == Procurement::STATUS_DITOLAK) {
+            $table = 'procurement_books';
+        }
         $singular = 'Buku';
         $plural = 'Data Buku';
         $crud = $this->_getGroceryCrudEnterprise();

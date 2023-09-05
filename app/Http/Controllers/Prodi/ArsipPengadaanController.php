@@ -22,7 +22,7 @@ class ArsipPengadaanController extends GroceryCrudController
         $crud->where([
             $table . '.campus_id = ?' => Auth::user()->campus_id,
             $table . '.deleted_at is null',
-            $table . ".status in ('" . Procurement::STATUS_SELESAI . "','" . Procurement::STATUS_INVOICE . "','" . Procurement::STATUS_DITOLAK . "')",
+            $table . ".status in ('" . Procurement::STATUS_SELESAI . "','" . Procurement::STATUS_INVOICE . "')",
         ]);
         $crud->unsetOperations();
         $crud->setRead();

@@ -53,8 +53,8 @@ class SocialiteController extends Controller
 
         if (mb_substr($email, -13) === '@undira.ac.id') $this->isDosen = true;
         if (mb_substr($email, -23) === '@mahasiswa.undira.ac.id') $this->isMahasiswa = true;
-        // if (mb_substr($email, -10) === '@gmail.com') $this->isPenerbit = true;
         else $this->isPenerbit = true;
+        // if (mb_substr($email, -10) === '@gmail.com') $this->isPenerbit = true;
 
         // jika sbg penerbit dan belum terdaftar, maka lempar gagal
         if ($this->isPenerbit && !$authUser) return false;
@@ -88,7 +88,7 @@ class SocialiteController extends Controller
                 return true;
             }
         } else {
-            if (!$this->isDosen) return false;
+            if (!$this->isDosen && !$this->isMahasiswa) return false;
 
             $authUser = User::create([
                 'name' => $user->name,
@@ -100,5 +100,6 @@ class SocialiteController extends Controller
             event(new Registered($authUser));
             return false;
         }
+        return false;
     }
 }
