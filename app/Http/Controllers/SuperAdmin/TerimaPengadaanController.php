@@ -16,6 +16,9 @@ class TerimaPengadaanController extends Controller
         DB::beginTransaction();
         try {
             $data = Procurement::find(decrypt($id));
+            if ($data->budget <= 0) {
+                return redirect()->back()->with('error', 'Tidak bisa menerima sebelum menuliskan budget pengadaan.');
+            }
             $data->approved_at = now();
             $data->cancelled_date = null;
             $data->status = Procurement::STATUS_AKTIF;

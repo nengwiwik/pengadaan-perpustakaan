@@ -23,12 +23,29 @@ class PengadaanBaruController extends GroceryCrudController
             "procurements.status" => Procurement::STATUS_BARU,
         ]);
         $crud->defaultOrdering('invoice_date', 'desc');
-        $crud->columns(['status', 'code', 'publisher_id', 'campus_id', 'cancelled_date', 'approved_at']);
+        $crud->columns(['status', 'code', 'publisher_id', 'campus_id', 'budget', 'cancelled_date', 'approved_at']);
+        $crud->editFields(['budget']);
+        $crud->requiredFields(['budget']);
         $crud->fieldTypeColumn('cancelled_date', 'invisible');
         $crud->fieldTypeColumn('approved_at', 'invisible');
         $crud->setRelation('publisher_id', 'publishers', 'name');
         $crud->setRelation('campus_id', 'campuses', 'name');
-        $crud->unsetAdd()->unsetDelete()->setRead()->unsetReadFields(['deleted_at', 'updated_at'])->unsetEdit();
+        $crud->unsetAdd()->unsetDelete()->setRead()->unsetReadFields(['deleted_at', 'updated_at']);
+        $crud->fieldType('budget', 'int');
+        $crud->setLangString('edit', 'Budget');
+        $crud->setLangString('edit_item', 'Atur Budget Pengadaan');
+        $crud->setRules([
+            [
+                'fieldName' => 'budget',
+                'rule' => 'numeric',
+                'parameters' => ''
+            ],
+            [
+                'fieldName' => 'budget',
+                'rule' => 'min',
+                'parameters' => '10000'
+            ],
+        ]);
         $crud->callbackColumn('status', function ($value, $row) {
             if (is_null($row->approved_at) && is_null($row->cancelled_date)) {
                 return "Pending";
@@ -42,6 +59,9 @@ class PengadaanBaruController extends GroceryCrudController
         });
         $crud->callbackColumn('code', function ($value, $row) {
             return "<a href='" . route('procurements.procurement-books', $row->id) . "'>" . $value . "</a>";
+        });
+        $crud->callbackColumn('budget', function ($value, $row) {
+            return 'Rp ' . number_format($value, 0, ',', '.');
         });
         $crud->setActionButton('Terima Permintaan', 'fa fa-check', function ($row) {
             return route('procurement.approve', encrypt($row->id));
