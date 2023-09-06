@@ -14,6 +14,7 @@ class GroceryCrudController extends Controller
         $config = config('grocerycrud');
 
         $crud = new GroceryCrud($config, $database);
+        $crud->unsetPrint()->unsetExport()->unsetSettings()->unsetFilters();
 
         return $crud;
     }
