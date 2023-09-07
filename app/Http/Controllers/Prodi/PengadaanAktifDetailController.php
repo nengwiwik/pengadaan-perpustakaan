@@ -18,6 +18,7 @@ class PengadaanAktifDetailController extends Controller
     {
         Paginator::useBootstrapFour();
         $data['title'] = "Data Buku | ID Pengadaan " . $procurement->code;
+        $data['procurement'] = $procurement;
         $data['books'] = ProcurementBook::where([
             'procurement_id' => $procurement->getKey(),
             'major_id' => Auth::user()->major_id,

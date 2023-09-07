@@ -16,6 +16,7 @@ class SimpanBukuController extends Controller
      */
     public function __invoke(Request $request)
     {
+        info($request->all());
         try {
             DB::beginTransaction();
             $request->validate([
@@ -33,11 +34,22 @@ class SimpanBukuController extends Controller
             $book->save();
 
             $this->addToCart($book);
+            $book->procurement->refresh();
+            if ($book->procurement->total_price > $book->procurement->budget) {
+                throw new \Exception('Ups, sudah melebihi budget.');
+            }
             DB::commit();
-            return response()->json($request->all());
+
+            $result = [
+                'total_books' => $book->procurement->total_books . ' buku',
+                // 'total_items' => $book->procurement->total_items . ' eksemplar',
+                'total_price' => 'Rp ' . number_format($book->procurement->total_price, 0, ',', '.'),
+            ];
+
+            return response()->json($result);
         } catch (\Throwable $th) {
             DB::rollBack();
-            return response($th->getMessage(), 500);
+            return response($th->getMessage(), 400);
         }
     }
 
