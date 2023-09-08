@@ -37,6 +37,7 @@ class PengadaanAktifController extends GroceryCrudController
         $crud->displayAs([
             'code' => 'Kode',
             'campus_id' => 'Kampus',
+            'budget' => 'Anggaran Biaya',
             'publisher_id' => 'Penerbit',
             'invoice_date' => 'Tgl. Pengadaan',
             'approved_at' => 'Tgl. Disetujui',

@@ -28,13 +28,14 @@ class ArsipPengadaanController extends GroceryCrudController
         $crud->setRead();
         $crud->defaultOrdering('invoice_date', 'desc');
         $crud->setFieldUpload('invoice', 'storage', asset('storage'));
-        $crud->columns(['code', 'campus_id', 'total_books', 'total_items']);
-        $crud->readFields(['code', 'campus_id', 'publisher_id', 'total_books', 'total_items', 'invoice_date', 'approved_at', 'verified_date', 'cancelled_date']);
+        $crud->columns(['code', 'publisher_id', 'budget', 'total_price']);
+        $crud->readFields(['code', 'campus_id', 'publisher_id', 'total_books', 'total_items', 'total_price', 'budget', 'invoice_date', 'approved_at', 'verified_date', 'cancelled_date']);
         $crud->unsetSearchColumns(['campus_id']);
         $crud->setRelation('campus_id', 'campuses', 'name');
         $crud->setRelation('publisher_id', 'publishers', 'name');
         $crud->displayAs([
             'code' => 'Kode',
+            'budget' => 'Anggaran Biaya',
             'campus_id' => 'Kampus',
             'publisher_id' => 'Penerbit',
             'invoice_date' => 'Tgl. Pengadaan',
@@ -58,6 +59,12 @@ class ArsipPengadaanController extends GroceryCrudController
             return "IDR " . number_format($value, 0, ',', '.');
         });
         $crud->callbackColumn('total_price', function ($value, $row) {
+            return "IDR " . number_format($value, 0, ',', '.');
+        });
+        $crud->callbackReadField('budget', function ($value, $row) {
+            return "IDR " . number_format($value, 0, ',', '.');
+        });
+        $crud->callbackColumn('budget', function ($value, $row) {
             return "IDR " . number_format($value, 0, ',', '.');
         });
 

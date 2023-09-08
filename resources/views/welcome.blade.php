@@ -147,7 +147,7 @@
         </div>
       @endrole
 
-      @hasanyrole('Super Admin|Penerbit')
+      @hasanyrole('Super Admin|Admin Prodi|Penerbit')
         {{-- Nominal Pengadaan Aktif --}}
         <div class="col-xl-3 col-md-6 mb-4">
           <div class="card border-left-success shadow h-100 py-2">
