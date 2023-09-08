@@ -102,6 +102,11 @@
     </div>
   </li>
 
+  <li class="nav-item">
+    <a class="nav-link" href="{{ route('request-buku') }}">
+      <i class="fas fa-fw fa-book-open"></i>
+      <span>Request Buku</span></a>
+  </li>
 
   @endrole
 
@@ -140,7 +145,7 @@
 
   <!-- Heading -->
   <div class="sidebar-heading">
-    Admin Prodi
+    Dosen Prodi
   </div>
 
   <li class="nav-item">
@@ -153,6 +158,12 @@
     <a class="nav-link" href="{{ route('prodi.procurements.archived') }}">
       <i class="fas fa-fw fa-book"></i>
       <span>Arsip Pengadaan</span></a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link" href="{{ route('prodi.request-buku') }}">
+      <i class="fas fa-fw fa-book-open"></i>
+      <span>Request Buku</span></a>
   </li>
 
   @endrole

@@ -14,6 +14,7 @@ use App\Http\Controllers\Prodi\ArsipPengadaanController as ProdiArsipPengadaanCo
 use App\Http\Controllers\Prodi\ArsipPengadaanDetailController as ProdiArsipPengadaanDetailController;
 use App\Http\Controllers\Prodi\PengadaanAktifController as ProdiPengadaanAktifController;
 use App\Http\Controllers\Prodi\PengadaanAktifDetailController as ProdiPengadaanAktifDetailController;
+use App\Http\Controllers\Prodi\RequestBukuController;
 use App\Http\Controllers\Prodi\SimpanBukuController;
 use App\Http\Controllers\Profile\UpdatePasswordController;
 use App\Http\Controllers\Profile\UpdateProfileController;
@@ -30,6 +31,7 @@ use App\Http\Controllers\SuperAdmin\PengadaanAktifDetailController;
 use App\Http\Controllers\SuperAdmin\PengadaanBaruController;
 use App\Http\Controllers\SuperAdmin\PengadaanBaruDetailController;
 use App\Http\Controllers\SuperAdmin\PenggunaBelumAktifController;
+use App\Http\Controllers\SuperAdmin\RequestBukuController as SuperAdminRequestBukuController;
 use App\Http\Controllers\SuperAdmin\TerimaPengadaanController;
 use App\Http\Controllers\SuperAdmin\TolakPengadaanController;
 use App\Http\Controllers\SuperAdmin\UpdateJumlahBukuController;
@@ -98,6 +100,9 @@ Route::prefix('admin')->middleware(['role:Super Admin', 'auth', 'verified'])->gr
     Route::get('/pengadaan/{id}/approve', TerimaPengadaanController::class)->name('procurement.approve');
     Route::get('/pengadaan/{id}/reject', TolakPengadaanController::class)->name('procurement.reject');
     Route::get('/pengadaan/{id}/verify', VerifikasiPengadaanController::class)->name('procurement.verify');
+
+    Route::get('/request-buku', SuperAdminRequestBukuController::class)->name('request-buku');
+    Route::post('/request-buku', SuperAdminRequestBukuController::class);
 });
 
 Route::prefix('penerbit')->middleware(['role:Penerbit', 'auth', 'verified'])->group(function () {
@@ -137,6 +142,9 @@ Route::prefix('prodi')->middleware(['role:Admin Prodi', 'auth', 'verified'])->gr
 
     Route::get('/pengadaan/{procurement}/arsip', ProdiArsipPengadaanDetailController::class)->name('prodi.procurements.procurement-books.archived');
     Route::post('/pengadaan/{procurement}/arsip', ProdiArsipPengadaanDetailController::class);
+
+    Route::get('/request-buku', RequestBukuController::class)->name('prodi.request-buku');
+    Route::post('/request-buku', RequestBukuController::class);
 });
 
 Route::middleware('auth')->group(function () {
