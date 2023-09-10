@@ -18,14 +18,17 @@
     </div>
 
     <div class="row mb-3 text-center">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <p>Total Buku: <span id="total-buku">{{ $procurement->total_books }} buku</span></p>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <p>Total Barang: <span id="total-barang">{{ $procurement->total_items }} eksemplar</span></p>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <p>Total Harga: <span id="total-harga">Rp {{ number_format($procurement->total_price, 0, ',', '.') }}</span></p>
+        </div>
+        <div class="col-md-3">
+            <p>Anggaran Biaya: <span id="total-harga">Rp {{ number_format($procurement->budget, 0, ',', '.') }}</span></p>
         </div>
     </div>
 

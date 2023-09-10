@@ -11,7 +11,7 @@
                 <thead>
                     <tr>
                         <th>Penerbit</th>
-                        <th>Budget</th>
+                        <th>Anggaran Biaya</th>
                         <th>Total Buku</th>
                         <th>Total Biaya Sementara</th>
                     </tr>
