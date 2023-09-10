@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('content')
-  <h1 class="h3 mb-4 text-gray-800">UNDIRA</h1>
+  <h1 class="h3 mb-4 text-gray-800">Sistem Informasi Pengadaan</h1>
 
   @hasanyrole('Super Admin|Penerbit|Admin Prodi')
     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -72,7 +72,7 @@
                 <div class="col-auto">
                   <a href="{{ $route_arsip_pengadaan }}"><i class="fas fa-archive fa-2x text-gray-300"></i></a>
                 </div>
-              </div>
+                </div>
             </div>
           </div>
         </div>
@@ -188,7 +188,25 @@
           </div>
         </div>
       @endhasanyrole
-
+@role("Super Admin")
+    <div class="col-xl-3 col-md-6 mb-4">
+          <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                  <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                    <a href="{{ route("request-buku") }}" class="stretched-link text-reset text-decoration-none">Request Buku</a>
+                  </div>
+                  <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $jumlah_request_buku }}</div>
+                </div>
+                <div class="col-auto">
+                  <a href="{{ route("request-buku") }}"><i class="fas fa-book fa-2x text-gray-300"></i></a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+@endrole
     </div>
   @else
     <div class="alert alert-danger" role="alert">
