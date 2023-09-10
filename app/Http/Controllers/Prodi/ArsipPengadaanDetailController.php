@@ -13,8 +13,11 @@ class ArsipPengadaanDetailController extends GroceryCrudController
 {
     public function __invoke(Procurement $procurement)
     {
-        $title = "Data Buku | Arsip | ID Pengadaan " . $procurement->code;
-        $table = 'procurement_books';
+        $title = "Data Buku | ID Pengadaan " . $procurement->code;
+        $table = 'books';
+        if ($procurement->status == Procurement::STATUS_DITOLAK) {
+            $table = 'procurement_books';
+        }
         $singular = 'Buku';
         $plural = 'Data Buku';
         $crud = $this->_getGroceryCrudEnterprise();
@@ -23,13 +26,10 @@ class ArsipPengadaanDetailController extends GroceryCrudController
         $crud->setSubject($singular, $plural);
         $crud->where([
             $table . '.procurement_id = ?' => $procurement->getKey(),
-            $table . '.deleted_at is null',
-            $table . '.major_id = ?' => Auth::user()->major_id,
-            $table . '.is_chosen = ?' => 1,
         ]);
 
         $crud->unsetOperations();
-        $crud->columns(['title', 'published_year', 'isbn', 'author_name', 'price', 'eksemplar', 'suplemen']);
+        $crud->columns(['title', 'eksemplar', 'price', 'published_year', 'isbn', 'author_name', 'suplemen']);
         $crud->readFields(['title', 'summary', 'is_chosen', 'published_year', 'isbn', 'author_name', 'price', 'suplemen']);
         $crud->fieldType('price', 'numeric');
         $crud->displayAs([
@@ -55,6 +55,6 @@ class ArsipPengadaanDetailController extends GroceryCrudController
 
         $output = $crud->render();
 
-        return $this->_showOutput($output, $title, 'prodi.arsip');
+        return $this->_showOutput($output, $title, 'superadmin.invoice.arsip');
     }
 }
