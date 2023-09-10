@@ -33,10 +33,11 @@ class ArsipPengadaanController extends GroceryCrudController
         $crud->setRead();
         $crud->setFieldUpload('invoice', 'storage', asset('storage'));
         $crud->columns(['code', 'status', 'campus_id', 'invoice_date', 'total_price']);
-        $crud->editFields(['invoice', 'status']);
+        $crud->editFields(['invoice', 'total_price', 'status']);
         $crud->fieldType('status', 'hidden');
         $crud->requiredFields(['invoice']);
         $crud->setLangString('edit', 'Upload Invoice');
+        $crud->setLangString('edit_value', 'Upload Invoice');
         $crud->callbackBeforeUpload(function ($uploadData) {
             $fieldName = $uploadData->field_name;
 
