@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BookRequest;
 use App\Models\Procurement;
 use App\Models\Publisher;
 use App\Models\User;
@@ -40,6 +41,7 @@ class HomeController extends Controller
         $jumlah_arsip_pengadaan = 0;
         $jumlah_penerbit = 0;
         $jumlah_user_belum_aktif = 0;
+        $jumlah_request_buku = 0;
 
         $route_pengadaan_baru = "#";
         $route_pengadaan_aktif = "#";
@@ -56,6 +58,7 @@ class HomeController extends Controller
             $jumlah_arsip_pengadaan = Procurement::whereIn('status', [Procurement::STATUS_INVOICE, Procurement::STATUS_SELESAI, Procurement::STATUS_DITOLAK])->count();
             $jumlah_penerbit = Publisher::count();
             $jumlah_user_belum_aktif = User::doesntHave('roles')->count();
+            $jumlah_request_buku = BookRequest::where('status', BookRequest::STATUS_REQUESTED)->count();
 
             $route_pengadaan_baru = route('procurements.new');
             $route_pengadaan_aktif = route('procurements.active');
@@ -101,6 +104,7 @@ class HomeController extends Controller
             'jumlah_arsip_pengadaan',
             'jumlah_penerbit',
             'jumlah_user_belum_aktif',
+            'jumlah_request_buku',
             'route_pengadaan_baru',
             'route_pengadaan_aktif',
             'route_arsip_pengadaan',
