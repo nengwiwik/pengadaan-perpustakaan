@@ -39,6 +39,7 @@
                 <th>Judul Buku</th>
                 <th>Penulis</th>
                 <th class="text-center">Tahun Terbit</th>
+                <th class="text-right">Harga</th>
                 <th class="text-center" style="width:10%">Jumlah</th>
                 <th class="text-center">Hapus</th>
             </tr>
@@ -50,6 +51,7 @@
                     <td>{{ $book->title }}</td>
                     <td>{{ $book->author_name }}</td>
                     <td class="text-center">{{ $book->published_year }}</td>
+                    <td class="text-right">Rp {{ number_format($book->price, 0, ',', '.') }}</td>
                     <td class="text-center">
                         <label class="sr-only" for="eksemplar">Eksemplar</label>
                         <input type="number" class="form-control mb-2 mr-sm-2 form-control-sm"
