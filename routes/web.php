@@ -31,6 +31,7 @@ use App\Http\Controllers\SuperAdmin\PengadaanAktifDetailController;
 use App\Http\Controllers\SuperAdmin\PengadaanBaruController;
 use App\Http\Controllers\SuperAdmin\PengadaanBaruDetailController;
 use App\Http\Controllers\SuperAdmin\PenggunaBelumAktifController;
+use App\Http\Controllers\SuperAdmin\PrintController;
 use App\Http\Controllers\SuperAdmin\RequestBukuController as SuperAdminRequestBukuController;
 use App\Http\Controllers\SuperAdmin\TerimaPengadaanController;
 use App\Http\Controllers\SuperAdmin\TolakPengadaanController;
@@ -103,6 +104,8 @@ Route::prefix('admin')->middleware(['role:Super Admin', 'auth', 'verified'])->gr
 
     Route::get('/request-buku', SuperAdminRequestBukuController::class)->name('request-buku');
     Route::post('/request-buku', SuperAdminRequestBukuController::class);
+
+    Route::get('/{procurement}/print', PrintController::class)->name('print');
 });
 
 Route::prefix('penerbit')->middleware(['role:Penerbit', 'auth', 'verified'])->group(function () {

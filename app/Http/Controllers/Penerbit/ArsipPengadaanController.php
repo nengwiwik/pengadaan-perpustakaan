@@ -32,10 +32,10 @@ class ArsipPengadaanController extends GroceryCrudController
         $crud->unsetOperations()->setEdit();
         $crud->setRead();
         $crud->setFieldUpload('invoice', 'storage', asset('storage'));
-        $crud->columns(['code', 'status', 'campus_id', 'invoice_date', 'total_price']);
-        $crud->editFields(['invoice', 'total_price', 'status']);
+        $crud->columns(['code', 'status', 'campus_id', 'verified_date']);
+        $crud->editFields(['invoice', 'final_price', 'status']);
         $crud->fieldType('status', 'hidden');
-        $crud->requiredFields(['invoice']);
+        $crud->requiredFields(['invoice', 'final_price']);
         $crud->setLangString('edit', 'Upload Invoice');
         $crud->setLangString('edit_value', 'Upload Invoice');
         $crud->callbackBeforeUpload(function ($uploadData) {
@@ -67,7 +67,7 @@ class ArsipPengadaanController extends GroceryCrudController
 
             return $s;
         });
-        $crud->readFields(['code', 'status', 'campus_id', 'total_books', 'total_items', 'total_price', 'invoice', 'invoice_date', 'approved_at', 'verified_date', 'cancelled_date']);
+        $crud->readFields(['code', 'status', 'campus_id', 'total_books', 'total_items', 'total_price', 'invoice', 'final_price', 'invoice_date', 'approved_at', 'verified_date', 'cancelled_date']);
         $crud->setRelation('campus_id', 'campuses', 'name');
         $crud->displayAs([
             'campus_id' => 'Kampus',
@@ -86,6 +86,9 @@ class ArsipPengadaanController extends GroceryCrudController
             return "IDR " . number_format($value, 0, ',', '.');
         });
         $crud->callbackColumn('total_price', function ($value, $row) {
+            return "IDR " . number_format($value, 0, ',', '.');
+        });
+        $crud->callbackReadField('final_price', function ($value, $row) {
             return "IDR " . number_format($value, 0, ',', '.');
         });
         $crud->callbackDelete(function ($s) {

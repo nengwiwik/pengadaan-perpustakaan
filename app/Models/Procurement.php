@@ -18,6 +18,7 @@ class Procurement extends Model
         'invoice_date' => 'date:Y-m-d',
         'verified_date' => 'date:Y-m-d',
         'paid_date' => 'date:Y-m-d',
+        'approved_at' => 'date:Y-m-d',
         'cancelled_date' => 'date:Y-m-d',
     ];
 

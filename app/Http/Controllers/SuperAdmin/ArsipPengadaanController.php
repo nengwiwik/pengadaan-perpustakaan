@@ -28,7 +28,7 @@ class ArsipPengadaanController extends GroceryCrudController
         $crud->setRelation('campus_id', 'campuses', 'name');
         $crud->unsetOperations()->setRead();
         $crud->setFieldUpload('invoice', 'storage', asset('storage'));
-        $crud->readFields(['code', 'status', 'publisher_id', 'campus_id', 'total_books', 'total_items', 'total_price', 'invoice', 'invoice_date', 'approved_at', 'verified_date', 'cancelled_date']);
+        $crud->readFields(['code', 'status', 'publisher_id', 'campus_id', 'total_books', 'total_items', 'total_price', 'invoice', 'final_price', 'invoice_date', 'approved_at', 'verified_date', 'cancelled_date']);
         $crud->callbackColumn('code', function ($value, $row) {
             return "<a href='" . route('procurements.procurement-books.arsip', $row->id) . "'>" . $value . "</a>";
         });
@@ -44,6 +44,9 @@ class ArsipPengadaanController extends GroceryCrudController
         $crud->callbackColumn('total_price', function ($value, $row) {
             return "IDR " . number_format($value, 0, ',', '.');
         });
+        $crud->callbackReadField('final_price', function ($value, $row) {
+            return "IDR " . number_format($value, 0, ',', '.');
+        });
         $crud->displayAs([
             'code' => 'Kode',
             'created_at' => 'Status',
@@ -52,6 +55,7 @@ class ArsipPengadaanController extends GroceryCrudController
             'total_books' => 'Jumlah Buku',
             'total_items' => 'Jumlah Barang',
             'total_price' => 'Total Harga',
+            'final_price' => 'Harga Final',
             'invoice_date' => 'Tgl. Pengadaan',
             'approved_at' => 'Tgl. Disetujui',
             'verified_date' => 'Tgl. Diverifikasi',
@@ -72,6 +76,9 @@ class ArsipPengadaanController extends GroceryCrudController
             $data->delete();
             return $s;
         });
+        $crud->setActionButton('Print', 'fa fa-print', function ($row) {
+            return route('print', $row->id);
+        }, true);
 
         $output = $crud->render();
 

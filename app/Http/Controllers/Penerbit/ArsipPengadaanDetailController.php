@@ -29,7 +29,7 @@ class ArsipPengadaanDetailController extends GroceryCrudController
             // $table . '.is_chosen = ?' => 1,
         ]);
 
-        $crud->unsetOperations();
+        $crud->unsetOperations()->setExport()->setPrint();
         $crud->columns(['title', 'eksemplar', 'price', 'published_year', 'isbn', 'author_name', 'suplemen']);
         $crud->fieldType('price', 'numeric');
         $crud->displayAs([
